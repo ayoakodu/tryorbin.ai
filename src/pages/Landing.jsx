@@ -1,14 +1,13 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Zap, ArrowRight, ChevronRight, Check, Sparkles,
   Globe, TrendingUp, Users, Mail, BarChart3,
-  Target, Star, Menu, X, Brain, Search, 
-  MessageSquare, PieChart, Layers, Database
+  Target, Brain, Search, MessageSquare, PieChart, Layers, Database
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import NavBar from '@/components/landing/NavBar';
 
 const africanCountries = [
   'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
@@ -82,7 +81,6 @@ const earlyAccessBenefits = [
 export default function Landing() {
   const [email, setEmail] = useState('');
   const [joined, setJoined] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
 
   const handleJoin = () => {
@@ -92,45 +90,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground font-inter overflow-x-hidden">
 
-      {/* Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/30 backdrop-blur-xl" style={{ background: 'rgba(6, 11, 26, 0.92)' }}>
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg gradient-brand flex items-center justify-center">
-              <Zap className="w-4 h-4 text-black" strokeWidth={2.5} />
-            </div>
-            <span className="text-xl font-bold gradient-text">RVNU</span>
-          </div>
-          <div className="hidden md:flex items-center gap-8 text-sm text-muted-foreground">
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
-            <a href="#ai-copilot" className="hover:text-foreground transition-colors">AI Copilot</a>
-            <a href="#faq" className="hover:text-foreground transition-colors">FAQ</a>
-          </div>
-          <div className="hidden md:flex items-center gap-3">
-            <Link to="/dashboard">
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground text-xs">Preview App</Button>
-            </Link>
-            <a href="#waitlist">
-              <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 glow-green-sm text-xs">
-                Join Waitlist <ArrowRight className="w-3.5 h-3.5 ml-1" />
-              </Button>
-            </a>
-          </div>
-          <button className="md:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
-        </div>
-        {mobileOpen && (
-          <div className="md:hidden border-t border-border/30 px-6 py-4 space-y-3">
-            {['How It Works', 'AI Copilot', 'FAQ'].map(item => (
-              <a key={item} href={`#${item.toLowerCase().replace(/\s+/g, '-')}`} className="block text-sm text-muted-foreground hover:text-foreground" onClick={() => setMobileOpen(false)}>{item}</a>
-            ))}
-            <a href="#waitlist" onClick={() => setMobileOpen(false)}>
-              <Button className="w-full mt-2 bg-primary text-primary-foreground">Join Waitlist</Button>
-            </a>
-          </div>
-        )}
-      </nav>
+      <NavBar />
 
       {/* Hero */}
       <section className="relative pt-36 pb-28 px-6 overflow-hidden">
