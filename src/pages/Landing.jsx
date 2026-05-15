@@ -10,6 +10,15 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
+const africanCountries = [
+  'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
+  'Ethiopia', 'Tanzania', 'Uganda', 'Côte d\'Ivoire', 'Cameroon', 'Morocco',
+  'Tunisia', 'Algeria', 'Angola', 'Mozambique', 'Zambia', 'Zimbabwe',
+  'Botswana', 'Namibia', 'Mali', 'Burkina Faso', 'Guinea', 'Benin',
+  'Togo', 'Niger', 'Chad', 'Somalia', 'Sudan', 'DR Congo', 'Congo',
+  'Gabon', 'Malawi', 'Sierra Leone', 'Liberia', 'Mauritius', 'Cape Verde',
+];
+
 const steps = [
   {
     number: '01',
@@ -188,7 +197,7 @@ export default function Landing() {
                 <div className="w-3 h-3 rounded-full bg-primary/50" />
               </div>
               <div className="flex-1 h-6 bg-secondary/50 rounded-md mx-4 flex items-center px-3">
-                <span className="text-xs text-muted-foreground">app.rvnu.ai — Early Access Preview</span>
+                <span className="text-xs text-muted-foreground">app.uservnu.io — Early Access Preview</span>
               </div>
               <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 border border-primary/20">
                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
@@ -218,12 +227,14 @@ export default function Landing() {
       </section>
 
       {/* Building For */}
-      <section className="py-10 px-6 border-y border-border/30">
-        <div className="max-w-5xl mx-auto text-center">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest mb-6">Designed for GTM teams building in</p>
-          <div className="flex flex-wrap items-center justify-center gap-6 md:gap-14 opacity-40">
-            {['Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal'].map(name => (
-              <span key={name} className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5">
+      <section className="py-10 px-6 border-y border-border/30 overflow-hidden">
+        <div className="max-w-5xl mx-auto text-center mb-6">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest">Designed for GTM teams building in</p>
+        </div>
+        <div className="relative">
+          <div className="flex animate-marquee whitespace-nowrap gap-10 opacity-40">
+            {[...africanCountries, ...africanCountries].map((name, i) => (
+              <span key={i} className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 flex-shrink-0">
                 <Globe className="w-3 h-3" /> {name}
               </span>
             ))}
