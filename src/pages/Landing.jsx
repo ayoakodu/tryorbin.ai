@@ -145,11 +145,10 @@ export default function Landing() {
               Coming Soon — AI-Powered GTM for Emerging Markets
             </div>
             <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
-              The Revenue Platform<br />
-              <span className="gradient-text">Africa Has Been Waiting For</span>
+              <span className="gradient-text">The AI-Native GTM Operating System.</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              RVNU is an AI-native Go-To-Market operating system being built for revenue teams across Africa and emerging markets — unifying prospecting, outreach, CRM, and intelligence in one platform.
+              RVNU is an AI-native Go-To-Market operating system helping revenue teams across Africa and emerging markets unify prospecting, outreach, CRM, and intelligence in one platform.
             </p>
           </motion.div>
 
@@ -227,17 +226,17 @@ export default function Landing() {
       </section>
 
       {/* Building For */}
-      <section className="py-10 px-6 border-y border-border/30 overflow-hidden">
-        <div className="max-w-5xl mx-auto text-center mb-6">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest">Designed for GTM teams building in</p>
-        </div>
-        <div className="relative">
-          <div className="flex animate-marquee whitespace-nowrap gap-10 opacity-40">
-            {[...africanCountries, ...africanCountries].map((name, i) => (
-              <span key={i} className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 flex-shrink-0">
-                <Globe className="w-3 h-3" /> {name}
-              </span>
-            ))}
+      <section className="py-10 px-6 border-y border-border/30">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest text-center mb-6">Designed for GTM teams building in</p>
+          <div className="overflow-hidden relative">
+            <div className="flex animate-marquee whitespace-nowrap gap-10 opacity-40">
+              {[...africanCountries, ...africanCountries].map((name, i) => (
+                <span key={i} className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 flex-shrink-0">
+                  <Globe className="w-3 h-3" /> {name}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
