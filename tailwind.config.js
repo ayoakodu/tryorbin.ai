@@ -5,7 +5,8 @@ module.exports = {
   theme: {
   	extend: {
       fontFamily: {
-        inter: ['Inter', 'sans-serif'],
+        jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+        inter: ['Plus Jakarta Sans', 'sans-serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
   		borderRadius: {
