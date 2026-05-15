@@ -89,7 +89,7 @@ module.exports = {
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         'float': 'float 3s ease-in-out infinite',
         'shimmer': 'shimmer 2s linear infinite',
-        'marquee': 'marquee 35s linear infinite',
+        'marquee': 'marquee 20s linear infinite',
   		}
   	}
   },
