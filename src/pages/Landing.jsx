@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import NavBar from '@/components/landing/NavBar';
+import Footer from '@/components/landing/Footer';
 
 const africanCountries = [
   'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
@@ -422,23 +423,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-10 px-6 border-t border-border/30">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-md gradient-brand flex items-center justify-center">
-              <Zap className="w-3.5 h-3.5 text-black" strokeWidth={2.5} />
-            </div>
-            <span className="font-bold gradient-text">RVNU</span>
-          </div>
-          <p className="text-xs text-muted-foreground">© 2026 RVNU. Built for Africa's revenue operators. Currently in development.</p>
-          <div className="flex gap-6 text-xs text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
