@@ -1,0 +1,52 @@
+{
+  "name": "Sequence",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "active",
+        "paused",
+        "draft"
+      ],
+      "default": "draft"
+    },
+    "channel": {
+      "type": "string",
+      "enum": [
+        "email",
+        "linkedin",
+        "whatsapp",
+        "sms",
+        "multi-channel"
+      ]
+    },
+    "steps_count": {
+      "type": "number"
+    },
+    "enrolled_count": {
+      "type": "number"
+    },
+    "reply_rate": {
+      "type": "number"
+    },
+    "meeting_rate": {
+      "type": "number"
+    },
+    "description": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "name"
+  ]
+}

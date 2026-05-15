@@ -1,0 +1,215 @@
+import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
+import { 
+  Sparkles, Send, Zap, ChevronRight, Copy, 
+  RefreshCw, ThumbsUp, ThumbsDown, Loader2,
+  MessageSquare, TrendingUp, Users, Mail, BarChart3
+} from 'lucide-react';
+import TopBar from '@/components/layout/TopBar';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+
+const suggestionPrompts = [
+  { icon: Users, text: 'Generate an ICP for B2B SaaS targeting Nigerian fintechs', category: 'Prospecting' },
+  { icon: Mail, text: 'Write a 5-step outbound sequence for CFOs in East Africa', category: 'Outreach' },
+  { icon: TrendingUp, text: 'Analyze my pipeline and identify deals at risk this quarter', category: 'Pipeline' },
+  { icon: BarChart3, text: 'Summarize campaign performance and suggest improvements', category: 'Campaigns' },
+  { icon: Sparkles, text: 'Create a LinkedIn post about our AI-powered GTM platform', category: 'Content' },
+  { icon: MessageSquare, text: 'Suggest the best follow-up message for a warm prospect', category: 'Engagement' },
+];
+
+const initialMessages = [
+  {
+    role: 'assistant',
+    content: `Hello! I'm **RVNU AI**, your revenue intelligence copilot. 
+
+I can help you:
+- 🎯 **Prospect** — Generate ICPs, find target accounts, build lists
+- ✉️ **Write** — Outbound emails, LinkedIn messages, ad copy, landing pages
+- 📊 **Analyze** — Pipeline health, campaign performance, deal risks  
+- 🔮 **Predict** — Revenue forecasts, churn risks, conversion probabilities
+- ⚡ **Automate** — GTM workflows, follow-up sequences, nurture journeys
+
+What would you like to work on today?`,
+  }
+];
+
+function Message({ msg }) {
+  const isUser = msg.role === 'user';
+  return (
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+      className={`flex gap-3 ${isUser ? 'flex-row-reverse' : ''}`}>
+      {!isUser && (
+        <div className="w-8 h-8 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0 mt-0.5">
+          <Sparkles className="w-4 h-4 text-black" />
+        </div>
+      )}
+      {isUser && (
+        <div className="w-8 h-8 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0 mt-0.5">
+          <span className="text-xs font-bold text-muted-foreground">You</span>
+        </div>
+      )}
+      <div className={`max-w-[80%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
+        <div className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${
+          isUser 
+            ? 'bg-primary text-primary-foreground' 
+            : 'glass border border-border/40 text-foreground'
+        }`}>
+          {msg.loading ? (
+            <div className="flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              <span className="text-muted-foreground text-xs">RVNU AI is thinking...</span>
+            </div>
+          ) : (
+            <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{
+              __html: msg.content
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/🎯|✉️|📊|🔮|⚡/g, match => match)
+            }} />
+          )}
+        </div>
+        {!isUser && !msg.loading && (
+          <div className="flex gap-1.5 px-1">
+            <button className="p-1 rounded text-muted-foreground hover:text-foreground transition-colors">
+              <Copy className="w-3 h-3" />
+            </button>
+            <button className="p-1 rounded text-muted-foreground hover:text-primary transition-colors">
+              <ThumbsUp className="w-3 h-3" />
+            </button>
+            <button className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors">
+              <ThumbsDown className="w-3 h-3" />
+            </button>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
+export default function AICopilot() {
+  const [messages, setMessages] = useState(initialMessages);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const bottomRef = useRef(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const sendMessage = async (text) => {
+    const userText = text || input;
+    if (!userText.trim() || loading) return;
+    
+    setInput('');
+    setMessages(prev => [...prev, { role: 'user', content: userText }]);
+    setLoading(true);
+    
+    const loadingId = Date.now();
+    setMessages(prev => [...prev, { role: 'assistant', content: '', loading: true, id: loadingId }]);
+
+    const response = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are RVNU AI, an expert AI revenue copilot for B2B GTM teams in Africa and emerging markets.
+      
+You help with: prospecting, outbound email writing, campaign strategy, pipeline analysis, deal risk assessment, ICP development, LinkedIn content, marketing copy, and GTM strategy.
+
+Be specific, actionable, and tailored for African and emerging markets context. Format your responses clearly using markdown bold (**text**) for emphasis. Keep responses concise but comprehensive.
+
+User question: ${userText}`,
+    });
+
+    setMessages(prev => prev.map(m => 
+      m.id === loadingId ? { role: 'assistant', content: response, loading: false } : m
+    ));
+    setLoading(false);
+  };
+
+  const handleKey = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <TopBar title="AI Copilot" subtitle="Your always-on GTM intelligence engine" />
+      
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar Prompts */}
+        <div className="hidden lg:flex w-64 flex-col border-r border-border/30 p-4 gap-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Quick Prompts</p>
+          <div className="space-y-2">
+            {suggestionPrompts.map((p, i) => (
+              <button key={i} onClick={() => sendMessage(p.text)}
+                className="w-full text-left p-3 rounded-xl bg-secondary/40 hover:bg-secondary/80 transition-colors group">
+                <div className="flex items-center gap-2 mb-1.5">
+                  <p.icon className="w-3.5 h-3.5 text-primary" />
+                  <span className="text-[10px] font-semibold text-primary uppercase tracking-wider">{p.category}</span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed group-hover:text-foreground transition-colors line-clamp-2">
+                  {p.text}
+                </p>
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-auto p-3 rounded-xl bg-primary/5 border border-primary/20">
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="w-4 h-4 text-primary" />
+              <span className="text-xs font-semibold text-primary">AI Credits</span>
+            </div>
+            <div className="w-full bg-border rounded-full h-1.5 mb-1.5">
+              <div className="bg-primary h-1.5 rounded-full" style={{ width: '73%' }} />
+            </div>
+            <p className="text-[10px] text-muted-foreground">730 / 1,000 credits used</p>
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-6 space-y-5">
+            <AnimatePresence>
+              {messages.map((msg, i) => (
+                <Message key={i} msg={msg} />
+              ))}
+            </AnimatePresence>
+            <div ref={bottomRef} />
+          </div>
+
+          {/* Input */}
+          <div className="p-4 border-t border-border/30">
+            <div className="glass rounded-xl p-3 border border-border/40 focus-within:border-primary/40 transition-colors">
+              <Textarea
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                onKeyDown={handleKey}
+                placeholder="Ask RVNU AI anything — write outbound emails, analyze pipeline, build ICPs..."
+                className="bg-transparent border-0 text-sm text-foreground placeholder:text-muted-foreground resize-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 min-h-[60px]"
+                rows={3}
+              />
+              <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
+                <div className="flex gap-2">
+                  {['Write email', 'Build ICP', 'Analyze pipeline'].map(t => (
+                    <button key={t} onClick={() => setInput(t)}
+                      className="text-xs text-muted-foreground hover:text-primary px-2.5 py-1 rounded-md bg-secondary/50 hover:bg-primary/10 transition-colors">
+                      {t}
+                    </button>
+                  ))}
+                </div>
+                <Button onClick={() => sendMessage()} disabled={!input.trim() || loading} size="sm"
+                  className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2">
+                  {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                  Send
+                </Button>
+              </div>
+            </div>
+            <p className="text-center text-[10px] text-muted-foreground mt-2">
+              RVNU AI may make mistakes. Verify important information.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

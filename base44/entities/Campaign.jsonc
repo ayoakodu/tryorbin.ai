@@ -1,0 +1,80 @@
+{
+  "name": "Campaign",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "email",
+        "linkedin",
+        "whatsapp",
+        "sms",
+        "multi-channel",
+        "event",
+        "webinar"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "scheduled",
+        "active",
+        "paused",
+        "completed"
+      ],
+      "default": "draft"
+    },
+    "goal": {
+      "type": "string"
+    },
+    "target_audience": {
+      "type": "string"
+    },
+    "start_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "end_date": {
+      "type": "string",
+      "format": "date"
+    },
+    "total_contacts": {
+      "type": "number"
+    },
+    "sent_count": {
+      "type": "number"
+    },
+    "open_rate": {
+      "type": "number"
+    },
+    "click_rate": {
+      "type": "number"
+    },
+    "reply_rate": {
+      "type": "number"
+    },
+    "conversion_rate": {
+      "type": "number"
+    },
+    "subject_line": {
+      "type": "string"
+    },
+    "body_content": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "type"
+  ]
+}

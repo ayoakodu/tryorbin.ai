@@ -5,43 +5,74 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
-// Add page imports here
+
+// Page imports
+import Landing from './pages/Landing';
+import Dashboard from './pages/Dashboard';
+import Contacts from './pages/Contacts';
+import Companies from './pages/Companies';
+import Pipeline from './pages/Pipeline';
+import Outreach from './pages/Outreach';
+import Campaigns from './pages/Campaigns';
+import Analytics from './pages/Analytics';
+import ABM from './pages/ABM';
+import AICopilot from './pages/AICopilot';
+import Integrations from './pages/Integrations';
+
+// Layout
+import AppLayout from './components/layout/AppLayout';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
+      <div className="fixed inset-0 flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center animate-pulse-glow">
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-black" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <div className="w-6 h-6 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+        </div>
       </div>
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
-      {/* Add your page Route elements here */}
+      <Route path="/" element={<Landing />} />
+      
+      {/* App Routes with Layout */}
+      <Route element={<AppLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/contacts" element={<Contacts />} />
+        <Route path="/companies" element={<Companies />} />
+        <Route path="/pipeline" element={<Pipeline />} />
+        <Route path="/outreach" element={<Outreach />} />
+        <Route path="/campaigns" element={<Campaigns />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/abm" element={<ABM />} />
+        <Route path="/ai-copilot" element={<AICopilot />} />
+        <Route path="/integrations" element={<Integrations />} />
+      </Route>
+
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
@@ -51,7 +82,7 @@ function App() {
         <Toaster />
       </QueryClientProvider>
     </AuthProvider>
-  )
+  );
 }
 
-export default App
+export default App;
