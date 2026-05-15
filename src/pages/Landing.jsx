@@ -203,14 +203,14 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-28 px-6">
+      <section id="how-it-works" className="py-28 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-xs text-muted-foreground mb-4">
-              <Zap className="w-3 h-3 text-primary" /> The RVNU Vision
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-200 bg-green-50 text-xs text-green-700 mb-4">
+              <Zap className="w-3 h-3 text-green-600" /> The RVNU Vision
             </div>
-            <h2 className="text-3xl md:text-4xl font-black mb-5">How RVNU Will Power Your GTM Engine</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-black mb-5 text-gray-900">How RVNU Will Power Your GTM Engine</h2>
+            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
               A step-by-step look at the AI-driven workflows we're designing — from first contact to closed deal and beyond.
             </p>
           </div>
@@ -226,22 +226,22 @@ export default function Landing() {
                 className={`flex flex-col md:flex-row gap-8 items-center ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}
               >
                 {/* Content */}
-                <div className="flex-1 glass rounded-2xl p-8 hover:border-primary/30 transition-all duration-300 group">
+                <div className="flex-1 bg-gray-50 border border-gray-200 rounded-2xl p-8 hover:border-green-300 transition-all duration-300 group">
                   <div className="flex items-start gap-5">
                     <div className="flex-shrink-0">
-                      <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <step.icon className="w-5 h-5 text-primary" />
+                      <div className="w-12 h-12 rounded-xl bg-green-50 border border-green-200 flex items-center justify-center group-hover:bg-green-100 transition-colors">
+                        <step.icon className="w-5 h-5 text-green-600" />
                       </div>
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
-                        <span className="text-xs font-mono text-primary/60 font-bold">{step.number}</span>
-                        <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
+                        <span className="text-xs font-mono text-green-500 font-bold">{step.number}</span>
+                        <h3 className="text-lg font-bold text-gray-900">{step.title}</h3>
                       </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed mb-5">{step.description}</p>
+                      <p className="text-sm text-gray-500 leading-relaxed mb-5">{step.description}</p>
                       <div className="flex flex-wrap gap-2">
                         {step.tags.map(tag => (
-                          <span key={tag} className="px-2.5 py-1 rounded-full text-xs border border-primary/20 bg-primary/5 text-primary/80">{tag}</span>
+                          <span key={tag} className="px-2.5 py-1 rounded-full text-xs border border-green-200 bg-green-50 text-green-700">{tag}</span>
                         ))}
                       </div>
                     </div>
@@ -250,21 +250,21 @@ export default function Landing() {
 
                 {/* Step number visual */}
                 <div className="hidden md:flex flex-shrink-0 w-20 flex-col items-center gap-2">
-                  <div className="w-14 h-14 rounded-full border-2 border-primary/20 bg-primary/5 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-full border-2 border-green-200 bg-green-50 flex items-center justify-center">
                     <span className="text-xl font-black gradient-text">{step.number}</span>
                   </div>
                   {i < steps.length - 1 && (
-                    <div className="w-px h-16 bg-gradient-to-b from-primary/30 to-transparent" />
+                    <div className="w-px h-16 bg-gradient-to-b from-green-300 to-transparent" />
                   )}
                 </div>
 
                 {/* Placeholder visual */}
-                <div className="flex-1 glass rounded-2xl p-6 border border-border/40 min-h-[160px] flex items-center justify-center">
+                <div className="flex-1 bg-white border border-gray-200 rounded-2xl p-6 min-h-[160px] flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3">
-                      <step.icon className="w-6 h-6 text-primary/60" />
+                    <div className="w-14 h-14 rounded-2xl bg-green-50 border border-green-200 flex items-center justify-center mx-auto mb-3">
+                      <step.icon className="w-6 h-6 text-green-400" />
                     </div>
-                    <p className="text-xs text-muted-foreground/50 font-mono">UI preview coming soon</p>
+                    <p className="text-xs text-gray-400 font-mono">UI preview coming soon</p>
                   </div>
                 </div>
               </motion.div>
@@ -336,11 +336,11 @@ export default function Landing() {
       </section>
 
       {/* Why RVNU */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-black mb-4">Built for how Africa does business</h2>
-            <p className="text-muted-foreground max-w-xl mx-auto">Most GTM tools were built for Silicon Valley workflows. RVNU is being designed from the ground up for emerging market realities.</p>
+            <h2 className="text-3xl font-black mb-4 text-gray-900">Built for how Africa does business</h2>
+            <p className="text-gray-500 max-w-xl mx-auto">Most GTM tools were built for Silicon Valley workflows. RVNU is being designed from the ground up for emerging market realities.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
@@ -351,12 +351,12 @@ export default function Landing() {
               <motion.div key={item.title}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.1 }} viewport={{ once: true }}
-                className="glass rounded-xl p-6 hover:border-primary/30 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <item.icon className="w-5 h-5 text-primary" />
+                className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:border-green-300 transition-all group">
+                <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
+                  <item.icon className="w-5 h-5 text-green-600" />
                 </div>
-                <h3 className="font-bold mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold mb-2 text-gray-900">{item.title}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -364,19 +364,19 @@ export default function Landing() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-24 px-6">
+      <section id="faq" className="py-24 px-6 bg-gray-50">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-black text-center mb-10">Frequently asked questions</h2>
+          <h2 className="text-3xl font-black text-center mb-10 text-gray-900">Frequently asked questions</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
-              <div key={i} className="glass rounded-xl overflow-hidden">
+              <div key={i} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
                 <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-accent/20 transition-colors">
-                  <span className="font-medium text-sm">{faq.q}</span>
-                  <ChevronRight className={`w-4 h-4 text-muted-foreground transition-transform flex-shrink-0 ml-4 ${openFaq === i ? 'rotate-90' : ''}`} />
+                  className="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors">
+                  <span className="font-medium text-sm text-gray-900">{faq.q}</span>
+                  <ChevronRight className={`w-4 h-4 text-gray-400 transition-transform flex-shrink-0 ml-4 ${openFaq === i ? 'rotate-90' : ''}`} />
                 </button>
                 {openFaq === i && (
-                  <div className="px-6 pb-4 text-sm text-muted-foreground leading-relaxed border-t border-border/30 pt-3">
+                  <div className="px-6 pb-4 text-sm text-gray-500 leading-relaxed border-t border-gray-100 pt-3">
                     {faq.a}
                   </div>
                 )}
