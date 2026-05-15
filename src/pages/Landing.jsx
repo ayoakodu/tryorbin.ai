@@ -105,7 +105,7 @@ export default function Landing() {
               <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" />
               Coming Soon — AI-Powered GTM for Emerging Markets
             </div>
-            <h1 className="text-5xl md:text-7xl font-black leading-[1.05] tracking-tight mb-6">
+            <h1 className="text-4xl md:text-5xl font-black leading-[1.1] tracking-tight mb-6">
               <span className="gradient-text">The AI-Native GTM Operating System.</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
@@ -209,7 +209,7 @@ export default function Landing() {
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-border text-xs text-muted-foreground mb-4">
               <Zap className="w-3 h-3 text-primary" /> The RVNU Vision
             </div>
-            <h2 className="text-4xl md:text-5xl font-black mb-5">How RVNU Will Power<br />Your GTM Engine</h2>
+            <h2 className="text-3xl md:text-4xl font-black mb-5">How RVNU Will Power Your GTM Engine</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               A step-by-step look at the AI-driven workflows we're designing — from first contact to closed deal and beyond.
             </p>
@@ -283,7 +283,7 @@ export default function Landing() {
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-medium mb-6">
                   <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" /> AI Revenue Copilot — Planned Feature
                 </div>
-                <h2 className="text-3xl md:text-4xl font-black mb-4">An intelligence engine embedded in every workflow</h2>
+                <h2 className="text-2xl md:text-3xl font-black mb-4">An intelligence engine embedded in every workflow</h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
                   We're designing RVNU's AI Copilot to be your always-on GTM assistant — capable of generating outbound sequences, analysing pipeline risk, identifying target accounts, and creating campaign briefs. All from a single conversational interface.
                 </p>
@@ -339,7 +339,7 @@ export default function Landing() {
       <section className="py-20 px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-4xl font-black mb-4">Built for how Africa does business</h2>
+            <h2 className="text-3xl font-black mb-4">Built for how Africa does business</h2>
             <p className="text-muted-foreground max-w-xl mx-auto">Most GTM tools were built for Silicon Valley workflows. RVNU is being designed from the ground up for emerging market realities.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
@@ -366,7 +366,7 @@ export default function Landing() {
       {/* FAQ */}
       <section id="faq" className="py-24 px-6">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-4xl font-black text-center mb-14">Frequently asked questions</h2>
+          <h2 className="text-3xl font-black text-center mb-10">Frequently asked questions</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <div key={i} className="glass rounded-xl overflow-hidden">
@@ -395,7 +395,7 @@ export default function Landing() {
               <div className="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-6">
                 <Zap className="w-7 h-7 text-black" strokeWidth={2.5} />
               </div>
-              <h2 className="text-4xl md:text-5xl font-black mb-4">Be first to experience RVNU</h2>
+              <h2 className="text-3xl md:text-4xl font-black mb-4">Be first to experience RVNU</h2>
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
                 We're building something new for Africa's revenue operators. Join the waitlist to get early access, shape the product, and lock in founder pricing.
               </p>

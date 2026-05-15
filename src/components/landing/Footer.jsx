@@ -87,10 +87,10 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
 
         {/* Top section: logo/social + link columns */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-10 mb-14">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
 
           {/* Brand + social */}
-          <div className="col-span-2 md:col-span-1">
+          <div className="col-span-2 md:col-span-2">
             <div className="flex items-center gap-2 mb-5">
               <div className="w-7 h-7 rounded-md gradient-brand flex items-center justify-center">
                 <Zap className="w-3.5 h-3.5 text-black" strokeWidth={2.5} />
@@ -113,7 +113,7 @@ export default function Footer() {
 
           {/* Link columns */}
           {Object.entries(footerLinks).map(([section, links]) => (
-            <div key={section} className="col-span-1">
+            <div key={section} className="col-span-1 min-w-0">
               <p className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{section}</p>
               <ul className="space-y-2.5">
                 {links.map((link) => (
@@ -132,9 +132,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-border/30 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="border-t border-border/30 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <p className="text-xs text-muted-foreground">© 2026 RVNU. Built for Africa's revenue operators.</p>
-          <div className="flex items-center gap-6 text-xs text-muted-foreground">
+          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 text-xs text-muted-foreground">
             <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
             <a href="#" className="hover:text-foreground transition-colors">Cookies</a>
