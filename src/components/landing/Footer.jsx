@@ -97,9 +97,6 @@ export default function Footer() {
               </div>
               <span className="text-sm font-bold gradient-text">RVNU</span>
             </div>
-            <p className="text-[11px] text-muted-foreground leading-relaxed mb-4">
-              AI-native GTM execution for Africa's revenue teams.
-            </p>
             <div className="flex items-center gap-2">
               {socialLinks.map((s) => (
                 <a
