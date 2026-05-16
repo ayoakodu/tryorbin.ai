@@ -279,7 +279,7 @@ Keep it specific and actionable for African/emerging markets.`,
           ].map(s => (
             <div key={s.label} className="glass rounded-xl p-4">
               <span className="text-xs text-muted-foreground block mb-2">{s.label}</span>
-              <span className={`text-2xl font-black ${s.color}`}>{s.value}</span>
+              <span className={`text-xl font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>

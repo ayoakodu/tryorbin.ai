@@ -164,7 +164,7 @@ Provide a concise 3-sentence team summary and 2-3 bullet actionable recommendati
                 <span className="text-xs text-muted-foreground">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <p className={`text-2xl font-black ${s.color}`}>{s.value}</p>
+              <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">{s.change} this month</p>
             </motion.div>
           ))}

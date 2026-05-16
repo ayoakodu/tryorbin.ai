@@ -359,7 +359,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                 <span className="text-xs text-muted-foreground">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <span className={`text-2xl font-black ${s.color}`}>{s.value}</span>
+              <span className={`text-xl font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -424,7 +424,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                     { label: 'Meetings', value: selectedSeq.meetings, color: 'text-amber-400' },
                   ].map(m => (
                     <div key={m.label} className="text-center p-2 rounded-lg bg-secondary/50">
-                      <p className={`text-base font-black ${m.color}`}>{m.value}</p>
+                      <p className={`text-sm font-bold ${m.color}`}>{m.value}</p>
                       <p className="text-[10px] text-muted-foreground">{m.label}</p>
                     </div>
                   ))}

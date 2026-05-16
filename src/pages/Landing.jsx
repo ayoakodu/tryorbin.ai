@@ -94,7 +94,7 @@ export default function Landing() {
       <NavBar />
 
       {/* Hero */}
-      <section className="relative pt-36 pb-28 px-6 overflow-hidden">
+      <section className="relative pt-28 pb-20 px-6 overflow-hidden">
         <div className="absolute inset-0 mesh-bg" />
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(74, 222, 128, 0.07) 0%, transparent 65%)' }} />
@@ -105,10 +105,10 @@ export default function Landing() {
               <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" />
               AI-Native GTM Execution for Emerging Market Revenue Teams
             </div>
-            <h1 className="text-4xl md:text-5xl font-black leading-[1.1] tracking-tight mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold leading-[1.15] tracking-tight mb-5">
               <span className="gradient-text">The AI-Native GTM Execution Platform.</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
               RVNU automates the full GTM execution cycle — from multichannel outreach and pipeline management to AI-driven follow-ups and revenue forecasting — built for revenue teams across Africa and emerging markets.
             </p>
           </motion.div>
@@ -203,14 +203,14 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-28 px-6 bg-white">
+      <section id="how-it-works" className="py-20 px-6 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-20">
+          <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-200 bg-green-50 text-xs text-green-700 mb-4">
               <Zap className="w-3 h-3 text-green-600" /> The RVNU Execution Engine
             </div>
-            <h2 className="text-3xl md:text-4xl font-black mb-5 text-gray-900">How RVNU Powers Your GTM Execution</h2>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">How RVNU Powers Your GTM Execution</h2>
+            <p className="text-base text-gray-500 max-w-2xl mx-auto">
               A step-by-step look at the AI-driven execution workflows we're building — from first touchpoint to closed deal and beyond.
             </p>
           </div>
@@ -236,7 +236,7 @@ export default function Landing() {
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-3">
                         <span className="text-xs font-mono text-green-500 font-bold">{step.number}</span>
-                        <h3 className="text-lg font-bold text-gray-900">{step.title}</h3>
+                        <h3 className="text-sm font-semibold text-gray-900">{step.title}</h3>
                       </div>
                       <p className="text-sm text-gray-500 leading-relaxed mb-5">{step.description}</p>
                       <div className="flex flex-wrap gap-2">
@@ -251,7 +251,7 @@ export default function Landing() {
                 {/* Step number visual */}
                 <div className="hidden md:flex flex-shrink-0 w-20 flex-col items-center gap-2">
                   <div className="w-14 h-14 rounded-full border-2 border-green-200 bg-green-50 flex items-center justify-center">
-                    <span className="text-xl font-black gradient-text">{step.number}</span>
+                    <span className="text-base font-bold gradient-text">{step.number}</span>
                   </div>
                   {i < steps.length - 1 && (
                     <div className="w-px h-16 bg-gradient-to-b from-green-300 to-transparent" />
@@ -274,16 +274,16 @@ export default function Landing() {
       </section>
 
       {/* AI Copilot Highlight */}
-      <section id="ai-copilot" className="py-28 px-6 relative overflow-hidden">
+      <section id="ai-copilot" className="py-20 px-6 relative overflow-hidden">
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.05) 0%, transparent 70%)' }} />
         <div className="relative max-w-5xl mx-auto">
-          <div className="glass rounded-2xl p-8 md:p-14 border border-primary/20 glow-green">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="glass rounded-2xl p-7 md:p-10 border border-primary/20 glow-green">
+            <div className="grid md:grid-cols-2 gap-10 items-center">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-medium mb-6">
                   <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" /> AI Revenue Copilot — Planned Feature
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black mb-4">An AI execution engine embedded in every workflow</h2>
+                <h2 className="text-xl md:text-2xl font-bold mb-4">An AI execution engine embedded in every workflow</h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
                   We're designing RVNU's AI Copilot to be your always-on GTM execution assistant — generating outbound sequences, automating follow-ups, analysing pipeline risk, and creating personalised messaging on demand. Embedded contextually across every workflow.
                 </p>
@@ -336,10 +336,10 @@ export default function Landing() {
       </section>
 
       {/* Why RVNU */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-16 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl font-black mb-4 text-gray-900">Stop tracking. Start executing.</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-bold mb-3 text-gray-900">Stop tracking. Start executing.</h2>
             <p className="text-gray-500 max-w-xl mx-auto">Most GTM tools show you dashboards. RVNU automates the workflows that drive revenue — outreach, follow-ups, pipeline progression, and conversion — with AI embedded throughout.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
@@ -364,9 +364,9 @@ export default function Landing() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-24 px-6 bg-gray-50">
+      <section id="faq" className="py-16 px-6 bg-gray-50">
         <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-black text-center mb-10 text-gray-900">Frequently asked questions</h2>
+          <h2 className="text-xl font-bold text-center mb-8 text-gray-900">Frequently asked questions</h2>
           <div className="space-y-3">
             {faqs.map((faq, i) => (
               <div key={i} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
@@ -387,15 +387,15 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-24 px-6">
+      <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="glass rounded-2xl p-10 md:p-14 border border-primary/20 glow-green relative overflow-hidden">
+          <div className="glass rounded-2xl p-8 md:p-12 border border-primary/20 glow-green relative overflow-hidden">
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
               <div className="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-6">
                 <Zap className="w-7 h-7 text-black" strokeWidth={2.5} />
               </div>
-              <h2 className="text-3xl md:text-4xl font-black mb-4">Be first to execute with RVNU</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with RVNU</h2>
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
                 The AI-native GTM execution platform for Africa's revenue teams. Automate your outreach, pipeline, and follow-ups — and close faster. Join the waitlist for early access and founder pricing.
               </p>

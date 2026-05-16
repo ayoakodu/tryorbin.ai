@@ -81,7 +81,7 @@ export default function Dashboard() {
                 <span className="text-xs text-muted-foreground uppercase tracking-wider font-medium">{stat.label}</span>
                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
               </div>
-              <p className="text-2xl font-black text-foreground mb-1">{stat.value}</p>
+              <p className="text-xl font-bold text-foreground mb-1">{stat.value}</p>
               <div className="flex items-center gap-1 text-xs text-primary">
                 <TrendingUp className="w-3 h-3" />
                 <span>{stat.change} this month</span>

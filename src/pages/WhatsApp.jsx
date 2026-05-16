@@ -142,7 +142,7 @@ Just write the message text, nothing else.`,
             <div key={s.label} className="glass rounded-xl p-3 flex items-center gap-3">
               <s.icon className={`w-5 h-5 ${s.color} flex-shrink-0`} />
               <div>
-                <p className={`text-lg font-black ${s.color}`}>{s.value}</p>
+                <p className={`text-base font-bold ${s.color}`}>{s.value}</p>
                 <p className="text-[10px] text-muted-foreground">{s.label}</p>
               </div>
             </div>

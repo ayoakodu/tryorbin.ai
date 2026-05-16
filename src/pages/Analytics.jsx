@@ -153,7 +153,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">{k.label}</span>
                 <k.icon className={`w-4 h-4 ${k.color}`} />
               </div>
-              <p className={`text-2xl font-black mb-1 ${k.color}`}>{k.value}</p>
+              <p className={`text-xl font-bold mb-1 ${k.color}`}>{k.value}</p>
               <p className="text-[10px] text-muted-foreground">{k.sub}</p>
             </motion.div>
           ))}

@@ -223,7 +223,7 @@ Focus on risk, stale deals, or quick wins.`,
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <span className={`text-2xl font-black ${s.color}`}>{s.value}</span>
+              <span className={`text-xl font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
