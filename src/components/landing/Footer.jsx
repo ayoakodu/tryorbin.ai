@@ -84,26 +84,29 @@ const socialLinks = [
 export default function Footer() {
   return (
     <footer className="border-t border-border/30 bg-background">
-      <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
+      <div className="max-w-6xl mx-auto px-6 pt-14 pb-8">
 
-        {/* Top section: logo/social + link columns */}
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-8 mb-12">
+        {/* Top section */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-x-8 gap-y-10 mb-10">
 
           {/* Brand + social */}
-          <div className="col-span-2 md:col-span-2">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="w-7 h-7 rounded-md gradient-brand flex items-center justify-center">
-                <Zap className="w-3.5 h-3.5 text-black" strokeWidth={2.5} />
+          <div className="col-span-2 md:col-span-1">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 rounded-md gradient-brand flex items-center justify-center">
+                <Zap className="w-3 h-3 text-black" strokeWidth={2.5} />
               </div>
-              <span className="text-lg font-bold gradient-text">RVNU</span>
+              <span className="text-sm font-bold gradient-text">RVNU</span>
             </div>
-            <div className="flex items-center gap-3">
+            <p className="text-[11px] text-muted-foreground leading-relaxed mb-4">
+              AI-native GTM execution for Africa's revenue teams.
+            </p>
+            <div className="flex items-center gap-2">
               {socialLinks.map((s) => (
                 <a
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className="w-7 h-7 rounded-md bg-secondary/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 >
                   {s.icon}
                 </a>
@@ -114,13 +117,13 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([section, links]) => (
             <div key={section} className="col-span-1 min-w-0">
-              <p className="text-xs font-bold uppercase tracking-widest text-foreground mb-4">{section}</p>
-              <ul className="space-y-2.5">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-3">{section}</p>
+              <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link.label}>
                     <a
                       href="#"
-                      className="text-sm text-muted-foreground hover:text-foreground transition-colors leading-snug"
+                      className="text-[11px] text-muted-foreground hover:text-foreground transition-colors leading-snug"
                     >
                       {link.label}
                     </a>
@@ -132,11 +135,11 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-border/30 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
-          <p className="text-xs text-muted-foreground">© 2026 RVNU. Built for Africa's revenue operators.</p>
-          <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 text-xs text-muted-foreground">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms of Service</a>
+        <div className="border-t border-border/30 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-[11px] text-muted-foreground/60">© 2026 RVNU. Built for Africa's revenue operators.</p>
+          <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-muted-foreground/60">
+            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
+            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
             <a href="#" className="hover:text-foreground transition-colors">Cookies</a>
             <a href="#" className="hover:text-foreground transition-colors">Contact</a>
           </div>
