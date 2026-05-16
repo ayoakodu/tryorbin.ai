@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
 import TopBar from '@/components/layout/TopBar';
-import { 
+import { Button } from '@/components/ui/button';
+import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
   XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell
 } from 'recharts';
-import { TrendingUp, TrendingDown, Users, Mail, DollarSign, Target } from 'lucide-react';
+import { TrendingUp, TrendingDown, Users, Mail, DollarSign, Target, Sparkles, Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 const revenueData = [
   { month: 'Jan', revenue: 82000, pipeline: 320000 },
@@ -54,7 +57,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p className="text-muted-foreground mb-1 font-medium">{label}</p>
         {payload.map((p, i) => (
           <p key={i} style={{ color: p.color }} className="font-bold">
-            {p.name}: {typeof p.value === 'number' && p.value > 1000 ? `$${(p.value/1000).toFixed(0)}K` : p.value}
+            {p.name}: {typeof p.value === 'number' && p.value > 1000 ? `$${(p.value / 1000).toFixed(0)}K` : p.value}
           </p>
         ))}
       </div>
@@ -64,10 +67,39 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 export default function Analytics() {
+  const [aiInsights, setAiInsights] = useState([
+    { type: 'warning', text: 'WhatsApp channel has 22% higher conversion than email but receives 47% less investment. Consider reallocating budget.' },
+    { type: 'success', text: 'Chioma E. is your top performer with 6 deals won. Replicate her outreach patterns across the team.' },
+    { type: 'warning', text: 'Lead-to-qualified conversion dropped to 4.5% this month. Review qualification criteria and sequence messaging.' },
+  ]);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  const refreshAIInsights = async () => {
+    setAiLoading(true);
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are a GTM analytics AI. Based on this performance data, generate exactly 3 actionable insights:
+- Revenue: $228K MTD (+19%)  
+- Pipeline: $1.02M (+31%)
+- Top channel: WhatsApp (91% open rate)
+- Team top performer: Chioma E. (15 meetings, 6 deals)
+- Funnel: 15% lead conversion, 4.5% qualified rate
+- Channels: Email (340 leads), LinkedIn (210), WhatsApp (180), Inbound (420), Referral (90)
+
+Return JSON with insights array, each having: type ("success" or "warning"), text (1-2 sentences, specific and actionable).`,
+      response_json_schema: {
+        type: 'object', properties: {
+          insights: { type: 'array', items: { type: 'object', properties: { type: { type: 'string' }, text: { type: 'string' } } } }
+        }
+      }
+    });
+    if (result?.insights?.length) setAiInsights(result.insights);
+    setAiLoading(false);
+  };
+
   return (
     <div className="min-h-screen">
       <TopBar title="Analytics" subtitle="Execution performance — sequences, campaigns, WhatsApp, and pipeline" />
-      
+
       <div className="p-6 space-y-5">
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -92,9 +124,36 @@ export default function Analytics() {
           ))}
         </div>
 
+        {/* AI Insights Panel */}
+        <div className="glass rounded-xl p-5 border border-primary/20">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-black" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground">AI Performance Insights</h3>
+            </div>
+            <Button size="sm" variant="outline" onClick={refreshAIInsights} disabled={aiLoading}
+              className="border-primary/30 text-primary hover:bg-primary/10 text-xs gap-1.5">
+              {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+              {aiLoading ? 'Analyzing...' : 'Refresh AI'}
+            </Button>
+          </div>
+          <div className="grid md:grid-cols-3 gap-3">
+            {aiInsights.map((insight, i) => (
+              <div key={i} className={`p-3 rounded-xl border text-xs leading-relaxed flex gap-2.5 ${insight.type === 'warning' ? 'bg-amber-500/5 border-amber-500/20 text-amber-200' : 'bg-primary/5 border-primary/20 text-foreground'}`}>
+                {insight.type === 'warning'
+                  ? <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+                  : <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                }
+                <p>{insight.text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Revenue + Funnel Row */}
         <div className="grid lg:grid-cols-3 gap-4">
-          {/* Revenue Chart */}
           <div className="lg:col-span-2 glass rounded-xl p-5">
             <h3 className="font-bold mb-4 text-foreground">Revenue vs Pipeline</h3>
             <ResponsiveContainer width="100%" height={220}>
@@ -110,7 +169,7 @@ export default function Analytics() {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v/1000}K`} />
+                <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v / 1000}K`} />
                 <Tooltip content={<CustomTooltip />} />
                 <Area type="monotone" dataKey="pipeline" name="Pipeline" stroke="hsl(197 100% 56%)" strokeWidth={1.5} fill="url(#pipGrad)" />
                 <Area type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(142 76% 52%)" strokeWidth={2} fill="url(#revGrad)" />
@@ -118,7 +177,6 @@ export default function Analytics() {
             </ResponsiveContainer>
           </div>
 
-          {/* Source Mix */}
           <div className="glass rounded-xl p-5">
             <h3 className="font-bold mb-4 text-foreground">Pipeline by Source</h3>
             <div className="flex justify-center mb-4">
@@ -142,9 +200,8 @@ export default function Analytics() {
           </div>
         </div>
 
-        {/* Funnel + Channel Attribution */}
+        {/* Funnel + Channel */}
         <div className="grid lg:grid-cols-2 gap-4">
-          {/* Funnel */}
           <div className="glass rounded-xl p-5">
             <h3 className="font-bold mb-5 text-foreground">Conversion Funnel</h3>
             <div className="space-y-3">
@@ -152,8 +209,8 @@ export default function Analytics() {
                 <div key={stage.stage} className="flex items-center gap-4">
                   <span className="text-xs text-muted-foreground w-24 text-right">{stage.stage}</span>
                   <div className="flex-1 bg-secondary rounded-full h-6 overflow-hidden relative">
-                    <div className="h-full bg-primary rounded-full flex items-center justify-end pr-2 transition-all" 
-                      style={{ width: `${stage.rate}%`, minWidth: '12%', background: `hsl(${142 - i*12} 76% 52%)` }}>
+                    <div className="h-full rounded-full flex items-center justify-end pr-2 transition-all"
+                      style={{ width: `${stage.rate}%`, minWidth: '12%', background: `hsl(${142 - i * 12} 76% 52%)` }}>
                       <span className="text-[10px] font-bold text-black">{stage.count.toLocaleString()}</span>
                     </div>
                   </div>
@@ -163,7 +220,6 @@ export default function Analytics() {
             </div>
           </div>
 
-          {/* Channel Performance */}
           <div className="glass rounded-xl p-5">
             <h3 className="font-bold mb-4 text-foreground">Channel Attribution</h3>
             <ResponsiveContainer width="100%" height={200}>
@@ -191,13 +247,11 @@ export default function Analytics() {
                 </tr>
               </thead>
               <tbody>
-                {teamData.sort((a,b) => b.deals - a.deals).map((rep, i) => (
+                {teamData.sort((a, b) => b.deals - a.deals).map((rep, i) => (
                   <tr key={rep.name} className="border-b border-border/20 hover:bg-secondary/30 transition-colors">
                     <td className="py-3 px-3">
                       <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                          {rep.name[0]}
-                        </div>
+                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">{rep.name[0]}</div>
                         <span className="text-sm font-medium">{rep.name}</span>
                       </div>
                     </td>
@@ -206,9 +260,7 @@ export default function Analytics() {
                     <td className="py-3 px-3 text-sm text-muted-foreground">{rep.meetings}</td>
                     <td className="py-3 px-3 text-sm font-bold text-primary">{rep.deals}</td>
                     <td className="py-3 px-3">
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${i === 0 ? 'bg-amber-400/20 text-amber-400' : i === 1 ? 'bg-secondary text-muted-foreground' : 'text-muted-foreground'}`}>
-                        #{i + 1}
-                      </span>
+                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${i === 0 ? 'bg-amber-400/20 text-amber-400' : 'text-muted-foreground'}`}>#{i + 1}</span>
                     </td>
                   </tr>
                 ))}

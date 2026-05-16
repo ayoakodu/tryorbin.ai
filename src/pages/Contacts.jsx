@@ -1,19 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, Search, Filter, Download, Upload, Sparkles,
-  Mail, Phone, Linkedin, Globe, Star, MoreHorizontal,
-  ChevronDown, X, Building2, MapPin, TrendingUp, Users
+import {
+  Plus, Search, Filter, Sparkles, Mail, Phone,
+  Linkedin, MoreHorizontal, MapPin, X, Loader2,
+  MessageCircle, ChevronRight, Copy, Star, Edit3
 } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 
 const statusColors = {
@@ -26,30 +26,162 @@ const statusColors = {
 };
 
 const intentColors = {
-  hot: 'text-red-400',
-  warm: 'text-amber-400',
-  cold: 'text-blue-400',
-  unknown: 'text-muted-foreground',
+  hot: 'text-red-400', warm: 'text-amber-400', cold: 'text-blue-400', unknown: 'text-muted-foreground',
 };
 
 const sampleContacts = [
-  { id: 's1', first_name: 'Amara', last_name: 'Diallo', email: 'amara@flutterwave.com', title: 'VP Sales', company: 'Flutterwave', country: 'Nigeria', status: 'qualified', intent_signal: 'hot', lead_score: 92, industry: 'Fintech' },
-  { id: 's2', first_name: 'Tunde', last_name: 'Okafor', email: 'tunde@paystack.com', title: 'Head of Growth', company: 'Paystack', country: 'Nigeria', status: 'contacted', intent_signal: 'warm', lead_score: 78, industry: 'Fintech' },
-  { id: 's3', first_name: 'Kefilwe', last_name: 'Mthembu', email: 'k.mthembu@yoco.com', title: 'CMO', company: 'Yoco', country: 'South Africa', status: 'new', intent_signal: 'warm', lead_score: 65, industry: 'Payments' },
-  { id: 's4', first_name: 'Chioma', last_name: 'Eze', email: 'chioma@andela.com', title: 'Revenue Lead', company: 'Andela', country: 'Nigeria', status: 'nurturing', intent_signal: 'hot', lead_score: 88, industry: 'Tech' },
-  { id: 's5', first_name: 'Kweku', last_name: 'Mensah', email: 'kweku@wave.com', title: 'CFO', company: 'Wave', country: 'Ghana', status: 'qualified', intent_signal: 'warm', lead_score: 74, industry: 'Fintech' },
-  { id: 's6', first_name: 'Aisha', last_name: 'Kamara', email: 'aisha@moniepoint.com', title: 'BD Director', company: 'Moniepoint', country: 'Nigeria', status: 'converted', intent_signal: 'hot', lead_score: 96, industry: 'Fintech' },
+  { id: 's1', first_name: 'Amara', last_name: 'Diallo', email: 'amara@flutterwave.com', title: 'VP Sales', company: 'Flutterwave', country: 'Nigeria', status: 'qualified', intent_signal: 'hot', lead_score: 92, industry: 'Fintech', linkedin_url: 'https://linkedin.com/in/amara', phone: '+234 801 234 5678' },
+  { id: 's2', first_name: 'Tunde', last_name: 'Okafor', email: 'tunde@paystack.com', title: 'Head of Growth', company: 'Paystack', country: 'Nigeria', status: 'contacted', intent_signal: 'warm', lead_score: 78, industry: 'Fintech', phone: '+234 802 345 6789' },
+  { id: 's3', first_name: 'Kefilwe', last_name: 'Mthembu', email: 'k.mthembu@yoco.com', title: 'CMO', company: 'Yoco', country: 'South Africa', status: 'new', intent_signal: 'warm', lead_score: 65, industry: 'Payments', phone: '+27 71 234 5678' },
+  { id: 's4', first_name: 'Chioma', last_name: 'Eze', email: 'chioma@andela.com', title: 'Revenue Lead', company: 'Andela', country: 'Nigeria', status: 'nurturing', intent_signal: 'hot', lead_score: 88, industry: 'Tech', phone: '+234 803 456 7890' },
+  { id: 's5', first_name: 'Kweku', last_name: 'Mensah', email: 'kweku@wave.com', title: 'CFO', company: 'Wave', country: 'Ghana', status: 'qualified', intent_signal: 'warm', lead_score: 74, industry: 'Fintech', phone: '+233 24 567 8901' },
+  { id: 's6', first_name: 'Aisha', last_name: 'Kamara', email: 'aisha@moniepoint.com', title: 'BD Director', company: 'Moniepoint', country: 'Nigeria', status: 'converted', intent_signal: 'hot', lead_score: 96, industry: 'Fintech', phone: '+234 805 678 9012' },
 ];
+
+function AIPersonalizationPanel({ contact, onClose }) {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState(null);
+  const [activeType, setActiveType] = useState(null);
+  const { toast } = useToast();
+
+  const generate = async (type) => {
+    setLoading(true);
+    setActiveType(type);
+    const prompts = {
+      firstLine: `Generate a personalized cold email first line for ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company} (${contact.industry} industry, ${contact.country}). Make it specific, relevant, and conversational. 1 sentence only.`,
+      summary: `Write a brief prospect summary for ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company}. Include likely pain points, buying triggers, and what they care about as a ${contact.title}. 3-4 sentences.`,
+      whatsapp: `Write a WhatsApp outreach message for ${contact.first_name} at ${contact.company} (${contact.industry}, ${contact.country}). Short, warm, professional. 2-3 sentences. Use 1 relevant emoji. No salesy language.`,
+      email: `Write a complete cold email subject line and body for ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company}. Context: B2B GTM platform for African revenue teams. Make it personalized to their role and company. Format as: SUBJECT: [subject]\n\nBODY: [body]`,
+      callPrep: `Generate a call prep brief for a discovery call with ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company} (${contact.industry}). Include: likely objectives, key questions to ask, potential objections, and conversation openers. Keep it concise and actionable.`,
+    };
+    const res = await base44.integrations.Core.InvokeLLM({ prompt: prompts[type] });
+    setResult({ type, content: res });
+    setLoading(false);
+  };
+
+  const actions = [
+    { key: 'firstLine', label: 'Personalized First Line' },
+    { key: 'summary', label: 'Prospect Summary' },
+    { key: 'whatsapp', label: 'WhatsApp Message' },
+    { key: 'email', label: 'Cold Email Draft' },
+    { key: 'callPrep', label: 'Call Prep Brief' },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 flex">
+      <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25 }}
+        className="w-full max-w-md bg-card border-l border-border flex flex-col h-full overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
+              {contact.first_name[0]}{contact.last_name[0]}
+            </div>
+            <div>
+              <p className="font-semibold text-sm">{contact.first_name} {contact.last_name}</p>
+              <p className="text-xs text-muted-foreground">{contact.title} · {contact.company}</p>
+            </div>
+          </div>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {/* Contact Details */}
+          <div className="glass rounded-xl p-4 space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Contact Details</p>
+            {[
+              { icon: Mail, value: contact.email },
+              { icon: Phone, value: contact.phone || '—' },
+              { icon: MapPin, value: contact.country || '—' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2.5 text-xs">
+                <item.icon className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
+                <span className="text-foreground">{item.value}</span>
+                {item.value !== '—' && (
+                  <button onClick={() => { navigator.clipboard.writeText(item.value); toast({ title: 'Copied!' }); }}
+                    className="ml-auto text-muted-foreground hover:text-primary">
+                    <Copy className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            ))}
+            <div className="flex items-center gap-2 pt-1">
+              <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${statusColors[contact.status]}`}>{contact.status}</span>
+              {contact.lead_score && (
+                <span className="text-[10px] text-muted-foreground">Score: <strong className="text-primary">{contact.lead_score}</strong></span>
+              )}
+            </div>
+          </div>
+
+          {/* AI Actions */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <p className="text-xs font-semibold text-primary uppercase tracking-wider">AI Personalization</p>
+            </div>
+            <div className="space-y-2">
+              {actions.map(action => (
+                <button key={action.key} onClick={() => generate(action.key)}
+                  disabled={loading}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-secondary/50 hover:bg-secondary border border-border/30 hover:border-primary/30 text-sm transition-all text-left group">
+                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">{action.label}</span>
+                  {loading && activeType === action.key ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
+                  ) : (
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Result */}
+          {result && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+              className="glass rounded-xl p-4 border border-primary/20">
+              <div className="flex items-center justify-between mb-2">
+                <p className="text-xs font-semibold text-primary">{actions.find(a => a.key === result.type)?.label}</p>
+                <button onClick={() => { navigator.clipboard.writeText(result.content); toast({ title: 'Copied to clipboard!' }); }}
+                  className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1">
+                  <Copy className="w-3 h-3" /> Copy
+                </button>
+              </div>
+              <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">{result.content}</p>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="p-4 border-t border-border/30 flex gap-2">
+          <Button size="sm" className="flex-1 gap-1.5 bg-primary text-primary-foreground text-xs">
+            <Mail className="w-3.5 h-3.5" /> Email
+          </Button>
+          <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-border/60 text-xs">
+            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+          </Button>
+          {contact.linkedin_url && (
+            <Button size="sm" variant="outline" className="px-3 border-border/60">
+              <Linkedin className="w-3.5 h-3.5" />
+            </Button>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
 
 export default function Contacts() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAdd, setShowAdd] = useState(false);
+  const [selectedContact, setSelectedContact] = useState(null);
   const [form, setForm] = useState({ first_name: '', last_name: '', email: '', title: '', company: '', country: '', status: 'new' });
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: contacts = [], isLoading } = useQuery({
+  const { data: contacts = [] } = useQuery({
     queryKey: ['contacts'],
     queryFn: () => base44.entities.Contact.list('-created_date', 100),
     initialData: [],
@@ -61,25 +193,22 @@ export default function Contacts() {
       queryClient.invalidateQueries(['contacts']);
       setShowAdd(false);
       setForm({ first_name: '', last_name: '', email: '', title: '', company: '', country: '', status: 'new' });
-      toast({ title: 'Contact added!', description: 'New contact created successfully.' });
+      toast({ title: 'Contact added!' });
     }
   });
 
   const displayContacts = contacts.length > 0 ? contacts : sampleContacts;
-
   const filtered = displayContacts.filter(c => {
-    const matchSearch = search === '' || 
-      `${c.first_name} ${c.last_name} ${c.email} ${c.company}`.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = search === '' || `${c.first_name} ${c.last_name} ${c.email} ${c.company}`.toLowerCase().includes(search.toLowerCase());
     const matchStatus = statusFilter === 'all' || c.status === statusFilter;
     return matchSearch && matchStatus;
   });
 
   return (
     <div className="min-h-screen">
-      <TopBar title="Contacts" subtitle={`${displayContacts.length} contacts in your database`} />
-      
+      <TopBar title="Contacts" subtitle={`${displayContacts.length} contacts · Click any contact for AI personalization`} />
+
       <div className="p-6 space-y-5">
-        {/* Controls */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-64">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -87,28 +216,17 @@ export default function Contacts() {
               placeholder="Search contacts..." className="pl-10 bg-secondary/50 border-border/50" />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40 bg-secondary/50 border-border/50">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
+            <SelectTrigger className="w-40 bg-secondary/50 border-border/50"><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              {Object.keys(statusColors).map(s => (
-                <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>
-              ))}
+              {Object.keys(statusColors).map(s => <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>)}
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm" className="gap-2 border-border/60 text-muted-foreground hover:text-foreground">
-            <Filter className="w-3.5 h-3.5" /> Filter
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2 border-primary/30 text-primary hover:bg-primary/10">
-            <Sparkles className="w-3.5 h-3.5" /> AI Prospect
-          </Button>
           <Button onClick={() => setShowAdd(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
             <Plus className="w-4 h-4" /> Add Contact
           </Button>
         </div>
 
-        {/* Stats Row */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
             { label: 'Total', value: displayContacts.length, color: 'text-foreground' },
@@ -123,7 +241,6 @@ export default function Contacts() {
           ))}
         </div>
 
-        {/* Table */}
         <div className="glass rounded-xl overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -135,13 +252,14 @@ export default function Contacts() {
                   <th className="text-left px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
                   <th className="text-left px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Intent</th>
                   <th className="text-left px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Score</th>
-                  <th className="px-4 py-3.5"></th>
+                  <th className="px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">AI</th>
                 </tr>
               </thead>
               <tbody>
                 <AnimatePresence>
                   {filtered.map((contact, i) => (
                     <motion.tr key={contact.id || contact.email} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.03 }}
+                      onClick={() => setSelectedContact(contact)}
                       className="border-b border-border/20 hover:bg-secondary/30 transition-colors group cursor-pointer">
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
@@ -155,15 +273,12 @@ export default function Contacts() {
                         </div>
                       </td>
                       <td className="px-4 py-4 hidden md:table-cell">
-                        <div>
-                          <p className="text-sm font-medium">{contact.company || '—'}</p>
-                          <p className="text-xs text-muted-foreground">{contact.title || ''}</p>
-                        </div>
+                        <p className="text-sm font-medium">{contact.company || '—'}</p>
+                        <p className="text-xs text-muted-foreground">{contact.title || ''}</p>
                       </td>
                       <td className="px-4 py-4 hidden lg:table-cell">
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <MapPin className="w-3 h-3" />
-                          {contact.country || '—'}
+                          <MapPin className="w-3 h-3" />{contact.country || '—'}
                         </div>
                       </td>
                       <td className="px-4 py-4">
@@ -174,9 +289,7 @@ export default function Contacts() {
                       <td className="px-4 py-4 hidden md:table-cell">
                         <div className="flex items-center gap-1.5">
                           <div className={`w-1.5 h-1.5 rounded-full ${contact.intent_signal === 'hot' ? 'bg-red-400' : contact.intent_signal === 'warm' ? 'bg-amber-400' : 'bg-blue-400'}`} />
-                          <span className={`text-xs capitalize ${intentColors[contact.intent_signal] || 'text-muted-foreground'}`}>
-                            {contact.intent_signal || 'unknown'}
-                          </span>
+                          <span className={`text-xs capitalize ${intentColors[contact.intent_signal] || 'text-muted-foreground'}`}>{contact.intent_signal || 'unknown'}</span>
                         </div>
                       </td>
                       <td className="px-4 py-4 hidden lg:table-cell">
@@ -189,15 +302,11 @@ export default function Contacts() {
                           </div>
                         ) : '—'}
                       </td>
-                      <td className="px-4 py-4">
-                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors">
-                            <Mail className="w-3.5 h-3.5" />
-                          </button>
-                          <button className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors">
-                            <MoreHorizontal className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                      <td className="px-4 py-4 hidden md:table-cell">
+                        <button onClick={e => { e.stopPropagation(); setSelectedContact(contact); }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary">
+                          <Sparkles className="w-3.5 h-3.5" />
+                        </button>
                       </td>
                     </motion.tr>
                   ))}
@@ -208,50 +317,49 @@ export default function Contacts() {
         </div>
       </div>
 
+      {/* Contact AI Panel */}
+      <AnimatePresence>
+        {selectedContact && (
+          <AIPersonalizationPanel contact={selectedContact} onClose={() => setSelectedContact(null)} />
+        )}
+      </AnimatePresence>
+
       {/* Add Contact Dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
         <DialogContent className="bg-card border-border max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-foreground">Add New Contact</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Add New Contact</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs text-muted-foreground mb-1.5 block">First Name</Label>
-                <Input value={form.first_name} onChange={e => setForm({...form, first_name: e.target.value})}
-                  className="bg-secondary/50 border-border/60" placeholder="Amara" />
+                <Input value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} className="bg-secondary/50 border-border/60" placeholder="Amara" />
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground mb-1.5 block">Last Name</Label>
-                <Input value={form.last_name} onChange={e => setForm({...form, last_name: e.target.value})}
-                  className="bg-secondary/50 border-border/60" placeholder="Diallo" />
+                <Input value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} className="bg-secondary/50 border-border/60" placeholder="Diallo" />
               </div>
             </div>
             <div>
               <Label className="text-xs text-muted-foreground mb-1.5 block">Email</Label>
-              <Input value={form.email} onChange={e => setForm({...form, email: e.target.value})}
-                className="bg-secondary/50 border-border/60" placeholder="amara@company.com" type="email" />
+              <Input value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="bg-secondary/50 border-border/60" placeholder="amara@company.com" type="email" />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs text-muted-foreground mb-1.5 block">Title</Label>
-                <Input value={form.title} onChange={e => setForm({...form, title: e.target.value})}
-                  className="bg-secondary/50 border-border/60" placeholder="VP Sales" />
+                <Input value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} className="bg-secondary/50 border-border/60" placeholder="VP Sales" />
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground mb-1.5 block">Company</Label>
-                <Input value={form.company} onChange={e => setForm({...form, company: e.target.value})}
-                  className="bg-secondary/50 border-border/60" placeholder="Flutterwave" />
+                <Input value={form.company} onChange={e => setForm({ ...form, company: e.target.value })} className="bg-secondary/50 border-border/60" placeholder="Flutterwave" />
               </div>
             </div>
             <div>
               <Label className="text-xs text-muted-foreground mb-1.5 block">Country</Label>
-              <Input value={form.country} onChange={e => setForm({...form, country: e.target.value})}
-                className="bg-secondary/50 border-border/60" placeholder="Nigeria" />
+              <Input value={form.country} onChange={e => setForm({ ...form, country: e.target.value })} className="bg-secondary/50 border-border/60" placeholder="Nigeria" />
             </div>
             <div className="flex gap-3 pt-2">
               <Button variant="outline" onClick={() => setShowAdd(false)} className="flex-1 border-border/60">Cancel</Button>
-              <Button onClick={() => createMutation.mutate(form)} className="flex-1 bg-primary text-primary-foreground" disabled={createMutation.isPending}>
+              <Button onClick={() => createMutation.mutate(form)} className="flex-1 bg-primary text-primary-foreground" disabled={createMutation.isPending || !form.first_name || !form.email}>
                 {createMutation.isPending ? 'Adding...' : 'Add Contact'}
               </Button>
             </div>

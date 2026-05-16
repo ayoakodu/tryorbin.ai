@@ -16,6 +16,7 @@ const navItems = [
   { icon: Users, label: 'Contacts', path: '/contacts' },
   { icon: Building2, label: 'Companies', path: '/companies' },
   { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+  { icon: Workflow, label: 'Automations', path: '/automations' },
 ];
 
 export default function Sidebar() {
