@@ -11,27 +11,28 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 
 const suggestionPrompts = [
-  { icon: Users, text: 'Generate an ICP for B2B SaaS targeting Nigerian fintechs', category: 'Prospecting' },
-  { icon: Mail, text: 'Write a 5-step outbound sequence for CFOs in East Africa', category: 'Outreach' },
-  { icon: TrendingUp, text: 'Analyze my pipeline and identify deals at risk this quarter', category: 'Pipeline' },
-  { icon: BarChart3, text: 'Summarize campaign performance and suggest improvements', category: 'Campaigns' },
-  { icon: Sparkles, text: 'Create a LinkedIn post about our AI-powered GTM platform', category: 'Content' },
-  { icon: MessageSquare, text: 'Suggest the best follow-up message for a warm prospect', category: 'Engagement' },
+  { icon: Mail, text: 'Write a 5-step outbound email sequence for fintech CTOs in Nigeria focused on cost reduction', category: 'Sequences' },
+  { icon: MessageSquare, text: 'Generate a WhatsApp outreach message for a Series B CEO in East Africa', category: 'WhatsApp' },
+  { icon: TrendingUp, text: 'Which deals in my pipeline show risk signals and what should I do about them?', category: 'Pipeline' },
+  { icon: BarChart3, text: 'Analyze my outbound campaign and suggest 3 specific improvements to increase reply rate', category: 'Campaigns' },
+  { icon: Users, text: 'Write a personalized first line for the Head of Sales at Flutterwave', category: 'Personalization' },
+  { icon: Sparkles, text: 'Generate objection handling responses for "We already have a CRM" in the African market', category: 'Objections' },
 ];
 
 const initialMessages = [
   {
     role: 'assistant',
-    content: `Hello! I'm **RVNU AI**, your revenue intelligence copilot. 
+    content: `Hello! I'm **RVNU AI**, your GTM execution copilot. 
 
-I can help you:
-- 🎯 **Prospect** — Generate ICPs, find target accounts, build lists
-- ✉️ **Write** — Outbound emails, LinkedIn messages, ad copy, landing pages
-- 📊 **Analyze** — Pipeline health, campaign performance, deal risks  
-- 🔮 **Predict** — Revenue forecasts, churn risks, conversion probabilities
-- ⚡ **Automate** — GTM workflows, follow-up sequences, nurture journeys
+I'm embedded throughout your workflows and can help you execute faster:
+- ✉️ **Sequences** — Write multichannel outbound sequences, follow-ups, and WhatsApp messages
+- 🎯 **Personalization** — Generate personalized first lines, company summaries, and outreach angles
+- 📊 **Pipeline** — Analyze deal risk, suggest next actions, generate deal summaries
+- 🚀 **Campaigns** — Build campaign briefs, analyze performance, recommend optimizations
+- 💬 **Objection Handling** — Respond to common objections with market-aware replies
+- ⚡ **Automation** — Design workflow triggers and engagement automations
 
-What would you like to work on today?`,
+What would you like to execute today?`,
   }
 ];
 
@@ -109,13 +110,19 @@ export default function AICopilot() {
     setMessages(prev => [...prev, { role: 'assistant', content: '', loading: true, id: loadingId }]);
 
     const response = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are RVNU AI, an expert AI revenue copilot for B2B GTM teams in Africa and emerging markets.
-      
-You help with: prospecting, outbound email writing, campaign strategy, pipeline analysis, deal risk assessment, ICP development, LinkedIn content, marketing copy, and GTM strategy.
+      prompt: `You are RVNU AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.
 
-Be specific, actionable, and tailored for African and emerging markets context. Format your responses clearly using markdown bold (**text**) for emphasis. Keep responses concise but comprehensive.
+You specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, and sales automation strategy.
 
-User question: ${userText}`,
+Key principles:
+- Be specific and actionable, not generic
+- Tailor all advice for African and emerging market contexts
+- WhatsApp is a primary channel, not secondary
+- Focus on execution speed and workflow efficiency
+- Use markdown bold (**text**) for emphasis and structure your responses clearly
+- Keep responses concise but comprehensive
+
+User request: ${userText}`,
     });
 
     setMessages(prev => prev.map(m => 
@@ -189,13 +196,13 @@ User question: ${userText}`,
                 rows={3}
               />
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
-                <div className="flex gap-2">
-                  {['Write email', 'Build ICP', 'Analyze pipeline'].map(t => (
-                    <button key={t} onClick={() => setInput(t)}
-                      className="text-xs text-muted-foreground hover:text-primary px-2.5 py-1 rounded-md bg-secondary/50 hover:bg-primary/10 transition-colors">
-                      {t}
-                    </button>
-                  ))}
+                <div className="flex gap-2 flex-wrap">
+                {['Write sequence', 'WhatsApp message', 'Pipeline review', 'Objection handling'].map(t => (
+                  <button key={t} onClick={() => setInput(t)}
+                    className="text-xs text-muted-foreground hover:text-primary px-2.5 py-1 rounded-md bg-secondary/50 hover:bg-primary/10 transition-colors">
+                    {t}
+                  </button>
+                ))}
                 </div>
                 <Button onClick={() => sendMessage()} disabled={!input.trim() || loading} size="sm"
                   className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2">

@@ -66,7 +66,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function Analytics() {
   return (
     <div className="min-h-screen">
-      <TopBar title="Analytics" subtitle="Revenue intelligence and GTM performance" />
+      <TopBar title="Analytics" subtitle="Execution performance — sequences, campaigns, WhatsApp, and pipeline" />
       
       <div className="p-6 space-y-5">
         {/* KPI Cards */}

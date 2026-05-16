@@ -4,39 +4,36 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Plus, Zap, Globe, ArrowRight } from 'lucide-react';
 
 const integrations = [
-  { name: 'HubSpot', category: 'CRM', status: 'available', desc: 'Sync contacts, deals, and activities with HubSpot CRM.', color: '#FF7A59' },
-  { name: 'Salesforce', category: 'CRM', status: 'available', desc: 'Bidirectional sync with Salesforce CRM and pipelines.', color: '#00A1E0' },
-  { name: 'LinkedIn', category: 'Social', status: 'available', desc: 'LinkedIn Sales Navigator integration for prospecting.', color: '#0077B5' },
-  { name: 'Google Workspace', category: 'Productivity', status: 'available', desc: 'Gmail, Calendar, and Drive integration.', color: '#4285F4' },
-  { name: 'Slack', category: 'Communication', status: 'available', desc: 'Get deal alerts and team notifications in Slack.', color: '#4A154B' },
-  { name: 'WhatsApp Business', category: 'Messaging', status: 'available', desc: 'Send outreach and campaigns via WhatsApp API.', color: '#25D366' },
-  { name: 'Outlook', category: 'Email', status: 'available', desc: 'Microsoft 365 email and calendar sync.', color: '#0078D4' },
-  { name: 'Mailchimp', category: 'Email Marketing', status: 'available', desc: 'Sync audiences and campaign data.', color: '#FFE01B' },
-  { name: 'Meta Ads', category: 'Advertising', status: 'coming_soon', desc: 'Facebook and Instagram ad campaign management.', color: '#1877F2' },
-  { name: 'Google Ads', category: 'Advertising', status: 'coming_soon', desc: 'Sync pipeline attribution with Google Ads.', color: '#4285F4' },
-  { name: 'Apollo.io', category: 'Data', status: 'coming_soon', desc: 'Import prospect data from Apollo databases.', color: '#5D5DFF' },
-  { name: 'Clearbit', category: 'Enrichment', status: 'coming_soon', desc: 'Enrich contacts and companies with Clearbit data.', color: '#00A4BD' },
-  { name: 'Twilio', category: 'SMS', status: 'coming_soon', desc: 'SMS outreach via Twilio infrastructure.', color: '#F22F46' },
-  { name: 'Zoom', category: 'Meetings', status: 'coming_soon', desc: 'Auto-log Zoom meetings and recordings.', color: '#2D8CFF' },
-  { name: 'Stripe', category: 'Payments', status: 'coming_soon', desc: 'Revenue data and subscription insights.', color: '#6772E5' },
-  { name: 'Zapier', category: 'Automation', status: 'coming_soon', desc: 'Connect RVNU to 5,000+ apps via Zapier.', color: '#FF4A00' },
+  { name: 'WhatsApp Business', category: 'Messaging', status: 'available', desc: 'Connect your WhatsApp Business API to send campaigns, sequences, and track engagement natively.', color: '#25D366' },
+  { name: 'Gmail', category: 'Email', status: 'available', desc: 'Send sequences from your Gmail account with open and click tracking built in.', color: '#EA4335' },
+  { name: 'Outlook', category: 'Email', status: 'available', desc: 'Microsoft 365 email sending with full sequence automation and calendar sync.', color: '#0078D4' },
+  { name: 'Google Calendar', category: 'Scheduling', status: 'available', desc: 'Auto-log meetings and sync booked calls directly from your sequences.', color: '#4285F4' },
+  { name: 'Slack', category: 'Notifications', status: 'available', desc: 'Get real-time deal alerts, reply notifications, and team activity updates in Slack.', color: '#4A154B' },
+  { name: 'HubSpot', category: 'CRM', status: 'available', desc: 'Bidirectional contact and deal sync — keep HubSpot updated as you execute in RVNU.', color: '#FF7A59' },
+  { name: 'Salesforce', category: 'CRM', status: 'available', desc: 'Sync pipeline activity, contacts, and deal stages with Salesforce in real time.', color: '#00A1E0' },
+  { name: 'LinkedIn', category: 'Social', status: 'available', desc: 'Log LinkedIn outreach tasks and track engagement as part of multichannel sequences.', color: '#0077B5' },
+  { name: 'Zapier', category: 'Automation', status: 'coming_soon', desc: 'Connect RVNU workflows to 5,000+ apps via Zapier triggers and actions.', color: '#FF4A00' },
+  { name: 'Twilio', category: 'SMS', status: 'coming_soon', desc: 'SMS outreach and automated follow-ups via Twilio infrastructure.', color: '#F22F46' },
+  { name: 'Zoom', category: 'Meetings', status: 'coming_soon', desc: 'Auto-log Zoom meetings, transcribe calls, and generate AI meeting summaries.', color: '#2D8CFF' },
+  { name: 'Apollo.io', category: 'Prospecting', status: 'coming_soon', desc: 'Import and enrich prospect lists directly from Apollo into your sequences.', color: '#5D5DFF' },
+  { name: 'Microsoft Teams', category: 'Notifications', status: 'coming_soon', desc: 'Team notifications and deal alerts delivered to Microsoft Teams channels.', color: '#5059C9' },
+  { name: 'Calendly', category: 'Scheduling', status: 'coming_soon', desc: 'Embed Calendly booking links in sequences and track meeting conversions.', color: '#006BFF' },
+  { name: 'Google Ads', category: 'Advertising', status: 'coming_soon', desc: 'Sync pipeline attribution with Google Ads for closed-loop revenue reporting.', color: '#4285F4' },
+  { name: 'Stripe', category: 'Revenue', status: 'coming_soon', desc: 'Pull revenue and subscription data into pipeline forecasting and analytics.', color: '#6772E5' },
 ];
 
 const categoryColors = {
   CRM: 'bg-blue-500/10 text-blue-400',
   Social: 'bg-blue-600/10 text-blue-500',
-  Productivity: 'bg-yellow-500/10 text-yellow-400',
-  Communication: 'bg-violet-500/10 text-violet-400',
   Messaging: 'bg-primary/10 text-primary',
   Email: 'bg-cyan-500/10 text-cyan-400',
-  'Email Marketing': 'bg-amber-500/10 text-amber-400',
-  Advertising: 'bg-orange-500/10 text-orange-400',
-  Data: 'bg-indigo-500/10 text-indigo-400',
-  Enrichment: 'bg-teal-500/10 text-teal-400',
-  SMS: 'bg-red-500/10 text-red-400',
-  Meetings: 'bg-blue-500/10 text-blue-400',
-  Payments: 'bg-violet-500/10 text-violet-400',
+  Notifications: 'bg-violet-500/10 text-violet-400',
+  Scheduling: 'bg-amber-500/10 text-amber-400',
   Automation: 'bg-orange-500/10 text-orange-400',
+  SMS: 'bg-red-500/10 text-red-400',
+  Prospecting: 'bg-indigo-500/10 text-indigo-400',
+  Revenue: 'bg-primary/10 text-primary',
+  Advertising: 'bg-orange-500/10 text-orange-400',
 };
 
 export default function Integrations() {
@@ -54,8 +51,8 @@ export default function Integrations() {
             <Zap className="w-6 h-6 text-black" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-foreground mb-1">Unified Integration Hub</h3>
-            <p className="text-sm text-muted-foreground">Connect your entire GTM stack. RVNU syncs bidirectionally with your CRM, email, messaging, and data tools — keeping everything in one place.</p>
+            <h3 className="font-bold text-foreground mb-1">GTM Execution Integrations</h3>
+            <p className="text-sm text-muted-foreground">Connect your execution stack. RVNU integrates with your email, WhatsApp, CRM, and automation tools so every workflow runs end-to-end without switching tabs.</p>
           </div>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 whitespace-nowrap">
             <Globe className="w-4 h-4" /> Browse All

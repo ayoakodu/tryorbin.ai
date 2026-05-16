@@ -28,10 +28,10 @@ const activityData = [
 ];
 
 const aiInsights = [
-  { icon: AlertCircle, color: 'text-amber-400', bg: 'bg-amber-400/10', text: '3 deals show risk signals — last contact >14 days ago', action: 'Review Deals' },
-  { icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10', text: 'Fintech segment converting 2.3x better than average this month', action: 'See Segment' },
-  { icon: Sparkles, color: 'text-violet-400', bg: 'bg-violet-400/10', text: 'AI suggests launching re-engagement campaign for 47 cold contacts', action: 'Launch Now' },
-  { icon: CheckCircle2, color: 'text-cyan-400', bg: 'bg-cyan-400/10', text: 'Tuesday 9–11am is your best meeting booking window', action: 'Schedule' },
+  { icon: AlertCircle, color: 'text-amber-400', bg: 'bg-amber-400/10', text: '3 deals show risk signals — last contact >14 days ago. Suggest sending a personalized follow-up now.', action: 'Take Action' },
+  { icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/10', text: 'WhatsApp outreach converting 2.3x better than email this month — consider shifting more sequences to WhatsApp-first.', action: 'Optimize' },
+  { icon: Sparkles, color: 'text-violet-400', bg: 'bg-violet-400/10', text: 'AI can auto-generate a re-engagement sequence for 47 cold contacts sitting in your pipeline.', action: 'Generate' },
+  { icon: CheckCircle2, color: 'text-cyan-400', bg: 'bg-cyan-400/10', text: 'Your "Fintech CTO Outbound" sequence reply rate dropped 8% — AI suggests adding a LinkedIn touchpoint on Day 4.', action: 'Fix It' },
 ];
 
 const recentActivities = [
@@ -64,7 +64,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 export default function Dashboard() {
   return (
     <div className="min-h-screen">
-      <TopBar title="GTM Dashboard" subtitle="Good morning — here's your revenue overview" />
+      <TopBar title="GTM Dashboard" subtitle="Your execution overview — activity, pipeline &amp; AI insights" />
       
       <div className="p-6 space-y-6">
         {/* Stats */}

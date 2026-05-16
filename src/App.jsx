@@ -15,7 +15,7 @@ import Pipeline from './pages/Pipeline';
 import Outreach from './pages/Outreach';
 import Campaigns from './pages/Campaigns';
 import Analytics from './pages/Analytics';
-import ABM from './pages/ABM';
+import WhatsApp from './pages/WhatsApp';
 import AICopilot from './pages/AICopilot';
 import Integrations from './pages/Integrations';
 
@@ -62,7 +62,7 @@ const AuthenticatedApp = () => {
         <Route path="/outreach" element={<Outreach />} />
         <Route path="/campaigns" element={<Campaigns />} />
         <Route path="/analytics" element={<Analytics />} />
-        <Route path="/abm" element={<ABM />} />
+        <Route path="/whatsapp" element={<WhatsApp />} />
         <Route path="/ai-copilot" element={<AICopilot />} />
         <Route path="/integrations" element={<Integrations />} />
       </Route>

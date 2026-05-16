@@ -143,7 +143,7 @@ export default function Campaigns() {
 
   return (
     <div className="min-h-screen">
-      <TopBar title="Campaigns" subtitle="Manage and track your marketing campaigns" />
+      <TopBar title="Campaigns" subtitle="Launch, automate, and track multichannel engagement campaigns" />
       
       <div className="p-6 space-y-5">
         {/* Stats */}
@@ -168,7 +168,7 @@ export default function Campaigns() {
           </div>
           <div className="flex-1 text-center md:text-left">
             <h3 className="font-bold text-sm mb-0.5">AI Campaign Builder</h3>
-            <p className="text-xs text-muted-foreground">Describe your campaign goal and RVNU AI will generate the entire campaign — audience, messaging, channels, and schedule.</p>
+            <p className="text-xs text-muted-foreground">Describe your goal and RVNU AI generates the entire campaign — audience, messaging, channels, sequence steps, and schedule. Ready to launch in minutes.</p>
           </div>
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 whitespace-nowrap">
             <Sparkles className="w-4 h-4" /> Create with AI

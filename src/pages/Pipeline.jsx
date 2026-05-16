@@ -90,7 +90,7 @@ export default function Pipeline() {
 
   return (
     <div className="min-h-screen">
-      <TopBar title="Pipeline" subtitle="Manage and track your revenue pipeline" />
+      <TopBar title="Pipeline" subtitle="Lightweight CRM — track deals, activity, and AI-powered next actions" />
       
       <div className="p-6 space-y-5">
         {/* Stats */}
@@ -117,8 +117,8 @@ export default function Pipeline() {
             <Sparkles className="w-3.5 h-3.5 text-black" />
           </div>
           <p className="text-sm text-foreground flex-1">
-            <span className="font-semibold text-primary">AI Insight:</span> 2 deals in Proposal stage haven't had activity in 18+ days. 
-            <span className="text-muted-foreground"> Sending a follow-up now could improve close probability by 34%.</span>
+            <span className="font-semibold text-primary">AI Copilot:</span> 2 deals in Proposal stage haven't had activity in 18+ days. 
+            <span className="text-muted-foreground"> AI can generate personalized follow-up messages for each — click to take action now.</span>
           </p>
           <Button size="sm" variant="outline" className="border-primary/30 text-primary hover:bg-primary/10 whitespace-nowrap text-xs">
             Take Action

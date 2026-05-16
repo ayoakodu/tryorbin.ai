@@ -103,13 +103,13 @@ export default function Landing() {
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-medium mb-8">
               <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" />
-              Coming Soon — AI-Powered GTM for Emerging Markets
+              Coming Soon — AI-Powered Execution for Emerging Market Revenue Teams
             </div>
             <h1 className="text-4xl md:text-5xl font-black leading-[1.1] tracking-tight mb-6">
-              <span className="gradient-text">The AI-Native GTM Operating System.</span>
+              <span className="gradient-text">The AI-Native GTM Execution Platform.</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              RVNU is an AI-native Go-To-Market operating system helping revenue teams across Africa and emerging markets unify prospecting, outreach, CRM, and intelligence in one platform.
+              RVNU is an AI-native GTM execution platform helping revenue teams across Africa and emerging markets launch multichannel campaigns, automate engagement workflows, and close pipeline faster.
             </p>
           </motion.div>
 
@@ -207,11 +207,11 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-200 bg-green-50 text-xs text-green-700 mb-4">
-              <Zap className="w-3 h-3 text-green-600" /> The RVNU Vision
+              <Zap className="w-3 h-3 text-green-600" /> The RVNU Execution Engine
             </div>
-            <h2 className="text-3xl md:text-4xl font-black mb-5 text-gray-900">How RVNU Will Power Your GTM Engine</h2>
+            <h2 className="text-3xl md:text-4xl font-black mb-5 text-gray-900">How RVNU Powers Your GTM Execution</h2>
             <p className="text-lg text-gray-500 max-w-2xl mx-auto">
-              A step-by-step look at the AI-driven workflows we're designing — from first contact to closed deal and beyond.
+              A step-by-step look at the AI-driven execution workflows we're building — from first touchpoint to closed deal and beyond.
             </p>
           </div>
 
@@ -283,9 +283,9 @@ export default function Landing() {
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-medium mb-6">
                   <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" /> AI Revenue Copilot — Planned Feature
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black mb-4">An intelligence engine embedded in every workflow</h2>
+                <h2 className="text-2xl md:text-3xl font-black mb-4">An AI execution engine embedded in every workflow</h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  We're designing RVNU's AI Copilot to be your always-on GTM assistant — capable of generating outbound sequences, analysing pipeline risk, identifying target accounts, and creating campaign briefs. All from a single conversational interface.
+                  We're designing RVNU's AI Copilot to be your always-on GTM execution assistant — generating outbound sequences, automating follow-ups, analysing pipeline risk, and creating personalised messaging on demand. Embedded contextually across every workflow.
                 </p>
                 <div className="space-y-3">
                   {[
@@ -339,14 +339,14 @@ export default function Landing() {
       <section className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-black mb-4 text-gray-900">Built for how Africa does business</h2>
-            <p className="text-gray-500 max-w-xl mx-auto">Most GTM tools were built for Silicon Valley workflows. RVNU is being designed from the ground up for emerging market realities.</p>
+            <h2 className="text-3xl font-black mb-4 text-gray-900">Built for execution, not just visibility</h2>
+            <p className="text-gray-500 max-w-xl mx-auto">Most GTM tools track what happened. RVNU is being designed to help you execute what needs to happen — faster, smarter, and with AI embedded throughout.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { icon: Globe, title: 'Market-Aware AI', desc: 'Our AI models are intended to understand the nuances of African business contexts, from local industries to regional buyer behaviour.' },
-              { icon: MessageSquare, title: 'Channels That Reflect Reality', desc: 'WhatsApp isn\'t a secondary channel in Africa — it\'s often the primary one. RVNU is being built with this front of mind.' },
-              { icon: Layers, title: 'One Platform, Not a Stack', desc: 'We\'re designing RVNU to replace the 4-6 tools most GTM teams are currently juggling — from prospecting to analytics.' },
+              { icon: Globe, title: 'WhatsApp-Native GTM', desc: 'WhatsApp isn\'t a secondary channel in Africa — it\'s often the primary one. RVNU is being built with multichannel engagement as a first-class workflow.' },
+              { icon: MessageSquare, title: 'AI Copilots Everywhere', desc: 'AI isn\'t a feature — it\'s the engine. From generating outbound sequences to analyzing pipeline risk, AI is embedded into every workflow.' },
+              { icon: Layers, title: 'Execution Over Complexity', desc: 'We\'re designing RVNU to replace the 4-6 tools most revenue teams juggle — and make every workflow faster and more automated.' },
             ].map((item, i) => (
               <motion.div key={item.title}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
@@ -395,9 +395,9 @@ export default function Landing() {
               <div className="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-6">
                 <Zap className="w-7 h-7 text-black" strokeWidth={2.5} />
               </div>
-              <h2 className="text-3xl md:text-4xl font-black mb-4">Be first to experience RVNU</h2>
+              <h2 className="text-3xl md:text-4xl font-black mb-4">Be first to execute with RVNU</h2>
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
-                We're building something new for Africa's revenue operators. Join the waitlist to get early access, shape the product, and lock in founder pricing.
+                We're building the AI-native GTM execution platform for Africa's revenue teams. Join the waitlist to get early access, shape the product, and lock in founder pricing.
               </p>
               <p className="text-xs text-muted-foreground/50 mb-8">RVNU is currently in development. No credit card required to join the waitlist.</p>
 

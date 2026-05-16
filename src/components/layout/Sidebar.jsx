@@ -1,21 +1,21 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Building2, TrendingUp, 
-  Megaphone, Mail, BarChart3, Zap, MessageSquare,
-  Target, Settings, ChevronRight, Sparkles, Globe
+  Megaphone, Mail, BarChart3, Zap, MessageCircle,
+  Settings, ChevronRight, Sparkles, Globe, Workflow
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: Sparkles, label: 'AI Copilot', path: '/ai-copilot', highlight: true },
+  { icon: Mail, label: 'Sequences', path: '/outreach' },
+  { icon: Megaphone, label: 'Campaigns', path: '/campaigns' },
+  { icon: MessageCircle, label: 'WhatsApp', path: '/whatsapp' },
+  { icon: TrendingUp, label: 'Pipeline', path: '/pipeline' },
   { icon: Users, label: 'Contacts', path: '/contacts' },
   { icon: Building2, label: 'Companies', path: '/companies' },
-  { icon: TrendingUp, label: 'Pipeline', path: '/pipeline' },
-  { icon: Mail, label: 'Outreach', path: '/outreach' },
-  { icon: Megaphone, label: 'Campaigns', path: '/campaigns' },
   { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-  { icon: Target, label: 'ABM', path: '/abm' },
-  { icon: Sparkles, label: 'AI Copilot', path: '/ai-copilot' },
 ];
 
 export default function Sidebar() {
@@ -46,11 +46,14 @@ export default function Sidebar() {
                 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group',
                 active
                   ? 'bg-primary/10 text-primary glow-green-sm'
+                  : item.highlight
+                  ? 'text-primary/80 hover:text-primary hover:bg-primary/5'
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <item.icon className={cn('w-4 h-4 flex-shrink-0', active ? 'text-primary' : '')} />
+              <item.icon className={cn('w-4 h-4 flex-shrink-0', active || item.highlight ? 'text-primary' : '')} />
               <span>{item.label}</span>
+              {item.highlight && !active && <span className="ml-auto text-[9px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">AI</span>}
               {active && <ChevronRight className="w-3 h-3 ml-auto text-primary/60" />}
             </Link>
           );
