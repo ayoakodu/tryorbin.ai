@@ -12,6 +12,8 @@ import SequenceTemplates from '@/components/outreach/SequenceTemplates';
 import TaskQueuePanel from '@/components/outreach/TaskQueuePanel';
 import { ChannelStatusBadge, StepExecutionStatus } from '@/components/outreach/ChannelStatusBadge';
 import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
+import BranchingStepEditor from '@/components/outreach/BranchingStepEditor';
+import ProspectManager from '@/components/outreach/ProspectManager';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -165,6 +167,7 @@ function StepEditor({ step, index, onUpdate, onRemove, onOpenPersonalize }) {
             className="mt-1.5 flex items-center gap-1 text-[10px] text-primary/70 hover:text-primary transition-colors">
             <Sparkles className="w-2.5 h-2.5" /> AI Personalize — analyze a company website
           </button>
+          <BranchingStepEditor step={step} index={index} onUpdate={onUpdate} />
         </div>
       </div>
     </div>
@@ -283,6 +286,7 @@ export default function Outreach() {
   const [aiSuggesting, setAiSuggesting] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState(null);
   const [showPersonalize, setShowPersonalize] = useState(false);
+  const [showProspects, setShowProspects] = useState(false);
 
   const totalEnrolled = sequences.reduce((s, seq) => s + seq.enrolled, 0);
   const totalReplied = sequences.reduce((s, seq) => s + seq.replied, 0);
@@ -402,6 +406,9 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                     </span>
                   </div>
                   <div className="flex gap-1.5">
+                    <button onClick={() => setShowProspects(true)} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-primary" title="Manage Prospects">
+                      <Users className="w-3.5 h-3.5" />
+                    </button>
                     <button onClick={() => duplicateSequence(selectedSeq)} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground" title="Duplicate">
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -486,6 +493,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
         {showTemplates && <SequenceTemplates onClose={() => setShowTemplates(false)} onUse={useTemplate} />}
       </AnimatePresence>
       {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}
+      {showProspects && <ProspectManager sequence={selectedSeq} onClose={() => setShowProspects(false)} />}
     </div>
   );
 }

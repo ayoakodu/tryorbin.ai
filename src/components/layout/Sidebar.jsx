@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Building2, TrendingUp, 
   Megaphone, Mail, BarChart3, Zap, MessageCircle,
-  Settings, ChevronRight, Sparkles, Globe, Workflow
+  Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -17,6 +17,7 @@ const navItems = [
   { icon: Building2, label: 'Companies', path: '/companies' },
   { icon: BarChart3, label: 'Analytics', path: '/analytics' },
   { icon: Workflow, label: 'Automations', path: '/automations' },
+  { icon: UsersRound, label: 'Team Workspace', path: '/collaboration' },
 ];
 
 export default function Sidebar() {

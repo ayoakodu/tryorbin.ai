@@ -19,6 +19,7 @@ import WhatsApp from './pages/WhatsApp';
 import AICopilot from './pages/AICopilot';
 import Integrations from './pages/Integrations';
 import Automations from './pages/Automations';
+import Collaboration from './pages/Collaboration';
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
@@ -67,6 +68,7 @@ const AuthenticatedApp = () => {
         <Route path="/ai-copilot" element={<AICopilot />} />
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/automations" element={<Automations />} />
+        <Route path="/collaboration" element={<Collaboration />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
