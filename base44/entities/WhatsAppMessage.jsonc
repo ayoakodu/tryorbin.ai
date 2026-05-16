@@ -1,0 +1,67 @@
+{
+  "name": "WhatsAppMessage",
+  "type": "object",
+  "properties": {
+    "contact_id": {
+      "type": "string"
+    },
+    "contact_name": {
+      "type": "string"
+    },
+    "company": {
+      "type": "string"
+    },
+    "deal_id": {
+      "type": "string"
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "received"
+      ],
+      "default": "sent"
+    },
+    "content": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "sent",
+        "delivered",
+        "read",
+        "failed"
+      ],
+      "default": "sent"
+    },
+    "reply_time_minutes": {
+      "type": "number"
+    },
+    "engagement_status": {
+      "type": "string",
+      "enum": [
+        "opened",
+        "replied",
+        "ignored",
+        "bounced"
+      ],
+      "default": "opened"
+    },
+    "sequence_id": {
+      "type": "string"
+    },
+    "thread_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "contact_name",
+    "direction",
+    "content"
+  ]
+}

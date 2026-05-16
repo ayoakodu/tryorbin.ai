@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import MeetingPrepPanel from '@/components/pipeline/MeetingPrepPanel';
 import ObjectionHandler from '@/components/pipeline/ObjectionHandler';
+import ForecastChart from '@/components/pipeline/ForecastChart';
 import TeamComments from '@/components/collaboration/TeamComments';
 import TaskAssignment from '@/components/collaboration/TaskAssignment';
 import DealCopilotPanel from '@/components/copilot/DealCopilotPanel';
@@ -226,6 +227,9 @@ Focus on risk, stale deals, or quick wins.`,
             </div>
           ))}
         </div>
+
+        {/* Forecast Chart */}
+        <ForecastChart deals={deals} />
 
         {/* AI Insight Banner */}
         <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/20">

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { X, Sparkles, Loader2, Copy, ChevronRight, Mail, Phone, MessageCircle, Linkedin, MapPin, Globe, AlertTriangle, Clock } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { X, Sparkles, Loader2, Copy, ChevronRight, Mail, Phone, MessageCircle, Linkedin, MapPin, Globe, AlertTriangle, Clock, CheckCheck, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -23,10 +24,72 @@ const AI_ACTIONS = [
   { key: 'callPrep', label: 'Call Prep Brief', icon: Phone },
 ];
 
+function WhatsAppTimeline({ contact }) {
+  const { data: messages = [], isLoading } = useQuery({
+    queryKey: ['whatsapp-timeline', contact.id || contact.email],
+    queryFn: () => base44.entities.WhatsAppMessage.filter({ contact_name: `${contact.first_name} ${contact.last_name}` }, '-timestamp', 50),
+    initialData: [],
+  });
+
+  if (isLoading) return <div className="flex items-center justify-center py-8"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>;
+
+  if (messages.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <MessageCircle className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+        <p className="text-sm text-muted-foreground">No WhatsApp conversations recorded yet.</p>
+        <p className="text-xs text-muted-foreground mt-1">Messages sent via the WhatsApp inbox will appear here.</p>
+      </div>
+    );
+  }
+
+  const totalSent = messages.filter(m => m.direction === 'sent').length;
+  const totalReceived = messages.filter(m => m.direction === 'received').length;
+  const avgReplyTime = messages.filter(m => m.reply_time_minutes).reduce((s, m, _, arr) => s + m.reply_time_minutes / arr.length, 0);
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-3 gap-2">
+        {[
+          { label: 'Sent', value: totalSent, color: 'text-primary' },
+          { label: 'Received', value: totalReceived, color: 'text-cyan-400' },
+          { label: 'Avg Reply', value: avgReplyTime ? `${Math.round(avgReplyTime)}m` : '—', color: 'text-amber-400' },
+        ].map(s => (
+          <div key={s.label} className="p-2 rounded-lg bg-secondary/50 text-center">
+            <p className={`text-base font-black ${s.color}`}>{s.value}</p>
+            <p className="text-[10px] text-muted-foreground">{s.label}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+        {messages.map(msg => (
+          <div key={msg.id} className={`flex ${msg.direction === 'sent' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-[80%] px-3 py-2 rounded-xl text-xs ${
+              msg.direction === 'sent' ? 'bg-primary text-primary-foreground rounded-br-sm' : 'glass border border-border/40 text-foreground rounded-bl-sm'
+            }`}>
+              <p className="leading-relaxed">{msg.content}</p>
+              <div className="flex items-center gap-1 mt-1 justify-end">
+                <span className={`text-[9px] ${msg.direction === 'sent' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>
+                  {msg.timestamp ? new Date(msg.timestamp).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) : ''}
+                </span>
+                {msg.direction === 'sent' && (
+                  msg.status === 'read' ? <CheckCheck className="w-2.5 h-2.5 text-primary-foreground/80" /> : <Check className="w-2.5 h-2.5 text-primary-foreground/60" />
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function ContactCopilotPanel({ contact, onClose }) {
   const [loading, setLoading] = useState(false);
   const [activeKey, setActiveKey] = useState(null);
   const [result, setResult] = useState(null);
+  const [activeTab, setActiveTab] = useState('ai');
   const { toast } = useToast();
 
   // AI recommendation logic based on contact signals
@@ -116,7 +179,20 @@ Keep it concise and scannable.`,
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
         </div>
 
+        {/* Tabs */}
+        <div className="flex border-b border-border/30 px-4 gap-1 flex-shrink-0">
+          {[['ai', 'AI Copilot'], ['whatsapp', 'WhatsApp']].map(([tab, label]) => (
+            <button key={tab} onClick={() => setActiveTab(tab)}
+              className={`text-xs px-3 py-2.5 font-medium transition-colors border-b-2 ${activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
+              {label}
+            </button>
+          ))}
+        </div>
+
         <div className="flex-1 overflow-y-auto p-5 space-y-4">
+          {activeTab === 'whatsapp' && <WhatsAppTimeline contact={contact} />}
+
+          {activeTab === 'ai' && <>
           {/* Contact Details */}
           <div className="glass rounded-xl p-4 space-y-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Details</p>
@@ -187,6 +263,7 @@ Keep it concise and scannable.`,
               <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">{result.content}</p>
             </motion.div>
           )}
+          </>}
         </div>
 
         {/* Quick Actions */}

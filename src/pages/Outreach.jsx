@@ -11,6 +11,7 @@ import {
 import SequenceTemplates from '@/components/outreach/SequenceTemplates';
 import TaskQueuePanel from '@/components/outreach/TaskQueuePanel';
 import { ChannelStatusBadge, StepExecutionStatus } from '@/components/outreach/ChannelStatusBadge';
+import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -126,7 +127,7 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
   );
 }
 
-function StepEditor({ step, index, onUpdate, onRemove }) {
+function StepEditor({ step, index, onUpdate, onRemove, onOpenPersonalize }) {
   const Icon = channelIcons[step.type] || Mail;
   return (
     <div className="flex gap-3">
@@ -160,13 +161,17 @@ function StepEditor({ step, index, onUpdate, onRemove }) {
           <Textarea value={step.body} onChange={e => onUpdate(index, { ...step, body: e.target.value })}
             placeholder="Message body... use {{first_name}}, {{company}} for personalization"
             className="text-xs resize-none" rows={2} />
+          <button onClick={onOpenPersonalize} type="button"
+            className="mt-1.5 flex items-center gap-1 text-[10px] text-primary/70 hover:text-primary transition-colors">
+            <Sparkles className="w-2.5 h-2.5" /> AI Personalize — analyze a company website
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-function CreateSequenceModal({ onClose, onSave }) {
+function CreateSequenceModal({ onClose, onSave, onOpenPersonalize }) {
   const [name, setName] = useState('');
   const [steps, setSteps] = useState([{ type: 'email', day: 0, subject: '', body: '' }]);
   const [aiLoading, setAiLoading] = useState(false);
@@ -251,7 +256,7 @@ Return 4-6 steps. Make the messaging specific, personalized, and relevant to the
             </div>
             <div className="space-y-0">
               {steps.map((step, i) => (
-                <StepEditor key={i} step={step} index={i} onUpdate={updateStep} onRemove={removeStep} />
+                <StepEditor key={i} step={step} index={i} onUpdate={updateStep} onRemove={removeStep} onOpenPersonalize={onOpenPersonalize} />
               ))}
             </div>
           </div>
@@ -277,6 +282,7 @@ export default function Outreach() {
   const [showTaskQueue, setShowTaskQueue] = useState(false);
   const [aiSuggesting, setAiSuggesting] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState(null);
+  const [showPersonalize, setShowPersonalize] = useState(false);
 
   const totalEnrolled = sequences.reduce((s, seq) => s + seq.enrolled, 0);
   const totalReplied = sequences.reduce((s, seq) => s + seq.replied, 0);
@@ -365,6 +371,9 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)} className="gap-1.5 text-xs border-border/60">
                   <BookOpen className="w-3.5 h-3.5" /> Templates
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setShowPersonalize(true)} className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10">
+                  <Sparkles className="w-3.5 h-3.5" /> AI Personalize
                 </Button>
                 <Button size="sm" onClick={() => setShowCreate(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 text-xs">
                   <Plus className="w-3.5 h-3.5" /> New Sequence
@@ -473,9 +482,10 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
       </div>
 
       <AnimatePresence>
-        {showCreate && <CreateSequenceModal onClose={() => setShowCreate(false)} onSave={saveSequence} />}
+        {showCreate && <CreateSequenceModal onClose={() => setShowCreate(false)} onSave={saveSequence} onOpenPersonalize={() => setShowPersonalize(true)} />}
         {showTemplates && <SequenceTemplates onClose={() => setShowTemplates(false)} onUse={useTemplate} />}
       </AnimatePresence>
+      {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}
     </div>
   );
 }
