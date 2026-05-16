@@ -21,6 +21,9 @@ const triggerTypes = [
   { id: 'contact_created', label: 'New Contact Added', icon: CheckCircle2, color: 'text-primary' },
   { id: 'meeting_booked', label: 'Meeting Booked', icon: CheckCircle2, color: 'text-cyan-400' },
   { id: 'whatsapp_reply', label: 'WhatsApp Reply', icon: MessageCircle, color: 'text-primary' },
+  { id: 'email_opened_multiple', label: 'Email Opened 3+ Times', icon: Mail, color: 'text-amber-400' },
+  { id: 'sequence_completed', label: 'Sequence Completed (No Reply)', icon: AlertCircle, color: 'text-red-400' },
+  { id: 'deal_stale', label: 'Deal Stale (No Activity)', icon: Clock, color: 'text-muted-foreground' },
 ];
 
 const actionTypes = [
@@ -28,8 +31,11 @@ const actionTypes = [
   { id: 'send_whatsapp', label: 'Send WhatsApp', icon: MessageCircle },
   { id: 'slack_notify', label: 'Slack Notification', icon: Bell },
   { id: 'add_to_sequence', label: 'Add to Sequence', icon: Zap },
+  { id: 'remove_from_sequence', label: 'Remove from Sequence', icon: X },
   { id: 'update_deal_stage', label: 'Update Deal Stage', icon: GitBranch },
   { id: 'create_task', label: 'Create Task', icon: CheckCircle2 },
+  { id: 'mark_high_intent', label: 'Mark as High Intent', icon: Sparkles },
+  { id: 'stop_all_outreach', label: 'Stop All Outreach', icon: AlertCircle },
 ];
 
 const initialAutomations = [
@@ -37,7 +43,9 @@ const initialAutomations = [
   { id: 2, name: 'WhatsApp Reply → Slack Alert', trigger: 'whatsapp_reply', action: 'slack_notify', status: 'active', runs: 89, lastRun: '15m ago', description: 'Notifies the sales team on Slack immediately when a prospect replies on WhatsApp.' },
   { id: 3, name: 'New Contact → Welcome Sequence', trigger: 'contact_created', action: 'add_to_sequence', status: 'active', runs: 234, lastRun: '1h ago', description: 'Automatically enrolls new contacts into the onboarding email sequence.' },
   { id: 4, name: 'Deal Won → Handoff Task', trigger: 'deal_stage_change', action: 'create_task', status: 'paused', runs: 31, lastRun: '2d ago', description: 'Creates a customer success handoff task when a deal moves to Closed Won stage.' },
-  { id: 5, name: 'Meeting Booked → CRM Update', trigger: 'meeting_booked', action: 'update_deal_stage', status: 'active', runs: 67, lastRun: '30m ago', description: 'Automatically moves the associated deal to Proposal stage when a discovery call is booked.' },
+  { id: 5, name: 'Meeting Booked → Stop Outreach', trigger: 'meeting_booked', action: 'stop_all_outreach', status: 'active', runs: 67, lastRun: '30m ago', description: 'Stops all active sequences for a contact and updates their deal stage when a meeting is booked.' },
+  { id: 6, name: 'Reply Received → Remove from Sequence', trigger: 'reply_received', action: 'remove_from_sequence', status: 'active', runs: 54, lastRun: '45m ago', description: 'Automatically removes a contact from their active sequence when they reply, preventing over-messaging.' },
+  { id: 7, name: 'Email Opened 3x → High Intent Flag', trigger: 'email_opened_multiple', action: 'mark_high_intent', status: 'active', runs: 28, lastRun: '3h ago', description: 'Marks a contact as high intent and creates an SDR task when an email is opened 3 or more times.' },
 ];
 
 const statusColors = {
@@ -103,6 +111,12 @@ export default function Automations() {
   const [form, setForm] = useState({ name: '', trigger: '', action: '', description: '' });
   const [aiLoading, setAiLoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
+  const [suggestions, setSuggestions] = useState([
+    { name: 'Sequence Completed → Create Follow-up Task', trigger: 'sequence_completed', action: 'create_task', reason: 'Based on historical data: 34% of prospects who complete without replying convert on a manual follow-up call within 7 days.' },
+    { name: 'Deal Stale 7 Days → Re-engagement Email', trigger: 'deal_stale', action: 'send_email', reason: 'Your pipeline shows 8 deals with no activity in 7+ days. A timely check-in email has a 41% re-engagement rate in your history.' },
+    { name: 'High Intent Signal → Move to Proposal Stage', trigger: 'email_opened_multiple', action: 'update_deal_stage', reason: 'Contacts who open emails 3+ times convert to meetings at 2.4× the average rate. Escalate immediately.' },
+  ]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const { toast } = useToast();
 
   const activeCount = automations.filter(a => a.status === 'active').length;
@@ -124,6 +138,30 @@ export default function Automations() {
     toast({ title: 'Automation created!', description: `"${form.name}" is now active.` });
     setShowCreate(false);
     setForm({ name: '', trigger: '', action: '', description: '' });
+  };
+
+  const refreshSuggestions = async () => {
+    setLoadingSuggestions(true);
+    const result = await base44.integrations.Core.InvokeLLM({
+      prompt: `You are a GTM automation strategist. Based on these engagement signals, suggest 3 high-impact automation workflows:
+
+Signals:
+- WhatsApp reply rate: 28% (highest channel), Email reply rate: 22%
+- 34% of sequences complete with no reply — manual follow-up converts 34% of those
+- 8 deals stale (no activity in 7+ days)
+- Email opened 3+ times correlates with 2.4× meeting conversion
+- Meeting booked but outreach still running for 12 contacts
+- Deal stage: 5 deals stuck in Qualification for 14+ days
+
+Return 3 workflow suggestions. Each: name (short), trigger (one of: reply_received/deal_stage_change/no_reply_after/contact_created/meeting_booked/whatsapp_reply/email_opened_multiple/sequence_completed/deal_stale), action (one of: send_email/send_whatsapp/slack_notify/add_to_sequence/remove_from_sequence/update_deal_stage/create_task/mark_high_intent/stop_all_outreach), reason (1-2 sentences with specific data reference).`,
+      response_json_schema: {
+        type: 'object', properties: {
+          suggestions: { type: 'array', items: { type: 'object', properties: { name: { type: 'string' }, trigger: { type: 'string' }, action: { type: 'string' }, reason: { type: 'string' } } } }
+        }
+      }
+    });
+    if (result?.suggestions?.length) setSuggestions(result.suggestions);
+    setLoadingSuggestions(false);
   };
 
   const generateWithAI = async () => {
@@ -179,6 +217,45 @@ Return JSON with: name (string), trigger (one of: reply_received/deal_stage_chan
           <Button onClick={() => setShowCreate(true)} className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 whitespace-nowrap">
             <Plus className="w-4 h-4" /> New Automation
           </Button>
+        </div>
+
+        {/* AI Workflow Suggestions */}
+        <div className="glass rounded-xl p-5 border border-violet-500/20">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-lg bg-violet-500/20 flex items-center justify-center">
+                <Sparkles className="w-3.5 h-3.5 text-violet-400" />
+              </div>
+              <h3 className="font-bold text-sm text-foreground">AI Workflow Suggestions</h3>
+              <span className="text-[10px] text-muted-foreground px-2 py-0.5 rounded-full bg-secondary">Based on engagement + pipeline data</span>
+            </div>
+            <Button size="sm" variant="outline" onClick={refreshSuggestions} disabled={loadingSuggestions}
+              className="border-violet-500/30 text-violet-400 hover:bg-violet-500/10 text-xs gap-1.5">
+              {loadingSuggestions ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
+              Refresh
+            </Button>
+          </div>
+          <div className="grid md:grid-cols-3 gap-3">
+            {suggestions.map((s, i) => {
+              const trigger = triggerTypes.find(t => t.id === s.trigger);
+              const action = actionTypes.find(a => a.id === s.action);
+              return (
+                <div key={i} className="p-3.5 rounded-xl bg-violet-500/5 border border-violet-500/20 space-y-2">
+                  <p className="text-xs font-semibold text-foreground">{s.name}</p>
+                  <div className="flex items-center gap-1.5 text-[10px] text-violet-400">
+                    <span className="bg-violet-500/15 px-1.5 py-0.5 rounded">{trigger?.label || s.trigger}</span>
+                    <ChevronRight className="w-3 h-3" />
+                    <span className="bg-violet-500/15 px-1.5 py-0.5 rounded">{action?.label || s.action}</span>
+                  </div>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">{s.reason}</p>
+                  <button onClick={() => { setForm({ name: s.name, trigger: s.trigger, action: s.action, description: s.reason }); setShowCreate(true); }}
+                    className="text-[10px] text-violet-400 hover:text-violet-300 font-medium transition-colors flex items-center gap-1">
+                    <Plus className="w-3 h-3" /> Use this workflow
+                  </button>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Automations List */}

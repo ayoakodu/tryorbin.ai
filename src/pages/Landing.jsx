@@ -103,13 +103,13 @@ export default function Landing() {
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-medium mb-8">
               <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" />
-              Coming Soon — AI-Powered Execution for Emerging Market Revenue Teams
+              AI-Native GTM Execution for Emerging Market Revenue Teams
             </div>
             <h1 className="text-4xl md:text-5xl font-black leading-[1.1] tracking-tight mb-6">
               <span className="gradient-text">The AI-Native GTM Execution Platform.</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-              RVNU is an AI-native GTM execution platform helping revenue teams across Africa and emerging markets launch multichannel campaigns, automate engagement workflows, and close pipeline faster.
+              RVNU automates the full GTM execution cycle — from multichannel outreach and pipeline management to AI-driven follow-ups and revenue forecasting — built for revenue teams across Africa and emerging markets.
             </p>
           </motion.div>
 
@@ -339,14 +339,14 @@ export default function Landing() {
       <section className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <h2 className="text-3xl font-black mb-4 text-gray-900">Built for execution, not just visibility</h2>
-            <p className="text-gray-500 max-w-xl mx-auto">Most GTM tools track what happened. RVNU is being designed to help you execute what needs to happen — faster, smarter, and with AI embedded throughout.</p>
+            <h2 className="text-3xl font-black mb-4 text-gray-900">Stop tracking. Start executing.</h2>
+            <p className="text-gray-500 max-w-xl mx-auto">Most GTM tools show you dashboards. RVNU automates the workflows that drive revenue — outreach, follow-ups, pipeline progression, and conversion — with AI embedded throughout.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { icon: Globe, title: 'WhatsApp-Native GTM', desc: 'WhatsApp isn\'t a secondary channel in Africa — it\'s often the primary one. RVNU is being built with multichannel engagement as a first-class workflow.' },
-              { icon: MessageSquare, title: 'AI Copilots Everywhere', desc: 'AI isn\'t a feature — it\'s the engine. From generating outbound sequences to analyzing pipeline risk, AI is embedded into every workflow.' },
-              { icon: Layers, title: 'Execution Over Complexity', desc: 'We\'re designing RVNU to replace the 4-6 tools most revenue teams juggle — and make every workflow faster and more automated.' },
+              { icon: Globe, title: 'WhatsApp-Native Execution', desc: 'WhatsApp is the primary GTM channel across Africa. RVNU treats it as a first-class execution channel — sequences, tracking, and automation included.' },
+              { icon: MessageSquare, title: 'Workflow Automation, Not Dashboards', desc: 'AI doesn\'t just surface insights — it executes. Automated follow-ups, sequence management, deal progression, and SDR alerts run without manual intervention.' },
+              { icon: Layers, title: 'Revenue Outcomes Over Features', desc: 'Every module is built backwards from a revenue outcome: meetings booked, deals closed, pipeline converted. Not another tool to manage.' },
             ].map((item, i) => (
               <motion.div key={item.title}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
@@ -397,7 +397,7 @@ export default function Landing() {
               </div>
               <h2 className="text-3xl md:text-4xl font-black mb-4">Be first to execute with RVNU</h2>
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
-                We're building the AI-native GTM execution platform for Africa's revenue teams. Join the waitlist to get early access, shape the product, and lock in founder pricing.
+                The AI-native GTM execution platform for Africa's revenue teams. Automate your outreach, pipeline, and follow-ups — and close faster. Join the waitlist for early access and founder pricing.
               </p>
               <p className="text-xs text-muted-foreground/50 mb-8">RVNU is currently in development. No credit card required to join the waitlist.</p>
 

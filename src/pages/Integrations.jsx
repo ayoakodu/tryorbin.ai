@@ -8,26 +8,28 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
 
+// oauth = true means the connection uses an OAuth button flow (simulated)
+// fields = manual API key fallback
 const integrationsConfig = [
-  { id: 'whatsapp', name: 'WhatsApp Business', category: 'Messaging', desc: 'Connect your WhatsApp Business API to send campaigns, sequences, and track engagement natively.', color: '#25D366', fields: [{ key: 'api_key', label: 'API Key', placeholder: 'whatsapp_api_key_...' }, { key: 'phone_id', label: 'Phone Number ID', placeholder: '1234567890' }] },
-  { id: 'gmail', name: 'Gmail', category: 'Email', desc: 'Send sequences from your Gmail account with open and click tracking built in.', color: '#EA4335', fields: [{ key: 'email', label: 'Gmail Address', placeholder: 'you@gmail.com' }] },
-  { id: 'outlook', name: 'Outlook', category: 'Email', desc: 'Microsoft 365 email sending with full sequence automation and calendar sync.', color: '#0078D4', fields: [{ key: 'email', label: 'Outlook Email', placeholder: 'you@company.com' }] },
-  { id: 'google_calendar', name: 'Google Calendar', category: 'Scheduling', desc: 'Auto-log meetings and sync booked calls directly from your sequences.', color: '#4285F4', fields: [{ key: 'calendar_id', label: 'Calendar ID', placeholder: 'primary' }] },
-  { id: 'slack', name: 'Slack', category: 'Notifications', desc: 'Get real-time deal alerts, reply notifications, and team activity updates in Slack.', color: '#4A154B', fields: [{ key: 'webhook_url', label: 'Webhook URL', placeholder: 'https://hooks.slack.com/...' }, { key: 'channel', label: 'Channel', placeholder: '#gtm-alerts' }] },
-  { id: 'hubspot', name: 'HubSpot', category: 'CRM', desc: 'Bidirectional contact and deal sync — keep HubSpot updated as you execute in RVNU.', color: '#FF7A59', fields: [{ key: 'api_key', label: 'API Key', placeholder: 'pat-na1-...' }, { key: 'portal_id', label: 'Portal ID', placeholder: '12345678' }] },
+  { id: 'gmail', name: 'Gmail', category: 'Email', desc: 'Send sequences from your Gmail account with open and click tracking. Authorise via Google OAuth.', color: '#EA4335', oauth: true, oauthLabel: 'Connect with Google' },
+  { id: 'outlook', name: 'Outlook', category: 'Email', desc: 'Microsoft 365 email sending with full sequence automation and calendar sync. Authorise via Microsoft OAuth.', color: '#0078D4', oauth: true, oauthLabel: 'Connect with Microsoft' },
+  { id: 'google_calendar', name: 'Google Calendar', category: 'Scheduling', desc: 'Auto-log meetings and sync booked calls directly from your sequences via Google OAuth.', color: '#4285F4', oauth: true, oauthLabel: 'Connect with Google' },
+  { id: 'ms_calendar', name: 'Microsoft Calendar', category: 'Scheduling', desc: 'Sync meetings and bookings from Microsoft 365 Calendar into RVNU via Microsoft OAuth.', color: '#0078D4', oauth: true, oauthLabel: 'Connect with Microsoft' },
+  { id: 'hubspot', name: 'HubSpot', category: 'CRM', desc: 'Bidirectional contact and deal sync — keep HubSpot updated as you execute in RVNU.', color: '#FF7A59', oauth: true, oauthLabel: 'Connect with HubSpot' },
   { id: 'salesforce', name: 'Salesforce', category: 'CRM', desc: 'Sync pipeline activity, contacts, and deal stages with Salesforce in real time.', color: '#00A1E0', fields: [{ key: 'instance_url', label: 'Instance URL', placeholder: 'https://yourorg.salesforce.com' }, { key: 'access_token', label: 'Access Token', placeholder: 'Bearer ...' }] },
-  { id: 'linkedin', name: 'LinkedIn', category: 'Social', desc: 'Log LinkedIn outreach tasks and track engagement as part of multichannel sequences.', color: '#0077B5', fields: [{ key: 'profile_url', label: 'Profile URL', placeholder: 'https://linkedin.com/in/you' }] },
+  { id: 'zapier', name: 'Zapier', category: 'Automation', desc: 'Connect RVNU triggers and actions to 5,000+ apps. Use Zapier webhooks as the entry point.', color: '#FF4A00', fields: [{ key: 'webhook_url', label: 'Zapier Webhook URL', placeholder: 'https://hooks.zapier.com/hooks/catch/...' }] },
+  { id: 'slack', name: 'Slack', category: 'Notifications', desc: 'Get real-time deal alerts, reply notifications, and team activity updates in Slack.', color: '#4A154B', fields: [{ key: 'webhook_url', label: 'Webhook URL', placeholder: 'https://hooks.slack.com/...' }, { key: 'channel', label: 'Channel', placeholder: '#gtm-alerts' }] },
+  { id: 'whatsapp', name: 'WhatsApp Business', category: 'Messaging', desc: 'Connect your WhatsApp Business API to send campaigns, sequences, and track engagement natively.', color: '#25D366', fields: [{ key: 'api_key', label: 'API Key', placeholder: 'whatsapp_api_key_...' }, { key: 'phone_id', label: 'Phone Number ID', placeholder: '1234567890' }] },
+  { id: 'linkedin', name: 'LinkedIn', category: 'Social', desc: 'Log LinkedIn outreach tasks and track engagement as part of multichannel sequences.', color: '#0077B5', oauth: true, oauthLabel: 'Connect with LinkedIn' },
 ];
 
 const comingSoon = [
-  { id: 'zapier', name: 'Zapier', category: 'Automation', desc: 'Connect RVNU workflows to 5,000+ apps via Zapier triggers and actions.', color: '#FF4A00' },
   { id: 'twilio', name: 'Twilio', category: 'SMS', desc: 'SMS outreach and automated follow-ups via Twilio infrastructure.', color: '#F22F46' },
   { id: 'zoom', name: 'Zoom', category: 'Meetings', desc: 'Auto-log Zoom meetings, transcribe calls, and generate AI meeting summaries.', color: '#2D8CFF' },
   { id: 'apollo', name: 'Apollo.io', category: 'Prospecting', desc: 'Import and enrich prospect lists directly from Apollo into your sequences.', color: '#5D5DFF' },
   { id: 'teams', name: 'Microsoft Teams', category: 'Notifications', desc: 'Team notifications and deal alerts delivered to Microsoft Teams channels.', color: '#5059C9' },
   { id: 'calendly', name: 'Calendly', category: 'Scheduling', desc: 'Embed Calendly booking links in sequences and track meeting conversions.', color: '#006BFF' },
   { id: 'stripe', name: 'Stripe', category: 'Revenue', desc: 'Pull revenue and subscription data into pipeline forecasting and analytics.', color: '#6772E5' },
-  { id: 'ms_calendar', name: 'Microsoft Calendar', category: 'Scheduling', desc: 'Sync meetings and bookings from Microsoft 365 Calendar into RVNU.', color: '#0078D4' },
 ];
 
 const categoryColors = {
@@ -53,6 +55,16 @@ export default function Integrations() {
   const { toast } = useToast();
 
   const handleConnect = (integration) => {
+    if (integration.oauth) {
+      // Simulate OAuth popup flow
+      setConnecting(integration.id);
+      setTimeout(() => {
+        setConnected(prev => ({ ...prev, [integration.id]: true }));
+        setConnecting(null);
+        toast({ title: `${integration.name} connected!`, description: 'OAuth authorisation successful. Integration is active.' });
+      }, 2000);
+      return;
+    }
     setSelectedIntegration(integration);
     setFormData({});
   };
@@ -173,8 +185,11 @@ export default function Integrations() {
                       </>
                     ) : (
                       <Button size="sm" onClick={() => handleConnect(integration)}
+                        disabled={connecting === integration.id}
                         className="w-full text-xs bg-primary/10 text-primary hover:bg-primary/20 border-0">
-                        Connect <ArrowRight className="w-3 h-3 ml-1" />
+                        {connecting === integration.id
+                          ? <><Loader2 className="w-3 h-3 animate-spin mr-1" />Connecting...</>
+                          : <>{integration.oauth ? integration.oauthLabel : 'Connect'} <ArrowRight className="w-3 h-3 ml-1" /></>}
                       </Button>
                     )}
                   </div>

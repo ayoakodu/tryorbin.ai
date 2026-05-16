@@ -5,13 +5,30 @@ import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
-  XAxis, YAxis, Tooltip, ResponsiveContainer, FunnelChart, Funnel, LabelList, Cell
+  XAxis, YAxis, Tooltip, ResponsiveContainer, RadarChart, Radar, PolarGrid, PolarAngleAxis, Cell
 } from 'recharts';
 import {
   TrendingUp, TrendingDown, Mail, MessageCircle, Target,
   Sparkles, Loader2, AlertTriangle, CheckCircle2, Users,
   BarChart3, Reply, Calendar, MousePointerClick, Send
 } from 'lucide-react';
+
+// Channel performance comparison
+const channelPerformanceData = [
+  { channel: 'Email', openRate: 66, replyRate: 22, meetingRate: 3.2, sent: 1240 },
+  { channel: 'WhatsApp', openRate: 91, replyRate: 28, meetingRate: 5.8, sent: 890 },
+  { channel: 'LinkedIn', openRate: 54, replyRate: 18, meetingRate: 2.1, sent: 340 },
+  { channel: 'SMS', openRate: 88, replyRate: 14, meetingRate: 1.4, sent: 260 },
+];
+
+// Time-of-day performance
+const timeOfDayData = [
+  { hour: '6am', replies: 4 }, { hour: '7am', replies: 9 }, { hour: '8am', replies: 22 },
+  { hour: '9am', replies: 38 }, { hour: '10am', replies: 51 }, { hour: '11am', replies: 47 },
+  { hour: '12pm', replies: 29 }, { hour: '1pm', replies: 18 }, { hour: '2pm', replies: 34 },
+  { hour: '3pm', replies: 43 }, { hour: '4pm', replies: 39 }, { hour: '5pm', replies: 21 },
+  { hour: '6pm', replies: 11 },
+];
 
 // Campaign performance trend (weekly)
 const campaignTrendData = [
@@ -89,22 +106,21 @@ export default function Analytics() {
   const refreshAIInsights = async () => {
     setAiLoading(true);
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a GTM campaign analytics AI. Analyze these outbound campaign metrics and generate exactly 3 actionable insights:
+      prompt: `You are a GTM campaign analytics AI. Analyze these outbound campaign metrics and detect issues based on these rules:
+- Low open rate (<40%) → flag subject line issue
+- High open + low reply (<10% reply despite >60% open) → flag weak CTA or message mismatch
+- Drop-off >35% at any step → flag step optimisation needed
+- Channel with highest engagement → recommend replicating its targeting pattern
+- Any campaign with reply rate <18% → recommend pause or revision
 
 Campaign Data:
-- Total Sent: ${totalSent}
-- Avg Open Rate: ${avgOpenRate}%
-- Avg Reply Rate: ${avgReplyRate}%
-- Total Meetings: ${totalMeetings}
-- WhatsApp open rate: 91% (highest channel)
-- Email open rate: 66%
-- Best performing step: Step 1 (drives 73% of replies)
-- Underperforming: Re-engagement campaign (17% reply rate)
-- Step dropoff: 31% after step 2, 35% after step 3
+- Total Sent: ${totalSent}, Avg Open Rate: ${avgOpenRate}%, Avg Reply Rate: ${avgReplyRate}%, Total Meetings: ${totalMeetings}
+- WhatsApp: 91% open, 28% reply | Email: 66% open, 22% reply | LinkedIn: 54% open, 18% reply
+- Best step: Step 1 (73% of replies) | Dropoff: 31% step 2, 35% step 3
+- Re-engagement campaign: 38% open, 17% reply rate — UNDERPERFORMING
+- Peak reply hours: 10am–11am and 3pm–4pm
 
-Funnel: 2730 sent → 2676 delivered → 1802 opened → 427 replied → 77 meetings
-
-Return JSON with insights array, each having: type ("success" or "warning"), text (1-2 sentences, specific, actionable, data-driven).`,
+Return exactly 4 insights. Each must reference a specific metric. JSON: insights array with type ("success"|"warning"|"danger") and text.`,
       response_json_schema: {
         type: 'object', properties: {
           insights: {
@@ -159,10 +175,15 @@ Return JSON with insights array, each having: type ("success" or "warning"), tex
               {aiLoading ? 'Analyzing...' : 'Refresh AI'}
             </Button>
           </div>
-          <div className="grid md:grid-cols-3 gap-3">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
             {aiInsights.map((insight, i) => (
-              <div key={i} className={`p-3 rounded-xl border text-xs leading-relaxed flex gap-2.5 ${insight.type === 'warning' ? 'bg-amber-500/5 border-amber-500/20 text-amber-200' : 'bg-primary/5 border-primary/20 text-foreground'}`}>
-                {insight.type === 'warning'
+              <div key={i} className={`p-3 rounded-xl border text-xs leading-relaxed flex gap-2.5 ${
+                insight.type === 'danger' ? 'bg-destructive/5 border-destructive/20 text-red-300' :
+                insight.type === 'warning' ? 'bg-amber-500/5 border-amber-500/20 text-amber-200' :
+                'bg-primary/5 border-primary/20 text-foreground'}`}>
+                {insight.type === 'danger'
+                  ? <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
+                  : insight.type === 'warning'
                   ? <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
                   : <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />}
                 <p>{insight.text}</p>
@@ -172,14 +193,68 @@ Return JSON with insights array, each having: type ("success" or "warning"), tex
         </div>
 
         {/* Tab Nav */}
-        <div className="flex gap-1">
-          {[['overview', 'Overview'], ['sequences', 'Sequence Performance'], ['campaigns', 'Campaign Dashboard']].map(([val, label]) => (
+        <div className="flex gap-1 flex-wrap">
+          {[['overview', 'Overview'], ['channels', 'Channel Performance'], ['sequences', 'Sequence Performance'], ['campaigns', 'Campaign Dashboard']].map(([val, label]) => (
             <button key={val} onClick={() => setActiveTab(val)}
               className={`text-sm px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === val ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'}`}>
               {label}
             </button>
           ))}
         </div>
+
+        {activeTab === 'channels' && (
+          <div className="space-y-5">
+            {/* Channel comparison bar chart */}
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-bold mb-1 text-foreground">Channel Performance Comparison</h3>
+              <p className="text-xs text-muted-foreground mb-4">Open Rate, Reply Rate & Meeting Rate by channel</p>
+              <ResponsiveContainer width="100%" height={240}>
+                <BarChart data={channelPerformanceData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="channel" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="openRate" name="Open Rate %" fill="hsl(197 100% 56%)" radius={3} opacity={0.85} />
+                  <Bar dataKey="replyRate" name="Reply Rate %" fill="hsl(142 76% 52%)" radius={3} />
+                  <Bar dataKey="meetingRate" name="Meeting Rate %" fill="hsl(38 92% 50%)" radius={3} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Channel summary cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              {channelPerformanceData.map((ch) => (
+                <div key={ch.channel} className="glass rounded-xl p-4">
+                  <p className="text-sm font-bold text-foreground mb-2">{ch.channel}</p>
+                  <div className="space-y-1.5 text-xs">
+                    <div className="flex justify-between"><span className="text-muted-foreground">Sent</span><span className="font-medium">{ch.sent.toLocaleString()}</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Open Rate</span><span className="text-cyan-400 font-mono font-bold">{ch.openRate}%</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Reply Rate</span><span className="text-primary font-mono font-bold">{ch.replyRate}%</span></div>
+                    <div className="flex justify-between"><span className="text-muted-foreground">Meeting Rate</span><span className="text-amber-400 font-mono font-bold">{ch.meetingRate}%</span></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Time-of-day performance */}
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-bold mb-1 text-foreground">Best Time to Send</h3>
+              <p className="text-xs text-muted-foreground mb-4">Reply volume by hour of day — schedule sends around peak windows</p>
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={timeOfDayData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="hour" tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="replies" name="Replies" radius={3}>
+                    {timeOfDayData.map((entry, index) => (
+                      <Cell key={index} fill={entry.replies >= 40 ? 'hsl(142 76% 52%)' : entry.replies >= 25 ? 'hsl(197 100% 56%)' : 'hsl(223 47% 18%)'} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+              <p className="text-[10px] text-muted-foreground mt-2">Green = peak window · Blue = above average · Dark = off-peak</p>
+            </div>
+          </div>
+        )}
 
         {activeTab === 'overview' && (
           <>
