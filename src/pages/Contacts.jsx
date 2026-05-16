@@ -3,9 +3,8 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Plus, Search, Filter, Sparkles, Mail, Phone,
-  Linkedin, MoreHorizontal, MapPin, X, Loader2,
-  MessageCircle, ChevronRight, Copy, Star, Edit3
+  Plus, Search, Sparkles, Mail, Phone,
+  Linkedin, MapPin, Loader2, MessageCircle
 } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
@@ -13,8 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
+import ContactCopilotPanel from '@/components/copilot/ContactCopilotPanel';
 
 const statusColors = {
   new: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
@@ -38,139 +37,7 @@ const sampleContacts = [
   { id: 's6', first_name: 'Aisha', last_name: 'Kamara', email: 'aisha@moniepoint.com', title: 'BD Director', company: 'Moniepoint', country: 'Nigeria', status: 'converted', intent_signal: 'hot', lead_score: 96, industry: 'Fintech', phone: '+234 805 678 9012' },
 ];
 
-function AIPersonalizationPanel({ contact, onClose }) {
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [activeType, setActiveType] = useState(null);
-  const { toast } = useToast();
 
-  const generate = async (type) => {
-    setLoading(true);
-    setActiveType(type);
-    const prompts = {
-      firstLine: `Generate a personalized cold email first line for ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company} (${contact.industry} industry, ${contact.country}). Make it specific, relevant, and conversational. 1 sentence only.`,
-      summary: `Write a brief prospect summary for ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company}. Include likely pain points, buying triggers, and what they care about as a ${contact.title}. 3-4 sentences.`,
-      whatsapp: `Write a WhatsApp outreach message for ${contact.first_name} at ${contact.company} (${contact.industry}, ${contact.country}). Short, warm, professional. 2-3 sentences. Use 1 relevant emoji. No salesy language.`,
-      email: `Write a complete cold email subject line and body for ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company}. Context: B2B GTM platform for African revenue teams. Make it personalized to their role and company. Format as: SUBJECT: [subject]\n\nBODY: [body]`,
-      callPrep: `Generate a call prep brief for a discovery call with ${contact.first_name} ${contact.last_name}, ${contact.title} at ${contact.company} (${contact.industry}). Include: likely objectives, key questions to ask, potential objections, and conversation openers. Keep it concise and actionable.`,
-    };
-    const res = await base44.integrations.Core.InvokeLLM({ prompt: prompts[type] });
-    setResult({ type, content: res });
-    setLoading(false);
-  };
-
-  const actions = [
-    { key: 'firstLine', label: 'Personalized First Line' },
-    { key: 'summary', label: 'Prospect Summary' },
-    { key: 'whatsapp', label: 'WhatsApp Message' },
-    { key: 'email', label: 'Cold Email Draft' },
-    { key: 'callPrep', label: 'Call Prep Brief' },
-  ];
-
-  return (
-    <div className="fixed inset-0 z-50 flex">
-      <div className="flex-1 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'spring', damping: 25 }}
-        className="w-full max-w-md bg-card border-l border-border flex flex-col h-full overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
-              {contact.first_name[0]}{contact.last_name[0]}
-            </div>
-            <div>
-              <p className="font-semibold text-sm">{contact.first_name} {contact.last_name}</p>
-              <p className="text-xs text-muted-foreground">{contact.title} · {contact.company}</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
-          {/* Contact Details */}
-          <div className="glass rounded-xl p-4 space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Contact Details</p>
-            {[
-              { icon: Mail, value: contact.email },
-              { icon: Phone, value: contact.phone || '—' },
-              { icon: MapPin, value: contact.country || '—' },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2.5 text-xs">
-                <item.icon className="w-3.5 h-3.5 text-muted-foreground flex-shrink-0" />
-                <span className="text-foreground">{item.value}</span>
-                {item.value !== '—' && (
-                  <button onClick={() => { navigator.clipboard.writeText(item.value); toast({ title: 'Copied!' }); }}
-                    className="ml-auto text-muted-foreground hover:text-primary">
-                    <Copy className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-            ))}
-            <div className="flex items-center gap-2 pt-1">
-              <span className={`text-[10px] px-2 py-0.5 rounded-full border font-medium ${statusColors[contact.status]}`}>{contact.status}</span>
-              {contact.lead_score && (
-                <span className="text-[10px] text-muted-foreground">Score: <strong className="text-primary">{contact.lead_score}</strong></span>
-              )}
-            </div>
-          </div>
-
-          {/* AI Actions */}
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <p className="text-xs font-semibold text-primary uppercase tracking-wider">AI Personalization</p>
-            </div>
-            <div className="space-y-2">
-              {actions.map(action => (
-                <button key={action.key} onClick={() => generate(action.key)}
-                  disabled={loading}
-                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-secondary/50 hover:bg-secondary border border-border/30 hover:border-primary/30 text-sm transition-all text-left group">
-                  <span className="font-medium text-foreground group-hover:text-primary transition-colors">{action.label}</span>
-                  {loading && activeType === action.key ? (
-                    <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" />
-                  ) : (
-                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* AI Result */}
-          {result && (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-              className="glass rounded-xl p-4 border border-primary/20">
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-primary">{actions.find(a => a.key === result.type)?.label}</p>
-                <button onClick={() => { navigator.clipboard.writeText(result.content); toast({ title: 'Copied to clipboard!' }); }}
-                  className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1">
-                  <Copy className="w-3 h-3" /> Copy
-                </button>
-              </div>
-              <p className="text-xs text-foreground leading-relaxed whitespace-pre-wrap">{result.content}</p>
-            </motion.div>
-          )}
-        </div>
-
-        {/* Quick Actions */}
-        <div className="p-4 border-t border-border/30 flex gap-2">
-          <Button size="sm" className="flex-1 gap-1.5 bg-primary text-primary-foreground text-xs">
-            <Mail className="w-3.5 h-3.5" /> Email
-          </Button>
-          <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-border/60 text-xs">
-            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
-          </Button>
-          {contact.linkedin_url && (
-            <Button size="sm" variant="outline" className="px-3 border-border/60">
-              <Linkedin className="w-3.5 h-3.5" />
-            </Button>
-          )}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
 
 export default function Contacts() {
   const [search, setSearch] = useState('');
@@ -317,10 +184,10 @@ export default function Contacts() {
         </div>
       </div>
 
-      {/* Contact AI Panel */}
+      {/* Contact AI Copilot Panel */}
       <AnimatePresence>
         {selectedContact && (
-          <AIPersonalizationPanel contact={selectedContact} onClose={() => setSelectedContact(null)} />
+          <ContactCopilotPanel contact={selectedContact} onClose={() => setSelectedContact(null)} />
         )}
       </AnimatePresence>
 

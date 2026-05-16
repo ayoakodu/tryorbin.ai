@@ -5,49 +5,48 @@ import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import {
   AreaChart, Area, BarChart, Bar, LineChart, Line,
-  XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell
+  XAxis, YAxis, Tooltip, ResponsiveContainer, FunnelChart, Funnel, LabelList, Cell
 } from 'recharts';
-import { TrendingUp, TrendingDown, Users, Mail, DollarSign, Target, Sparkles, Loader2, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import {
+  TrendingUp, TrendingDown, Mail, MessageCircle, Target,
+  Sparkles, Loader2, AlertTriangle, CheckCircle2, Users,
+  BarChart3, Reply, Calendar, MousePointerClick, Send
+} from 'lucide-react';
 
-const revenueData = [
-  { month: 'Jan', revenue: 82000, pipeline: 320000 },
-  { month: 'Feb', revenue: 106000, pipeline: 410000 },
-  { month: 'Mar', revenue: 134000, pipeline: 520000 },
-  { month: 'Apr', revenue: 158000, pipeline: 680000 },
-  { month: 'May', revenue: 192000, pipeline: 840000 },
-  { month: 'Jun', revenue: 228000, pipeline: 1020000 },
+// Campaign performance trend (weekly)
+const campaignTrendData = [
+  { week: 'W1', sent: 320, opened: 198, replied: 45, meetings: 8 },
+  { week: 'W2', sent: 410, opened: 267, replied: 61, meetings: 11 },
+  { week: 'W3', sent: 380, opened: 228, replied: 53, meetings: 9 },
+  { week: 'W4', sent: 520, opened: 364, replied: 87, meetings: 16 },
+  { week: 'W5', sent: 490, opened: 318, replied: 79, meetings: 14 },
+  { week: 'W6', sent: 610, opened: 427, replied: 102, meetings: 19 },
 ];
 
-const funnelData = [
-  { stage: 'Visitors', count: 12400, rate: 100 },
-  { stage: 'Leads', count: 1860, rate: 15 },
-  { stage: 'Qualified', count: 558, rate: 4.5 },
-  { stage: 'Opportunities', count: 167, rate: 1.35 },
-  { stage: 'Closed Won', count: 42, rate: 0.34 },
+// Engagement funnel
+const funnelStages = [
+  { stage: 'Sent', value: 2730, pct: 100, color: 'hsl(142 76% 52%)' },
+  { stage: 'Delivered', value: 2676, pct: 98, color: 'hsl(142 76% 46%)' },
+  { stage: 'Opened', value: 1802, pct: 66, color: 'hsl(197 100% 56%)' },
+  { stage: 'Replied', value: 427, pct: 15.6, color: 'hsl(262 80% 65%)' },
+  { stage: 'Meeting', value: 77, pct: 2.8, color: 'hsl(38 92% 50%)' },
 ];
 
-const channelData = [
-  { channel: 'Outbound Email', leads: 340, deals: 28, revenue: 420000 },
-  { channel: 'LinkedIn', leads: 210, deals: 19, revenue: 285000 },
-  { channel: 'WhatsApp', leads: 180, deals: 22, revenue: 330000 },
-  { channel: 'Inbound', leads: 420, deals: 31, revenue: 465000 },
-  { channel: 'Referral', leads: 90, deals: 18, revenue: 540000 },
+// Step performance for selected sequence
+const stepPerformanceData = [
+  { step: 'Step 1', sent: 142, opened: 98, replied: 31, dropoff: 31 },
+  { step: 'Step 2', sent: 111, opened: 72, replied: 18, dropoff: 20 },
+  { step: 'Step 3', sent: 93, opened: 54, replied: 12, dropoff: 35 },
+  { step: 'Step 4', sent: 58, opened: 31, replied: 8, dropoff: 38 },
+  { step: 'Step 5', sent: 36, opened: 18, replied: 5, dropoff: 38 },
 ];
 
-const sourceData = [
-  { name: 'Outbound', value: 32, color: '#4ade80' },
-  { name: 'Inbound', value: 28, color: '#22d3ee' },
-  { name: 'LinkedIn', value: 20, color: '#818cf8' },
-  { name: 'Referral', value: 14, color: '#f59e0b' },
-  { name: 'Other', value: 6, color: '#6b7280' },
-];
-
-const teamData = [
-  { name: 'Amara D.', emails: 342, calls: 48, meetings: 12, deals: 4 },
-  { name: 'Tunde O.', emails: 289, calls: 62, meetings: 9, deals: 3 },
-  { name: 'Chioma E.', emails: 418, calls: 35, meetings: 15, deals: 6 },
-  { name: 'Kweku M.', emails: 195, calls: 28, meetings: 7, deals: 2 },
-  { name: 'Kefilwe M.', emails: 267, calls: 44, meetings: 11, deals: 4 },
+// Campaign dashboard table
+const campaignTableData = [
+  { name: 'Fintech CTO Outbound — Nigeria', channel: 'multi', sent: 142, openRate: 62.7, replyRate: 21.8, positiveReply: 8.5, meetings: 8, status: 'active' },
+  { name: 'SMB Decision Maker — WhatsApp', channel: 'whatsapp', sent: 89, openRate: 91.0, replyRate: 24.7, positiveReply: 11.2, meetings: 5, status: 'active' },
+  { name: 'Inbound Lead Nurture', channel: 'email', sent: 234, openRate: 66.7, replyRate: 28.6, positiveReply: 14.1, meetings: 19, status: 'active' },
+  { name: 'Re-engagement — Cold Leads', channel: 'email', sent: 47, openRate: 38.3, replyRate: 17.0, positiveReply: 4.3, meetings: 2, status: 'paused' },
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -57,7 +56,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         <p className="text-muted-foreground mb-1 font-medium">{label}</p>
         {payload.map((p, i) => (
           <p key={i} style={{ color: p.color }} className="font-bold">
-            {p.name}: {typeof p.value === 'number' && p.value > 1000 ? `$${(p.value / 1000).toFixed(0)}K` : p.value}
+            {p.name}: {p.value}
           </p>
         ))}
       </div>
@@ -66,29 +65,52 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
+const channelIcon = { multi: BarChart3, whatsapp: MessageCircle, email: Mail };
+const channelColor = { multi: 'text-amber-400', whatsapp: 'text-primary', email: 'text-blue-400' };
+const statusBadge = {
+  active: 'bg-primary/20 text-primary border-primary/30',
+  paused: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+};
+
 export default function Analytics() {
   const [aiInsights, setAiInsights] = useState([
-    { type: 'warning', text: 'WhatsApp channel has 22% higher conversion than email but receives 47% less investment. Consider reallocating budget.' },
-    { type: 'success', text: 'Chioma E. is your top performer with 6 deals won. Replicate her outreach patterns across the team.' },
-    { type: 'warning', text: 'Lead-to-qualified conversion dropped to 4.5% this month. Review qualification criteria and sequence messaging.' },
+    { type: 'warning', text: 'WhatsApp sequences have 91% open rate vs 66% for email — consider shifting more prospects to WhatsApp touchpoints.' },
+    { type: 'success', text: 'Step 1 drives 73% of all replies. Invest in optimizing your first touchpoint subject lines and hooks.' },
+    { type: 'warning', text: 'Re-engagement campaign reply rate dropped to 17%. Adjust messaging angle — try a "break-up" email approach.' },
   ]);
   const [aiLoading, setAiLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const totalSent = campaignTableData.reduce((s, c) => s + c.sent, 0);
+  const avgOpenRate = (campaignTableData.reduce((s, c) => s + c.openRate, 0) / campaignTableData.length).toFixed(1);
+  const avgReplyRate = (campaignTableData.reduce((s, c) => s + c.replyRate, 0) / campaignTableData.length).toFixed(1);
+  const totalMeetings = campaignTableData.reduce((s, c) => s + c.meetings, 0);
 
   const refreshAIInsights = async () => {
     setAiLoading(true);
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are a GTM analytics AI. Based on this performance data, generate exactly 3 actionable insights:
-- Revenue: $228K MTD (+19%)  
-- Pipeline: $1.02M (+31%)
-- Top channel: WhatsApp (91% open rate)
-- Team top performer: Chioma E. (15 meetings, 6 deals)
-- Funnel: 15% lead conversion, 4.5% qualified rate
-- Channels: Email (340 leads), LinkedIn (210), WhatsApp (180), Inbound (420), Referral (90)
+      prompt: `You are a GTM campaign analytics AI. Analyze these outbound campaign metrics and generate exactly 3 actionable insights:
 
-Return JSON with insights array, each having: type ("success" or "warning"), text (1-2 sentences, specific and actionable).`,
+Campaign Data:
+- Total Sent: ${totalSent}
+- Avg Open Rate: ${avgOpenRate}%
+- Avg Reply Rate: ${avgReplyRate}%
+- Total Meetings: ${totalMeetings}
+- WhatsApp open rate: 91% (highest channel)
+- Email open rate: 66%
+- Best performing step: Step 1 (drives 73% of replies)
+- Underperforming: Re-engagement campaign (17% reply rate)
+- Step dropoff: 31% after step 2, 35% after step 3
+
+Funnel: 2730 sent → 2676 delivered → 1802 opened → 427 replied → 77 meetings
+
+Return JSON with insights array, each having: type ("success" or "warning"), text (1-2 sentences, specific, actionable, data-driven).`,
       response_json_schema: {
         type: 'object', properties: {
-          insights: { type: 'array', items: { type: 'object', properties: { type: { type: 'string' }, text: { type: 'string' } } } }
+          insights: {
+            type: 'array',
+            items: { type: 'object', properties: { type: { type: 'string' }, text: { type: 'string' } } }
+          }
         }
       }
     });
@@ -98,28 +120,25 @@ Return JSON with insights array, each having: type ("success" or "warning"), tex
 
   return (
     <div className="min-h-screen">
-      <TopBar title="Analytics" subtitle="Execution performance — sequences, campaigns, WhatsApp, and pipeline" />
+      <TopBar title="Analytics" subtitle="Campaign performance — sequences, engagement, and pipeline visibility" />
 
       <div className="p-6 space-y-5">
         {/* KPI Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { label: 'Revenue (MTD)', value: '$228K', change: '+19%', positive: true, icon: DollarSign },
-            { label: 'New Leads', value: '1,247', change: '+23%', positive: true, icon: Users },
-            { label: 'Pipeline Generated', value: '$1.02M', change: '+31%', positive: true, icon: TrendingUp },
-            { label: 'CAC', value: '$1,240', change: '-8%', positive: true, icon: Target },
+            { label: 'Total Sent', value: totalSent.toLocaleString(), icon: Send, color: 'text-foreground', sub: 'across all campaigns' },
+            { label: 'Avg Open Rate', value: `${avgOpenRate}%`, icon: Mail, color: 'text-cyan-400', sub: '+4.2% vs last month' },
+            { label: 'Avg Reply Rate', value: `${avgReplyRate}%`, icon: Reply, color: 'text-primary', sub: 'positive signal threshold' },
+            { label: 'Meetings Booked', value: totalMeetings, icon: Calendar, color: 'text-amber-400', sub: 'from sequences' },
           ].map((k, i) => (
             <motion.div key={k.label} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.07 }}
               className="glass rounded-xl p-5">
               <div className="flex items-start justify-between mb-3">
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">{k.label}</span>
-                <k.icon className="w-4 h-4 text-primary" />
+                <k.icon className={`w-4 h-4 ${k.color}`} />
               </div>
-              <p className="text-2xl font-black text-foreground mb-1">{k.value}</p>
-              <div className={`flex items-center gap-1 text-xs font-medium ${k.positive ? 'text-primary' : 'text-destructive'}`}>
-                {k.positive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                <span>{k.change} vs last month</span>
-              </div>
+              <p className={`text-2xl font-black mb-1 ${k.color}`}>{k.value}</p>
+              <p className="text-[10px] text-muted-foreground">{k.sub}</p>
             </motion.div>
           ))}
         </div>
@@ -131,7 +150,8 @@ Return JSON with insights array, each having: type ("success" or "warning"), tex
               <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center">
                 <Sparkles className="w-3.5 h-3.5 text-black" />
               </div>
-              <h3 className="font-bold text-sm text-foreground">AI Performance Insights</h3>
+              <h3 className="font-bold text-sm text-foreground">AI Campaign Insights</h3>
+              <span className="text-[10px] text-muted-foreground px-2 py-0.5 rounded-full bg-secondary">Based on real data</span>
             </div>
             <Button size="sm" variant="outline" onClick={refreshAIInsights} disabled={aiLoading}
               className="border-primary/30 text-primary hover:bg-primary/10 text-xs gap-1.5">
@@ -144,130 +164,206 @@ Return JSON with insights array, each having: type ("success" or "warning"), tex
               <div key={i} className={`p-3 rounded-xl border text-xs leading-relaxed flex gap-2.5 ${insight.type === 'warning' ? 'bg-amber-500/5 border-amber-500/20 text-amber-200' : 'bg-primary/5 border-primary/20 text-foreground'}`}>
                 {insight.type === 'warning'
                   ? <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
-                  : <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                }
+                  : <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />}
                 <p>{insight.text}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Revenue + Funnel Row */}
-        <div className="grid lg:grid-cols-3 gap-4">
-          <div className="lg:col-span-2 glass rounded-xl p-5">
-            <h3 className="font-bold mb-4 text-foreground">Revenue vs Pipeline</h3>
-            <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={revenueData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(142 76% 52%)" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="hsl(142 76% 52%)" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="pipGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(197 100% 56%)" stopOpacity={0.15} />
-                    <stop offset="95%" stopColor="hsl(197 100% 56%)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} tickFormatter={v => `$${v / 1000}K`} />
-                <Tooltip content={<CustomTooltip />} />
-                <Area type="monotone" dataKey="pipeline" name="Pipeline" stroke="hsl(197 100% 56%)" strokeWidth={1.5} fill="url(#pipGrad)" />
-                <Area type="monotone" dataKey="revenue" name="Revenue" stroke="hsl(142 76% 52%)" strokeWidth={2} fill="url(#revGrad)" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-
-          <div className="glass rounded-xl p-5">
-            <h3 className="font-bold mb-4 text-foreground">Pipeline by Source</h3>
-            <div className="flex justify-center mb-4">
-              <PieChart width={160} height={160}>
-                <Pie data={sourceData} cx={80} cy={80} innerRadius={50} outerRadius={75} paddingAngle={3} dataKey="value">
-                  {sourceData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
-                </Pie>
-              </PieChart>
-            </div>
-            <div className="space-y-2">
-              {sourceData.map(s => (
-                <div key={s.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full" style={{ background: s.color }} />
-                    <span className="text-xs text-muted-foreground">{s.name}</span>
-                  </div>
-                  <span className="text-xs font-bold text-foreground">{s.value}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Tab Nav */}
+        <div className="flex gap-1">
+          {[['overview', 'Overview'], ['sequences', 'Sequence Performance'], ['campaigns', 'Campaign Dashboard']].map(([val, label]) => (
+            <button key={val} onClick={() => setActiveTab(val)}
+              className={`text-sm px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === val ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'}`}>
+              {label}
+            </button>
+          ))}
         </div>
 
-        {/* Funnel + Channel */}
-        <div className="grid lg:grid-cols-2 gap-4">
-          <div className="glass rounded-xl p-5">
-            <h3 className="font-bold mb-5 text-foreground">Conversion Funnel</h3>
-            <div className="space-y-3">
-              {funnelData.map((stage, i) => (
-                <div key={stage.stage} className="flex items-center gap-4">
-                  <span className="text-xs text-muted-foreground w-24 text-right">{stage.stage}</span>
-                  <div className="flex-1 bg-secondary rounded-full h-6 overflow-hidden relative">
-                    <div className="h-full rounded-full flex items-center justify-end pr-2 transition-all"
-                      style={{ width: `${stage.rate}%`, minWidth: '12%', background: `hsl(${142 - i * 12} 76% 52%)` }}>
-                      <span className="text-[10px] font-bold text-black">{stage.count.toLocaleString()}</span>
-                    </div>
-                  </div>
-                  <span className="text-xs font-mono text-muted-foreground w-10">{stage.rate}%</span>
-                </div>
-              ))}
+        {activeTab === 'overview' && (
+          <>
+            {/* Campaign Trend Line Chart */}
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-bold mb-1 text-foreground">Campaign Performance Trend</h3>
+              <p className="text-xs text-muted-foreground mb-4">Weekly — Sent, Opened, Replied, Meetings</p>
+              <ResponsiveContainer width="100%" height={220}>
+                <LineChart data={campaignTrendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="week" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Line type="monotone" dataKey="sent" name="Sent" stroke="hsl(215 20% 55%)" strokeWidth={1.5} dot={false} />
+                  <Line type="monotone" dataKey="opened" name="Opened" stroke="hsl(197 100% 56%)" strokeWidth={2} dot={false} />
+                  <Line type="monotone" dataKey="replied" name="Replied" stroke="hsl(142 76% 52%)" strokeWidth={2.5} dot={{ fill: 'hsl(142 76% 52%)', r: 3 }} />
+                  <Line type="monotone" dataKey="meetings" name="Meetings" stroke="hsl(38 92% 50%)" strokeWidth={2} dot={false} strokeDasharray="4 2" />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
-          </div>
 
-          <div className="glass rounded-xl p-5">
-            <h3 className="font-bold mb-4 text-foreground">Channel Attribution</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={channelData} layout="vertical" margin={{ top: 0, right: 0, left: -10, bottom: 0 }}>
-                <XAxis type="number" tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
-                <YAxis type="category" dataKey="channel" tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} width={90} />
-                <Tooltip contentStyle={{ background: 'hsl(224 71% 6%)', border: '1px solid hsl(223 47% 14%)', borderRadius: 8, fontSize: 11 }} />
-                <Bar dataKey="leads" name="Leads" fill="hsl(142 76% 36%)" radius={3} />
-                <Bar dataKey="deals" name="Deals" fill="hsl(197 100% 56%)" radius={3} opacity={0.8} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Team Performance */}
-        <div className="glass rounded-xl p-5">
-          <h3 className="font-bold mb-4 text-foreground">Team Performance</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-border/30">
-                  {['Rep', 'Emails', 'Calls', 'Meetings', 'Deals Won', 'Rank'].map(h => (
-                    <th key={h} className="text-left py-2.5 px-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {teamData.sort((a, b) => b.deals - a.deals).map((rep, i) => (
-                  <tr key={rep.name} className="border-b border-border/20 hover:bg-secondary/30 transition-colors">
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2">
-                        <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">{rep.name[0]}</div>
-                        <span className="text-sm font-medium">{rep.name}</span>
+            {/* Engagement Funnel */}
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-bold mb-1 text-foreground">Engagement Funnel</h3>
+              <p className="text-xs text-muted-foreground mb-5">Sent → Delivered → Opened → Replied → Meeting</p>
+              <div className="space-y-3">
+                {funnelStages.map((stage, i) => (
+                  <div key={stage.stage} className="flex items-center gap-4">
+                    <span className="text-xs text-muted-foreground w-20 text-right flex-shrink-0">{stage.stage}</span>
+                    <div className="flex-1 bg-secondary rounded-full h-7 overflow-hidden relative">
+                      <div className="h-full rounded-full flex items-center justify-between px-3 transition-all duration-500"
+                        style={{ width: `${Math.max(stage.pct, 8)}%`, background: stage.color, opacity: 0.85 }}>
+                        <span className="text-[11px] font-bold text-black">{stage.value.toLocaleString()}</span>
                       </div>
-                    </td>
-                    <td className="py-3 px-3 text-sm text-muted-foreground">{rep.emails}</td>
-                    <td className="py-3 px-3 text-sm text-muted-foreground">{rep.calls}</td>
-                    <td className="py-3 px-3 text-sm text-muted-foreground">{rep.meetings}</td>
-                    <td className="py-3 px-3 text-sm font-bold text-primary">{rep.deals}</td>
-                    <td className="py-3 px-3">
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${i === 0 ? 'bg-amber-400/20 text-amber-400' : 'text-muted-foreground'}`}>#{i + 1}</span>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="w-14 text-right">
+                      <span className="text-xs font-mono font-bold" style={{ color: stage.color }}>{stage.pct}%</span>
+                    </div>
+                    {i > 0 && (
+                      <div className="w-16 text-right hidden lg:block">
+                        <span className="text-[10px] text-muted-foreground">
+                          -{(funnelStages[i - 1].pct - stage.pct).toFixed(1)}%
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
+          </>
+        )}
+
+        {activeTab === 'sequences' && (
+          <div className="space-y-4">
+            {/* Step Performance Bar Chart */}
+            <div className="glass rounded-xl p-5">
+              <h3 className="font-bold mb-1 text-foreground">Step-by-Step Performance</h3>
+              <p className="text-xs text-muted-foreground mb-4">Fintech CTO Outbound — Nigeria · Sent, Opened, Replied per step</p>
+              <ResponsiveContainer width="100%" height={220}>
+                <BarChart data={stepPerformanceData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                  <XAxis dataKey="step" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="sent" name="Sent" fill="hsl(223 47% 18%)" radius={3} />
+                  <Bar dataKey="opened" name="Opened" fill="hsl(197 100% 56%)" radius={3} opacity={0.8} />
+                  <Bar dataKey="replied" name="Replied" fill="hsl(142 76% 52%)" radius={3} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Step metrics table */}
+            <div className="glass rounded-xl overflow-hidden">
+              <div className="px-5 py-4 border-b border-border/30">
+                <h3 className="font-bold text-sm text-foreground">Step Breakdown</h3>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-border/30">
+                      {['Step', 'Sent', 'Opened', 'Open Rate', 'Replied', 'Reply Rate', 'Drop-off'].map(h => (
+                        <th key={h} className="text-left py-2.5 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider">{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stepPerformanceData.map((row, i) => {
+                      const openRate = ((row.opened / row.sent) * 100).toFixed(1);
+                      const replyRate = ((row.replied / row.sent) * 100).toFixed(1);
+                      const isBest = row.replied === Math.max(...stepPerformanceData.map(r => r.replied));
+                      return (
+                        <tr key={row.step} className="border-b border-border/20 hover:bg-secondary/30">
+                          <td className="py-3 px-4 text-sm font-medium text-foreground flex items-center gap-2">
+                            {row.step}
+                            {isBest && <span className="text-[10px] bg-primary/20 text-primary border border-primary/30 px-1.5 py-0.5 rounded-full font-medium">Best</span>}
+                          </td>
+                          <td className="py-3 px-4 text-sm text-muted-foreground">{row.sent}</td>
+                          <td className="py-3 px-4 text-sm text-muted-foreground">{row.opened}</td>
+                          <td className="py-3 px-4 text-sm font-medium text-cyan-400">{openRate}%</td>
+                          <td className="py-3 px-4 text-sm text-muted-foreground">{row.replied}</td>
+                          <td className="py-3 px-4 text-sm font-medium text-primary">{replyRate}%</td>
+                          <td className="py-3 px-4">
+                            <span className={`text-xs font-medium ${row.dropoff > 30 ? 'text-amber-400' : 'text-muted-foreground'}`}>
+                              {row.dropoff}%
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {activeTab === 'campaigns' && (
+          <div className="glass rounded-xl overflow-hidden">
+            <div className="px-5 py-4 border-b border-border/30">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-sm text-foreground">Campaign Dashboard</h3>
+                <p className="text-xs text-muted-foreground">
+                  Tracking: open, reply, positive reply, meetings · Data from connected integrations
+                </p>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-border/30">
+                    {['Campaign', 'Channel', 'Sent', 'Open Rate', 'Reply Rate', '+ve Reply', 'Meetings', 'Status'].map(h => (
+                      <th key={h} className="text-left py-3 px-4 text-xs font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {campaignTableData.map((row, i) => {
+                    const Ch = channelIcon[row.channel] || Mail;
+                    return (
+                      <tr key={i} className="border-b border-border/20 hover:bg-secondary/30 transition-colors">
+                        <td className="py-3.5 px-4">
+                          <p className="text-sm font-medium text-foreground truncate max-w-[200px]">{row.name}</p>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <div className={`flex items-center gap-1 ${channelColor[row.channel]}`}>
+                            <Ch className="w-3.5 h-3.5" />
+                            <span className="text-xs capitalize">{row.channel}</span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4 text-sm text-muted-foreground">{row.sent}</td>
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
+                              <div className="h-full bg-cyan-400 rounded-full" style={{ width: `${row.openRate}%` }} />
+                            </div>
+                            <span className="text-xs font-mono text-cyan-400">{row.openRate}%</span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-2">
+                            <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
+                              <div className="h-full bg-primary rounded-full" style={{ width: `${row.replyRate * 3}%` }} />
+                            </div>
+                            <span className="text-xs font-mono text-primary">{row.replyRate}%</span>
+                          </div>
+                        </td>
+                        <td className="py-3.5 px-4 text-sm font-medium text-violet-400">{row.positiveReply}%</td>
+                        <td className="py-3.5 px-4 text-sm font-bold text-amber-400">{row.meetings}</td>
+                        <td className="py-3.5 px-4">
+                          <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusBadge[row.status]}`}>
+                            {row.status}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-5 py-3 border-t border-border/20">
+              <p className="text-[10px] text-muted-foreground">
+                * Open and reply tracking require Gmail or Outlook integration. Data shown reflects available tracking signals. Metrics degrade gracefully when integration is not connected.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -6,9 +6,11 @@ import {
   Phone, MoreHorizontal, Sparkles, Users, TrendingUp,
   Reply, Zap, X, ChevronRight, Copy, Trash2,
   Clock, GitBranch, CheckCircle2, Loader2, Edit3,
-  BarChart3, AlertCircle, ArrowRight, BookOpen
+  BarChart3, AlertCircle, ArrowRight, BookOpen, ListTodo
 } from 'lucide-react';
 import SequenceTemplates from '@/components/outreach/SequenceTemplates';
+import TaskQueuePanel from '@/components/outreach/TaskQueuePanel';
+import { ChannelStatusBadge, StepExecutionStatus } from '@/components/outreach/ChannelStatusBadge';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -272,6 +274,7 @@ export default function Outreach() {
   const [selectedSeq, setSelectedSeq] = useState(initialSequences[0]);
   const [showCreate, setShowCreate] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showTaskQueue, setShowTaskQueue] = useState(false);
   const [aiSuggesting, setAiSuggesting] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState(null);
 
@@ -357,6 +360,9 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
               <h3 className="font-bold text-foreground">All Sequences</h3>
               <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setShowTaskQueue(!showTaskQueue)} className="gap-1.5 text-xs border-blue-500/30 text-blue-400 hover:bg-blue-500/10">
+                  <ListTodo className="w-3.5 h-3.5" /> Task Queue
+                </Button>
                 <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)} className="gap-1.5 text-xs border-border/60">
                   <BookOpen className="w-3.5 h-3.5" /> Templates
                 </Button>
@@ -373,9 +379,11 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
             </div>
           </div>
 
-          {/* Sequence Detail */}
+          {/* Task Queue or Sequence Detail */}
           <div className="lg:col-span-2 glass rounded-xl p-5">
-            {selectedSeq ? (
+            {showTaskQueue ? (
+              <TaskQueuePanel onClose={() => setShowTaskQueue(false)} />
+            ) : selectedSeq ? (
               <>
                 <div className="flex items-center justify-between mb-4">
                   <div>
@@ -417,7 +425,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                     ) : selectedSeq.steps.map((step, i) => {
                       const Icon = channelIcons[step.type] || Mail;
                       return (
-                        <div key={i} className="flex items-center gap-3 py-1.5">
+                        <div key={i} className="flex items-start gap-3 py-1.5">
                           <div className="flex flex-col items-center flex-shrink-0">
                             <div className={`w-6 h-6 rounded-full ${channelBg[step.type] || 'bg-secondary'} flex items-center justify-center`}>
                               <Icon className={`w-3 h-3 ${channelColors[step.type]}`} />
@@ -426,7 +434,8 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-medium text-foreground truncate">{step.subject}</p>
-                            <p className="text-[10px] text-muted-foreground">Day {step.day} · {step.type}</p>
+                            <p className="text-[10px] text-muted-foreground mb-1">Day {step.day} · {step.type}</p>
+                            <StepExecutionStatus step={step} />
                           </div>
                         </div>
                       );

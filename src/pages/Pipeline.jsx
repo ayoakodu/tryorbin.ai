@@ -11,6 +11,7 @@ import MeetingPrepPanel from '@/components/pipeline/MeetingPrepPanel';
 import ObjectionHandler from '@/components/pipeline/ObjectionHandler';
 import TeamComments from '@/components/collaboration/TeamComments';
 import TaskAssignment from '@/components/collaboration/TaskAssignment';
+import DealCopilotPanel from '@/components/copilot/DealCopilotPanel';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -62,8 +63,8 @@ function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
         <div className="relative">
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button onClick={e => { e.stopPropagation(); onCollab(deal); }}
-              className="text-muted-foreground hover:text-primary" title="Team & AI Tools">
-              <Users className="w-3.5 h-3.5" />
+              className="text-muted-foreground hover:text-primary" title="AI Copilot & Team">
+              <Sparkles className="w-3.5 h-3.5" />
             </button>
             <button onClick={e => { e.stopPropagation(); setShowMenu(!showMenu); }}
               className="text-muted-foreground hover:text-foreground">
@@ -135,6 +136,9 @@ export default function Pipeline() {
   const [meetingPrepDeal, setMeetingPrepDeal] = useState(null);
   const [objectionDeal, setObjectionDeal] = useState(null);
   const [collabDeal, setCollabDeal] = useState(null);
+  const [collabTab, setCollabTab] = useState('ai');
+  const [aiCopilotDeal, setAiCopilotDeal] = useState(null);
+  const [aiCopilotStage, setAiCopilotStage] = useState(null);
   const { toast } = useToast();
 
   const totalValue = Object.values(deals).flat().reduce((sum, d) => sum + d.value, 0);
@@ -289,19 +293,63 @@ Focus on risk, stale deals, or quick wins.`,
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
-              <div className="flex gap-2">
-                <button onClick={() => { setMeetingPrepDeal(collabDeal); setCollabDeal(null); }}
-                  className="flex-1 p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-xs text-primary font-semibold flex items-center gap-1.5 justify-center hover:bg-primary/20 transition-colors">
-                  <ClipboardList className="w-3.5 h-3.5" /> Meeting Prep
+
+            {/* Tab Bar */}
+            <div className="flex border-b border-border/30 px-3 pt-2 gap-1">
+              {[['ai', 'AI Copilot'], ['team', 'Team'], ['tools', 'Tools']].map(([tab, label]) => (
+                <button key={tab} onClick={() => setCollabTab(tab)}
+                  className={`text-xs px-3 py-2 rounded-t-lg font-medium transition-colors ${collabTab === tab ? 'bg-secondary text-foreground border border-border/40 border-b-0' : 'text-muted-foreground hover:text-foreground'}`}>
+                  {label}
                 </button>
-                <button onClick={() => { setObjectionDeal(collabDeal); setCollabDeal(null); }}
-                  className="flex-1 p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-semibold flex items-center gap-1.5 justify-center hover:bg-violet-500/20 transition-colors">
-                  <MessageSquare className="w-3.5 h-3.5" /> Objections
-                </button>
-              </div>
-              <TaskAssignment entityId={collabDeal.id} />
-              <TeamComments entityId={collabDeal.id} entityType="deal" />
+              ))}
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {collabTab === 'ai' && (
+                <div className="space-y-4">
+                  <p className="text-xs text-muted-foreground">AI Copilot analyzes this deal and generates contextual recommendations.</p>
+                  <button onClick={() => { setAiCopilotDeal(collabDeal); setAiCopilotStage(Object.entries(deals).find(([, ds]) => ds.some(d => d.id === collabDeal.id))?.[0] || 'prospecting'); }}
+                    className="w-full p-3 rounded-xl bg-primary/10 border border-primary/20 text-sm text-primary font-semibold flex items-center gap-2 justify-center hover:bg-primary/20 transition-colors">
+                    <Sparkles className="w-4 h-4" /> Open AI Copilot
+                  </button>
+                  <div className="space-y-2">
+                    {[
+                      { label: 'Meeting Prep', action: () => { setMeetingPrepDeal(collabDeal); setCollabDeal(null); }, color: 'text-cyan-400 bg-cyan-500/10 border-cyan-500/20', icon: ClipboardList },
+                      { label: 'Objection Handler', action: () => { setObjectionDeal(collabDeal); setCollabDeal(null); }, color: 'text-violet-400 bg-violet-500/10 border-violet-500/20', icon: MessageSquare },
+                    ].map(item => (
+                      <button key={item.label} onClick={item.action}
+                        className={`w-full p-2.5 rounded-xl border text-xs font-semibold flex items-center gap-2 justify-center hover:opacity-80 transition-opacity ${item.color}`}>
+                        <item.icon className="w-3.5 h-3.5" /> {item.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {collabTab === 'team' && (
+                <div className="space-y-6">
+                  <TaskAssignment entityId={collabDeal.id} />
+                  <TeamComments entityId={collabDeal.id} entityType="deal" />
+                </div>
+              )}
+              {collabTab === 'tools' && (
+                <div className="space-y-3 text-xs text-muted-foreground">
+                  <p className="font-semibold text-foreground">Deal Info</p>
+                  {[
+                    { label: 'Value', value: `$${collabDeal.value?.toLocaleString()}` },
+                    { label: 'Contact', value: collabDeal.contact },
+                    { label: 'Probability', value: `${collabDeal.probability}%` },
+                    { label: 'Last Activity', value: collabDeal.days > 0 ? `${collabDeal.days} days ago` : 'Today' },
+                  ].map(row => (
+                    <div key={row.label} className="flex justify-between py-1.5 border-b border-border/20">
+                      <span className="text-muted-foreground">{row.label}</span>
+                      <span className="font-medium text-foreground">{row.value}</span>
+                    </div>
+                  ))}
+                  {collabDeal.notes && (
+                    <div className="p-3 rounded-lg bg-secondary/50 text-xs text-muted-foreground italic">"{collabDeal.notes}"</div>
+                  )}
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -309,6 +357,9 @@ Focus on risk, stale deals, or quick wins.`,
 
       {meetingPrepDeal && <MeetingPrepPanel deal={meetingPrepDeal} onClose={() => setMeetingPrepDeal(null)} />}
       {objectionDeal && <ObjectionHandler deal={objectionDeal} onClose={() => setObjectionDeal(null)} />}
+      <AnimatePresence>
+        {aiCopilotDeal && <DealCopilotPanel deal={aiCopilotDeal} currentStage={aiCopilotStage} onClose={() => setAiCopilotDeal(null)} />}
+      </AnimatePresence>
 
       {/* Add/Edit Deal Dialog */}
       <Dialog open={showAdd || !!editDeal} onOpenChange={(open) => { if (!open) { setShowAdd(false); setEditDeal(null); } }}>
