@@ -4,8 +4,13 @@ import { base44 } from '@/api/base44Client';
 import {
   Plus, DollarSign, TrendingUp, AlertTriangle, User,
   MoreHorizontal, Sparkles, Loader2, X, Calendar, Edit3,
-  ChevronRight, CheckCircle2, Clock, FileText
+  ChevronRight, CheckCircle2, Clock, FileText, ClipboardList,
+  MessageSquare, Users
 } from 'lucide-react';
+import MeetingPrepPanel from '@/components/pipeline/MeetingPrepPanel';
+import ObjectionHandler from '@/components/pipeline/ObjectionHandler';
+import TeamComments from '@/components/collaboration/TeamComments';
+import TaskAssignment from '@/components/collaboration/TaskAssignment';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +50,7 @@ const initialDealsData = {
   ],
 };
 
-function DealCard({ deal, onMove, onEdit, stages, currentStage }) {
+function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
   const [showMenu, setShowMenu] = useState(false);
   const otherStages = stages.filter(s => s.id !== currentStage);
 
@@ -55,10 +60,16 @@ function DealCard({ deal, onMove, onEdit, stages, currentStage }) {
       <div className="flex items-start justify-between mb-3">
         <h4 className="text-sm font-semibold text-foreground leading-tight pr-2">{deal.title}</h4>
         <div className="relative">
-          <button onClick={e => { e.stopPropagation(); setShowMenu(!showMenu); }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground">
-            <MoreHorizontal className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={e => { e.stopPropagation(); onCollab(deal); }}
+              className="text-muted-foreground hover:text-primary" title="Team & AI Tools">
+              <Users className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={e => { e.stopPropagation(); setShowMenu(!showMenu); }}
+              className="text-muted-foreground hover:text-foreground">
+              <MoreHorizontal className="w-4 h-4" />
+            </button>
+          </div>
           {showMenu && (
             <div className="absolute right-0 top-6 z-20 glass rounded-xl border border-border/60 shadow-xl min-w-[160px] py-1 overflow-hidden">
               <button onClick={() => { onEdit(deal, currentStage); setShowMenu(false); }}
@@ -121,6 +132,9 @@ export default function Pipeline() {
   const [aiInsight, setAiInsight] = useState('2 deals in Proposal stage haven\'t had activity in 18+ days. AI can generate personalized follow-up messages for each — click to take action now.');
   const [aiLoading, setAiLoading] = useState(false);
   const [form, setForm] = useState({ title: '', company: '', contact: '', value: '', probability: '30', notes: '' });
+  const [meetingPrepDeal, setMeetingPrepDeal] = useState(null);
+  const [objectionDeal, setObjectionDeal] = useState(null);
+  const [collabDeal, setCollabDeal] = useState(null);
   const { toast } = useToast();
 
   const totalValue = Object.values(deals).flat().reduce((sum, d) => sum + d.value, 0);
@@ -245,7 +259,7 @@ Focus on risk, stale deals, or quick wins.`,
                     <AnimatePresence>
                       {stageDeals.map(deal => (
                         <DealCard key={deal.id} deal={deal} currentStage={stage.id}
-                          stages={stages} onMove={moveDeal} onEdit={openEdit} />
+                          stages={stages} onMove={moveDeal} onEdit={openEdit} onCollab={setCollabDeal} />
                       ))}
                     </AnimatePresence>
                   </div>
@@ -260,6 +274,41 @@ Focus on risk, stale deals, or quick wins.`,
           </div>
         </div>
       </div>
+
+      {/* Collaboration sidebar */}
+      <AnimatePresence>
+        {collabDeal && (
+          <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+            className="fixed right-0 top-0 h-full w-80 bg-card border-l border-border/60 shadow-2xl z-40 flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-border/30">
+              <div>
+                <p className="text-sm font-bold text-foreground">{collabDeal.title}</p>
+                <p className="text-xs text-muted-foreground">{collabDeal.company}</p>
+              </div>
+              <button onClick={() => setCollabDeal(null)} className="text-muted-foreground hover:text-foreground">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-4 space-y-6">
+              <div className="flex gap-2">
+                <button onClick={() => { setMeetingPrepDeal(collabDeal); setCollabDeal(null); }}
+                  className="flex-1 p-2.5 rounded-xl bg-primary/10 border border-primary/20 text-xs text-primary font-semibold flex items-center gap-1.5 justify-center hover:bg-primary/20 transition-colors">
+                  <ClipboardList className="w-3.5 h-3.5" /> Meeting Prep
+                </button>
+                <button onClick={() => { setObjectionDeal(collabDeal); setCollabDeal(null); }}
+                  className="flex-1 p-2.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-xs text-violet-400 font-semibold flex items-center gap-1.5 justify-center hover:bg-violet-500/20 transition-colors">
+                  <MessageSquare className="w-3.5 h-3.5" /> Objections
+                </button>
+              </div>
+              <TaskAssignment entityId={collabDeal.id} />
+              <TeamComments entityId={collabDeal.id} entityType="deal" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {meetingPrepDeal && <MeetingPrepPanel deal={meetingPrepDeal} onClose={() => setMeetingPrepDeal(null)} />}
+      {objectionDeal && <ObjectionHandler deal={objectionDeal} onClose={() => setObjectionDeal(null)} />}
 
       {/* Add/Edit Deal Dialog */}
       <Dialog open={showAdd || !!editDeal} onOpenChange={(open) => { if (!open) { setShowAdd(false); setEditDeal(null); } }}>

@@ -5,16 +5,18 @@ import {
   MessageCircle, Send, Sparkles, Search, Plus,
   Phone, MoreHorizontal, Check, CheckCheck, Loader2,
   Smile, Paperclip, Mic, Users, TrendingUp, Reply,
-  Clock, Archive, Star, Filter
+  Clock, Archive, Star, Filter, UserCheck
 } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import VoiceNotePlayer from '@/components/whatsapp/VoiceNotePlayer';
+import SharedInboxHeader from '@/components/whatsapp/SharedInboxHeader';
 
-const conversations = [
-  {
-    id: 1, name: 'Amara Diallo', company: 'Flutterwave', phone: '+234 801 234 5678',
+const conversationsData = [
+{
+  id: 1, name: 'Amara Diallo', company: 'Flutterwave', phone: '+234 801 234 5678',
     avatar: 'AD', status: 'online', unread: 2,
     lastMessage: 'Thanks for the demo, very impressive!', lastTime: '2m ago',
     tag: 'hot',
@@ -73,8 +75,9 @@ const templates = [
 ];
 
 export default function WhatsApp() {
-  const [convs, setConvs] = useState(conversations);
-  const [selected, setSelected] = useState(conversations[0]);
+  const [convs, setConvs] = useState(conversationsData);
+  const [selected, setSelected] = useState(conversationsData[0]);
+  const [assignedTo, setAssignedTo] = useState(null);
   const [message, setMessage] = useState('');
   const [search, setSearch] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -196,6 +199,9 @@ Just write the message text, nothing else.`,
         {/* Chat window */}
         {selected ? (
           <div className="flex-1 glass rounded-xl flex flex-col overflow-hidden">
+            {/* Shared inbox header */}
+            <SharedInboxHeader assignedTo={assignedTo} onAssign={setAssignedTo} />
+
             {/* Chat header */}
             <div className="flex items-center gap-3 px-5 py-4 border-b border-border/30">
               <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-sm font-bold text-primary">
@@ -216,21 +222,31 @@ Just write the message text, nothing else.`,
               {selected.messages.map(msg => (
                 <motion.div key={msg.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
                   className={`flex ${msg.role === 'sent' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`max-w-[72%] px-4 py-2.5 rounded-2xl text-sm ${
-                    msg.role === 'sent'
-                      ? 'bg-primary text-primary-foreground rounded-br-sm'
-                      : 'glass border border-border/40 text-foreground rounded-bl-sm'
-                  }`}>
-                    <p className="leading-relaxed">{msg.content}</p>
-                    <div className={`flex items-center gap-1 mt-1 ${msg.role === 'sent' ? 'justify-end' : 'justify-start'}`}>
-                      <span className={`text-[10px] ${msg.role === 'sent' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{msg.time}</span>
-                      {msg.role === 'sent' && (
-                        msg.status === 'read' ? <CheckCheck className="w-3 h-3 text-primary-foreground/80" /> : <Check className="w-3 h-3 text-primary-foreground/60" />
-                      )}
+                  {msg.type === 'voice' ? (
+                    <VoiceNotePlayer note={msg} />
+                  ) : (
+                    <div className={`max-w-[72%] px-4 py-2.5 rounded-2xl text-sm ${
+                      msg.role === 'sent'
+                        ? 'bg-primary text-primary-foreground rounded-br-sm'
+                        : 'glass border border-border/40 text-foreground rounded-bl-sm'
+                    }`}>
+                      <p className="leading-relaxed">{msg.content}</p>
+                      <div className={`flex items-center gap-1 mt-1 ${msg.role === 'sent' ? 'justify-end' : 'justify-start'}`}>
+                        <span className={`text-[10px] ${msg.role === 'sent' ? 'text-primary-foreground/60' : 'text-muted-foreground'}`}>{msg.time}</span>
+                        {msg.role === 'sent' && (
+                          msg.status === 'read' ? <CheckCheck className="w-3 h-3 text-primary-foreground/80" /> : <Check className="w-3 h-3 text-primary-foreground/60" />
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </motion.div>
               ))}
+              {/* Simulated voice note in Amara's conversation */}
+              {selected.id === 1 && (
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="flex justify-start">
+                  <VoiceNotePlayer note={{ duration: 8, sender: 'Amara Diallo', context: 'Nigeria', topic: 'requesting a product demo and asking about pricing' }} />
+                </motion.div>
+              )}
               <div ref={bottomRef} />
             </div>
 

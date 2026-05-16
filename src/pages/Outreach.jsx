@@ -6,8 +6,9 @@ import {
   Phone, MoreHorizontal, Sparkles, Users, TrendingUp,
   Reply, Zap, X, ChevronRight, Copy, Trash2,
   Clock, GitBranch, CheckCircle2, Loader2, Edit3,
-  BarChart3, AlertCircle, ArrowRight
+  BarChart3, AlertCircle, ArrowRight, BookOpen
 } from 'lucide-react';
+import SequenceTemplates from '@/components/outreach/SequenceTemplates';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -270,6 +271,7 @@ export default function Outreach() {
   const [sequences, setSequences] = useState(initialSequences);
   const [selectedSeq, setSelectedSeq] = useState(initialSequences[0]);
   const [showCreate, setShowCreate] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [aiSuggesting, setAiSuggesting] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState(null);
 
@@ -290,6 +292,22 @@ export default function Outreach() {
     setSequences(prev => [...prev, newSeq]);
     setSelectedSeq(newSeq);
     setShowCreate(false);
+  };
+
+  const duplicateSequence = (seq) => {
+    const copy = { ...seq, id: Date.now(), name: `${seq.name} (Copy)`, status: 'draft', enrolled: 0, replied: 0, meetings: 0, opens: 0 };
+    setSequences(prev => [...prev, copy]);
+  };
+
+  const useTemplate = (template) => {
+    const newSeq = {
+      id: Date.now(), name: template.name, channel: template.channel, status: 'draft',
+      enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: template.tags,
+      steps: template.steps_data
+    };
+    setSequences(prev => [...prev, newSeq]);
+    setSelectedSeq(newSeq);
+    setShowTemplates(false);
   };
 
   const getAISuggestion = async () => {
@@ -338,9 +356,14 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
           <div className="lg:col-span-3 glass rounded-xl overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
               <h3 className="font-bold text-foreground">All Sequences</h3>
-              <Button size="sm" onClick={() => setShowCreate(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 text-xs">
-                <Plus className="w-3.5 h-3.5" /> New Sequence
-              </Button>
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)} className="gap-1.5 text-xs border-border/60">
+                  <BookOpen className="w-3.5 h-3.5" /> Templates
+                </Button>
+                <Button size="sm" onClick={() => setShowCreate(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 text-xs">
+                  <Plus className="w-3.5 h-3.5" /> New Sequence
+                </Button>
+              </div>
             </div>
             <div>
               {sequences.map(seq => (
@@ -362,11 +385,8 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                     </span>
                   </div>
                   <div className="flex gap-1.5">
-                    <button className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground" title="Duplicate">
+                    <button onClick={() => duplicateSequence(selectedSeq)} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground" title="Duplicate">
                       <Copy className="w-3.5 h-3.5" />
-                    </button>
-                    <button className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground" title="Edit">
-                      <Edit3 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -445,6 +465,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
 
       <AnimatePresence>
         {showCreate && <CreateSequenceModal onClose={() => setShowCreate(false)} onSave={saveSequence} />}
+        {showTemplates && <SequenceTemplates onClose={() => setShowTemplates(false)} onUse={useTemplate} />}
       </AnimatePresence>
     </div>
   );

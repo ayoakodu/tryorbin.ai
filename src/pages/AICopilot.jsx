@@ -4,7 +4,8 @@ import { base44 } from '@/api/base44Client';
 import { 
   Sparkles, Send, Zap, ChevronRight, Copy, 
   RefreshCw, ThumbsUp, ThumbsDown, Loader2,
-  MessageSquare, TrendingUp, Users, Mail, BarChart3
+  MessageSquare, TrendingUp, Users, Mail, BarChart3,
+  ClipboardList, BookOpen
 } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
@@ -13,10 +14,12 @@ import { Textarea } from '@/components/ui/textarea';
 const suggestionPrompts = [
   { icon: Mail, text: 'Write a 5-step outbound email sequence for fintech CTOs in Nigeria focused on cost reduction', category: 'Sequences' },
   { icon: MessageSquare, text: 'Generate a WhatsApp outreach message for a Series B CEO in East Africa', category: 'WhatsApp' },
-  { icon: TrendingUp, text: 'Which deals in my pipeline show risk signals and what should I do about them?', category: 'Pipeline' },
-  { icon: BarChart3, text: 'Analyze my outbound campaign and suggest 3 specific improvements to increase reply rate', category: 'Campaigns' },
-  { icon: Users, text: 'Write a personalized first line for the Head of Sales at Flutterwave', category: 'Personalization' },
-  { icon: Sparkles, text: 'Generate objection handling responses for "We already have a CRM" in the African market', category: 'Objections' },
+  { icon: TrendingUp, text: 'Which deals in my pipeline show risk signals and what should I do about them? Give me a ranked priority list with specific next actions.', category: 'Pipeline' },
+  { icon: BarChart3, text: 'Analyze my outbound campaign and suggest 3 specific improvements to increase reply rate by at least 20%', category: 'Campaigns' },
+  { icon: Users, text: 'Write a personalized first line for the Head of Sales at Flutterwave based on their recent product launches', category: 'Personalization' },
+  { icon: Sparkles, text: 'Generate objection handling responses for "We already have a CRM" in the African market context', category: 'Objections' },
+  { icon: RefreshCw, text: 'Prepare me for a discovery call with the VP of Engineering at a Nigerian fintech company. Give me key questions, likely objections, and a recommended talk track.', category: 'Meeting Prep' },
+  { icon: Zap, text: 'My deal at Andela has gone cold — they haven\'t responded in 3 weeks. Write a re-engagement message for WhatsApp and email.', category: 'Re-engagement' },
 ];
 
 const initialMessages = [
@@ -112,15 +115,18 @@ export default function AICopilot() {
     const response = await base44.integrations.Core.InvokeLLM({
       prompt: `You are RVNU AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.
 
-You specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, and sales automation strategy.
+You specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, meeting prep, re-engagement strategies, and sales automation.
 
 Key principles:
-- Be specific and actionable, not generic
-- Tailor all advice for African and emerging market contexts
-- WhatsApp is a primary channel, not secondary
-- Focus on execution speed and workflow efficiency
-- Use markdown bold (**text**) for emphasis and structure your responses clearly
-- Keep responses concise but comprehensive
+- Be specific and actionable, never generic
+- Tailor all advice for African and emerging market contexts (Nigeria, Ghana, Kenya, South Africa, Egypt, etc.)
+- WhatsApp is a PRIMARY sales channel — treat it accordingly
+- Focus on execution speed and concrete next steps
+- Use markdown bold (**text**) for emphasis
+- Structure responses clearly with sections when helpful
+- For meeting prep: include talk track, key questions, likely objections, and recommended next step
+- For objection handling: acknowledge → reframe → respond → close
+- For pipeline risk: rank deals by urgency and give specific follow-up copy
 
 User request: ${userText}`,
     });
@@ -197,7 +203,7 @@ User request: ${userText}`,
               />
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/30">
                 <div className="flex gap-2 flex-wrap">
-                {['Write sequence', 'WhatsApp message', 'Pipeline review', 'Objection handling'].map(t => (
+                {['Write sequence', 'WhatsApp message', 'Meeting prep', 'Objection handling', 'Pipeline risk', 'Re-engagement'].map(t => (
                   <button key={t} onClick={() => setInput(t)}
                     className="text-xs text-muted-foreground hover:text-primary px-2.5 py-1 rounded-md bg-secondary/50 hover:bg-primary/10 transition-colors">
                     {t}
