@@ -76,14 +76,14 @@ const initialSequences = [
 function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
   const replyRate = seq.enrolled > 0 ? ((seq.replied / seq.enrolled) * 100).toFixed(1) : 0;
   const meetingRate = seq.enrolled > 0 ? ((seq.meetings / seq.enrolled) * 100).toFixed(1) : 0;
-  const channelIcon = seq.channel === 'multi-channel' ? Zap : (channelIcons[seq.channel] || Mail);
+  const ChannelIcon = seq.channel === 'multi-channel' ? Zap : (channelIcons[seq.channel] || Mail);
   const channelColor = seq.channel === 'multi-channel' ? 'text-amber-400' : (channelColors[seq.channel] || 'text-blue-400');
 
   return (
     <div onClick={() => onSelect(seq)}
       className={`flex items-center gap-4 px-5 py-4 border-b border-border/20 hover:bg-secondary/30 transition-colors cursor-pointer ${isSelected ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}>
       <div className={`w-8 h-8 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0`}>
-        {React.createElement(channelIcon, { className: `w-4 h-4 ${channelColor}` })}
+        <ChannelIcon className={`w-4 h-4 ${channelColor}`} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
