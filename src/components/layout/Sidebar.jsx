@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, Users, Building2, TrendingUp, 
+  Home, Users, Building2, TrendingUp, 
   Megaphone, Mail, BarChart3, Zap, MessageCircle,
   Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound,
   Phone, CheckSquare, Radio, List, MailOpen
@@ -11,7 +11,7 @@ const navGroups = [
   {
     label: null,
     items: [
-      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+      { icon: Home, label: 'Home', path: '/dashboard' },
       { icon: Sparkles, label: 'AI Copilot', path: '/ai-copilot', highlight: true },
     ],
   },
