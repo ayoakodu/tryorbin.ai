@@ -9,7 +9,8 @@ import {
   Bot, Workflow, PieChart, Handshake, Cpu, Wallet, Truck,
   Megaphone, Rocket, Store, UserCheck, Network,
   CalendarCheck, Inbox, Globe, LineChart,
-  Activity, LayoutDashboard, UserCog, Gauge, Send
+  Activity, LayoutDashboard, UserCog, Gauge, Send,
+  FileText, Link2, Bell, Stars
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -68,7 +69,7 @@ const navData = {
       {
         label: 'COMPANY TYPE',
         items: [
-          { icon: Rocket, title: 'Startups', desc: 'Launch your GTM motion from day one.' },
+          { icon: Stars, title: 'Startups', desc: 'Launch your GTM motion from day one.' },
           { icon: Store, title: 'SMB & Mid-Market', desc: 'Scale revenue without scaling headcount.' },
           { icon: Activity, title: 'High-Growth Companies', desc: 'Accelerate pipeline for teams moving fast.' },
           { icon: ArrowRight, title: 'See all company types', desc: 'Find the right fit for your organization.', highlight: true, seeAll: true },
@@ -113,20 +114,20 @@ const navData = {
         cols: 2,
         items: [
           { icon: BookOpen, title: 'Blog', desc: 'Insights, trends, and GTM strategies from the RVNU team.' },
-          { icon: Zap, title: 'Product Updates', desc: 'See the latest features and improvements to RVNU.' },
-          { icon: Users, title: 'Customer Stories', desc: 'How revenue teams use RVNU to grow faster.' },
+          { icon: Megaphone, title: 'Product Updates', desc: 'See the latest features and improvements to RVNU.' },
+          { icon: Eye, title: 'Customer Stories', desc: 'How revenue teams use RVNU to grow faster.' },
         ],
       },
       {
         label: 'LEARN',
         cols: 2,
         items: [
-          { icon: Inbox, title: 'Help Center' },
+          { icon: BookOpen, title: 'Help Center' },
           { icon: Rocket, title: 'Getting Started' },
           { icon: Database, title: 'API Documentation' },
           { icon: Network, title: 'Integrations' },
           { icon: Map, title: 'GTM Playbooks' },
-          { icon: List, title: 'Revenue Templates' },
+          { icon: FileText, title: 'Revenue Templates' },
           { icon: Workflow, title: 'Workflow Tutorials' },
           { icon: GraduationCap, title: 'RVNU Academy' },
         ],
@@ -135,9 +136,9 @@ const navData = {
         label: 'CONNECT',
         cols: 2,
         items: [
-          { icon: Globe, title: 'Webinars', desc: 'Live and on-demand sessions with GTM experts.' },
-          { icon: CalendarCheck, title: 'Events', desc: 'Conferences, meetups, and RVNU-hosted events.' },
-          { icon: Handshake, title: 'Join the Community', desc: 'Connect with revenue operators using RVNU.' },
+          { icon: LayoutDashboard, title: 'Webinars', desc: 'Live and on-demand sessions with GTM experts.' },
+          { icon: Bell, title: 'Events', desc: 'Conferences, meetups, and RVNU-hosted events.' },
+          { icon: Network, title: 'Join the Community', desc: 'Connect with revenue operators using RVNU.' },
         ],
       },
       {
@@ -146,7 +147,7 @@ const navData = {
         items: [
           { icon: Building, title: 'About Us', desc: "It's time we stop working for our software." },
           { icon: Briefcase, title: 'Careers', desc: 'Join the RVNU team.' },
-          { icon: UserCheck, title: 'Partners', desc: 'Introducing the RVNU Agency Network.' },
+          { icon: Link2, title: 'Partners', desc: 'Introducing the RVNU Agency Network.' },
           { icon: Mail, title: 'Contact', desc: 'Get in touch with our team.' },
         ],
       },
