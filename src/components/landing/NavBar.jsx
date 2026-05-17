@@ -4,11 +4,12 @@ import {
   Zap, ArrowRight, ChevronDown, Menu, X,
   Target, Shield, Layers, Search, Users, TrendingUp, Brain,
   Database, List, Map, Mail, BookOpen, Building, Briefcase,
-  GraduationCap, RefreshCw, BarChart2, Filter,
-  MessageCircle, Sparkles, GitBranch, BarChart, Share2, Eye,
+  GraduationCap, BarChart2, Filter,
+  MessageCircle, GitBranch, BarChart, Share2, Eye,
   Bot, Workflow, PieChart, Handshake, Cpu, Wallet, Truck,
-  Megaphone, Rocket, Store, FlaskConical, UserCheck, Network,
-  CalendarCheck, Inbox, ClipboardList, Globe, LineChart
+  Megaphone, Rocket, Store, UserCheck, Network,
+  CalendarCheck, Inbox, Globe, LineChart,
+  Activity, LayoutDashboard, UserCog
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -32,7 +33,7 @@ const navData = {
         items: [
           { icon: GitBranch, title: 'AI Sequences', desc: 'Generate and launch AI-powered multichannel outbound campaigns.' },
           { icon: MessageCircle, title: 'WhatsApp Workflows', desc: 'Run WhatsApp-native engagement campaigns with AI-powered messaging and shared inboxes.' },
-          { icon: Sparkles, title: 'AI Personalization', desc: 'Generate personalized outreach, follow-ups, and messaging at scale.' },
+          { icon: UserCog, title: 'AI Personalization', desc: 'Generate personalized outreach, follow-ups, and messaging at scale.' },
           { icon: Bot, title: 'AI Agents', desc: 'AI assistants for campaign optimization, pipeline execution, and GTM productivity.' },
           { icon: Zap, title: 'Workflow Automation', desc: 'Create trigger-based automations for outreach, follow-ups, and pipeline actions.' },
           { icon: Globe, title: 'GTM Intelligence', desc: 'Unified engagement insights, account summaries, and activity visibility.' },
@@ -69,7 +70,7 @@ const navData = {
         items: [
           { icon: Rocket, title: 'Startups', desc: 'Launch your GTM motion from day one.' },
           { icon: Store, title: 'SMB & Mid-Market', desc: 'Scale revenue without scaling headcount.' },
-          { icon: FlaskConical, title: 'High-Growth Companies', desc: 'Accelerate pipeline for teams moving fast.' },
+          { icon: Activity, title: 'High-Growth Companies', desc: 'Accelerate pipeline for teams moving fast.' },
           { icon: ArrowRight, title: 'See all company types', desc: 'Find the right fit for your organization.', highlight: true, seeAll: true },
         ],
       },
@@ -78,7 +79,7 @@ const navData = {
         items: [
           { icon: Handshake, title: 'Sales Teams', desc: 'Close more deals and book more meetings with AI.' },
           { icon: Megaphone, title: 'Marketing Teams', desc: 'Run campaigns that convert across every channel.' },
-          { icon: ClipboardList, title: 'Revenue Operations', desc: 'Orchestrate data, tools, and GTM execution.' },
+          { icon: LayoutDashboard, title: 'Revenue Operations', desc: 'Orchestrate data, tools, and GTM execution.' },
           { icon: UserCheck, title: 'Founders & GTM Leaders', desc: 'Own your revenue motion from the top down.' },
         ],
       },
