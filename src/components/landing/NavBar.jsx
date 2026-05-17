@@ -44,25 +44,50 @@ const navData = {
       {
         label: 'USE CASES',
         items: [
-          { icon: RefreshCw, title: 'RevOps', desc: 'Align data, ownership, and forecasts.' },
-          { icon: BarChart2, title: 'Sales', desc: 'Prioritize deals and move opportunities forward.' },
-          { icon: Target, title: 'Marketing', desc: 'Define your market and focus where demand forms.' },
-          { icon: TrendingUp, title: 'Growth', desc: 'Scale pipeline from active demand.' },
+          { icon: Search, title: 'Outbound Prospecting', desc: 'Find and engage your ideal buyers at scale.' },
+          { icon: Target, title: 'Meeting Generation', desc: 'Book more qualified meetings with less effort.' },
+          { icon: TrendingUp, title: 'Pipeline Acceleration', desc: 'Move deals faster with AI-driven engagement.' },
+          { icon: RefreshCw, title: 'Lead Follow-Up', desc: 'Never let a warm lead go cold again.' },
+          { icon: BarChart2, title: 'Revenue Operations', desc: 'Align your GTM data, workflows, and forecasts.' },
+          { icon: Users, title: 'GTM Collaboration', desc: 'Coordinate sales and marketing in one workspace.' },
+          { icon: MessageCircle, title: 'Customer Engagement', desc: 'Drive retention and expansion through smart outreach.' },
+          { icon: Share2, title: 'Sales & Marketing Alignment', desc: 'Unify messaging, data, and pipeline ownership.' },
         ],
       },
       {
         label: 'INDUSTRIES',
         items: [
-          { icon: Building, title: 'B2B SaaS & Enterprise Software', desc: 'Target software companies with buying signals and fit.' },
-          { icon: Layers, title: '3PL & Logistics', desc: 'Find fulfillment-focused providers no database can surface.' },
-          { icon: Shield, title: 'Cybersecurity', desc: 'Reach security vendors evaluating new pipeline sources.' },
-          { icon: ArrowRight, title: 'See all 25 industries', desc: 'Explore every vertical RVNU supports.', highlight: true },
+          { icon: Brain, title: 'SaaS & Enterprise Software', desc: 'Target software buyers with precision and intent.' },
+          { icon: Shield, title: 'FinTech & Payments', desc: 'Reach financial decision-makers at the right time.' },
+          { icon: Layers, title: 'Logistics & Supply Chain', desc: 'Engage logistics operators and procurement teams.' },
+          { icon: Briefcase, title: 'Agencies & Consulting', desc: 'Win new retainers and scale client pipelines.' },
+          { icon: Zap, title: 'Telecommunications', desc: 'Penetrate enterprise telecoms with smarter outbound.' },
+          { icon: Building, title: 'B2B Services', desc: 'Generate leads for professional services at scale.' },
+          { icon: ArrowRight, title: 'E-commerce & Marketplace Platforms', desc: 'Drive B2B growth for digital commerce teams.' },
+          { icon: Sparkles, title: 'AI & Technology Companies', desc: 'Accelerate GTM for fast-moving tech businesses.' },
         ],
       },
       {
-        label: 'SEE US IN ACTION',
+        label: 'COMPANY TYPE',
         items: [
-          { icon: BookOpen, title: 'Step-by-Step Guides', desc: 'Learn how teams use RVNU.', highlight: true },
+          { icon: TrendingUp, title: 'Startups', desc: 'Launch your GTM motion from day one.' },
+          { icon: BarChart2, title: 'SMB & Mid-Market', desc: 'Scale revenue without scaling headcount.' },
+          { icon: Zap, title: 'High-Growth Companies', desc: 'Accelerate pipeline for teams moving fast.' },
+          { icon: Users, title: 'Remote Teams', desc: 'Coordinate distributed GTM teams with ease.' },
+          { icon: Target, title: 'Revenue-Led Organizations', desc: 'Align every team around pipeline and growth.' },
+          { icon: BarChart, title: 'Sales-Led Organizations', desc: 'Empower your sales team with AI-native tools.' },
+        ],
+      },
+      {
+        label: 'TEAMS',
+        items: [
+          { icon: BarChart2, title: 'Sales Teams', desc: 'Close more deals with AI-assisted workflows.' },
+          { icon: Target, title: 'SDR & BDR Teams', desc: 'Automate prospecting and book more meetings.' },
+          { icon: RefreshCw, title: 'Revenue Operations', desc: 'Orchestrate data, tools, and GTM execution.' },
+          { icon: Sparkles, title: 'Marketing Teams', desc: 'Run campaigns that convert across every channel.' },
+          { icon: TrendingUp, title: 'Growth Teams', desc: 'Experiment, iterate, and scale pipeline fast.' },
+          { icon: MessageCircle, title: 'Customer Success', desc: 'Retain and expand accounts with smart outreach.' },
+          { icon: Brain, title: 'Founders & GTM Leaders', desc: 'Own your revenue motion from the top down.' },
         ],
       },
     ],
@@ -109,7 +134,7 @@ const navData = {
 
 function DropdownPanel({ data }) {
   const sections = data.sections;
-  const colCount = sections.length >= 3 ? 3 : sections.length >= 2 ? 2 : 1;
+  const colCount = sections.length >= 4 ? 4 : sections.length >= 3 ? 3 : sections.length >= 2 ? 2 : 1;
 
   return (
     <div className={`grid gap-8`} style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
@@ -211,7 +236,7 @@ export default function NavBar() {
 
               {activeMenu === menu && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl p-6 z-50"
-                  style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '760px' : '580px' }}
+                  style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '960px' : '580px' }}
                 >
                   <DropdownPanel data={navData[menu]} />
                 </div>
