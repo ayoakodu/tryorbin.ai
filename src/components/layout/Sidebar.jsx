@@ -2,22 +2,53 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, Building2, TrendingUp, 
   Megaphone, Mail, BarChart3, Zap, MessageCircle,
-  Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound
+  Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound,
+  Phone, CheckSquare, Radio, List, MailOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: Sparkles, label: 'AI Copilot', path: '/ai-copilot', highlight: true },
-  { icon: Mail, label: 'Sequences', path: '/outreach' },
-  { icon: Megaphone, label: 'Campaigns', path: '/campaigns' },
-  { icon: MessageCircle, label: 'WhatsApp', path: '/whatsapp' },
-  { icon: TrendingUp, label: 'Pipeline', path: '/pipeline' },
-  { icon: Users, label: 'Prospects', path: '/contacts' },
-  { icon: Building2, label: 'Accounts', path: '/companies' },
-  { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-  { icon: Workflow, label: 'Automations', path: '/automations' },
-  { icon: UsersRound, label: 'Team Workspace', path: '/collaboration' },
+const navGroups = [
+  {
+    label: null,
+    items: [
+      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+      { icon: Sparkles, label: 'AI Copilot', path: '/ai-copilot', highlight: true },
+    ],
+  },
+  {
+    label: 'PROSPECT',
+    items: [
+      { icon: Users, label: 'People', path: '/contacts' },
+      { icon: Building2, label: 'Accounts', path: '/companies' },
+      { icon: List, label: 'Lists', path: '/lists' },
+    ],
+  },
+  {
+    label: 'ENGAGEMENT',
+    items: [
+      { icon: Mail, label: 'Sequences', path: '/outreach' },
+      { icon: MailOpen, label: 'Emails', path: '/emails' },
+      { icon: Phone, label: 'Calls', path: '/calls' },
+      { icon: MessageCircle, label: 'WhatsApp', path: '/whatsapp' },
+      { icon: Megaphone, label: 'Campaigns', path: '/campaigns' },
+      { icon: Radio, label: 'Broadcasts', path: '/broadcasts' },
+      { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
+    ],
+  },
+  {
+    label: 'INTELLIGENCE',
+    items: [
+      { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+      { icon: Workflow, label: 'Automations', path: '/automations' },
+    ],
+  },
+  {
+    label: 'PIPELINE & WORKSPACE',
+    items: [
+      { icon: TrendingUp, label: 'Pipeline', path: '/pipeline' },
+      { icon: UsersRound, label: 'Collaboration', path: '/collaboration' },
+    ],
+  },
 ];
 
 export default function Sidebar() {
@@ -37,29 +68,40 @@ export default function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-        {navItems.map((item) => {
-          const active = location.pathname === item.path;
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 group',
-                active
-                  ? 'bg-emerald-100 text-emerald-700'
-                  : item.highlight
-                  ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
-              )}
-            >
-              <item.icon className={cn('w-4 h-4 flex-shrink-0', active ? 'text-emerald-700' : item.highlight ? 'text-emerald-600' : 'text-slate-500')} />
-              <span>{item.label}</span>
-              {item.highlight && !active && <span className="ml-auto text-[9px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">AI</span>}
-              {active && <ChevronRight className="w-3 h-3 ml-auto text-primary/60" />}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-4">
+        {navGroups.map((group, gi) => (
+          <div key={gi}>
+            {group.label && (
+              <p className="px-3 mb-1 text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+                {group.label}
+              </p>
+            )}
+            <div className="space-y-0.5">
+              {group.items.map((item) => {
+                const active = location.pathname === item.path;
+                return (
+                  <Link
+                    key={item.path}
+                    to={item.path}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 group',
+                      active
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : item.highlight
+                        ? 'text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                    )}
+                  >
+                    <item.icon className={cn('w-4 h-4 flex-shrink-0', active ? 'text-emerald-700' : item.highlight ? 'text-emerald-600' : 'text-slate-500')} />
+                    <span>{item.label}</span>
+                    {item.highlight && !active && <span className="ml-auto text-[9px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">AI</span>}
+                    {active && <ChevronRight className="w-3 h-3 ml-auto text-primary/60" />}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Bottom */}
