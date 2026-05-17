@@ -400,7 +400,7 @@ export default function Landing() {
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
                 The AI-native GTM execution platform for Africa's revenue teams. Automate your outreach, pipeline, and follow-ups — and close faster. Join the waitlist for early access and founder pricing.
               </p>
-              <p className="text-xs text-muted-foreground/50 mb-8">RVNU is currently in development. No credit card required to join the waitlist.</p>
+              <p className="text-xs text-slate-400 mb-8">RVNU is currently in development. No credit card required to join the waitlist.</p>
 
               {!joined ? (
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -408,8 +408,7 @@ export default function Landing() {
                     placeholder="Enter your work email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="sm:w-72 h-12 border-white/20 text-center sm:text-left text-white placeholder:text-white/60"
-                    style={{ background: 'rgba(255,255,255,0.1)' }}
+                    className="sm:w-72 h-12 border-slate-300 text-center sm:text-left text-slate-800 placeholder:text-slate-400 bg-white"
                   />
                   <Button onClick={handleJoin} size="lg" className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 glow-green font-semibold">
                     Join Waitlist <ArrowRight className="w-4 h-4 ml-2" />
