@@ -340,7 +340,7 @@ export default function Landing() {
       <section className="py-16 px-6" style={{ background: '#060b1a' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold mb-3 text-white">Stop tracking. Start executing.</h2>
+            <h2 className="text-2xl font-bold mb-3 gradient-text">Stop tracking. Start executing.</h2>
             <p className="text-slate-400 max-w-xl mx-auto">Most GTM tools show you dashboards. RVNU automates the workflows that drive revenue — outreach, follow-ups, pipeline progression, and conversion — with AI embedded throughout.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
