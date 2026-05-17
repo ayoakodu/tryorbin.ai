@@ -24,9 +24,9 @@ const channelColors = { email: 'text-blue-400', linkedin: 'text-blue-500', whats
 const channelBg = { email: 'bg-blue-500/10', linkedin: 'bg-blue-500/10', whatsapp: 'bg-primary/10', sms: 'bg-violet-500/10', call: 'bg-amber-500/10' };
 
 const statusBadge = {
-  active: 'bg-primary/20 text-primary border-primary/30',
-  paused: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  draft: 'bg-secondary text-muted-foreground border-border',
+  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  paused: 'bg-amber-50 text-amber-700 border-amber-200',
+  draft: 'bg-slate-100 text-slate-600 border-slate-200',
 };
 
 const initialSequences = [
@@ -342,7 +342,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Sequences" subtitle="AI-powered multichannel outreach engine" />
 
       <div className="p-6 space-y-5">

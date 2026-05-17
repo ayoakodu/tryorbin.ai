@@ -23,11 +23,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 
 const stages = [
-  { id: 'prospecting', label: 'Prospecting', color: 'text-blue-400', bg: 'bg-blue-500/10', border: 'border-blue-500/20' },
-  { id: 'qualification', label: 'Qualification', color: 'text-violet-400', bg: 'bg-violet-500/10', border: 'border-violet-500/20' },
-  { id: 'proposal', label: 'Proposal', color: 'text-amber-400', bg: 'bg-amber-500/10', border: 'border-amber-500/20' },
-  { id: 'negotiation', label: 'Negotiation', color: 'text-orange-400', bg: 'bg-orange-500/10', border: 'border-orange-500/20' },
-  { id: 'closed_won', label: 'Closed Won', color: 'text-primary', bg: 'bg-primary/10', border: 'border-primary/20' },
+  { id: 'prospecting', label: 'Prospecting', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
+  { id: 'qualification', label: 'Qualification', color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
+  { id: 'proposal', label: 'Proposal', color: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' },
+  { id: 'negotiation', label: 'Negotiation', color: 'text-orange-700', bg: 'bg-orange-50', border: 'border-orange-200' },
+  { id: 'closed_won', label: 'Closed Won', color: 'text-emerald-700', bg: 'bg-emerald-50', border: 'border-emerald-200' },
 ];
 
 const initialDealsData = {
@@ -206,7 +206,7 @@ Focus on risk, stale deals, or quick wins.`,
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Pipeline" subtitle="Lightweight CRM — track deals, activity, and AI-powered next actions" />
 
       <div className="p-6 space-y-5">

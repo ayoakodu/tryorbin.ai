@@ -99,7 +99,7 @@ export default function Integrations() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Integrations" subtitle="Connect RVNU to your existing tools" />
 
       <div className="p-6 space-y-6">

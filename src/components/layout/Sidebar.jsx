@@ -24,11 +24,11 @@ export default function Sidebar() {
   const location = useLocation();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[220px] flex flex-col z-40 border-r border-gray-200"
-      style={{ background: '#e8edf2' }}>
+    <aside className="fixed left-0 top-0 h-screen w-[220px] flex flex-col z-40 border-r border-slate-200"
+      style={{ background: '#f0f4f8' }}>
       
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 py-5 border-b border-gray-200">
+      <div className="flex items-center gap-2.5 px-5 py-5 border-b border-slate-200">
         <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center">
           <Zap className="w-4 h-4 text-black" strokeWidth={2.5} />
         </div>
@@ -63,7 +63,7 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 pb-4 space-y-0.5 border-t border-gray-200 pt-3">
+      <div className="px-3 pb-4 space-y-0.5 border-t border-slate-200 pt-3">
         <Link to="/integrations" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
           <Globe className="w-4 h-4 text-slate-500" />
           <span>Integrations</span>

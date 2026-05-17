@@ -145,7 +145,7 @@ User request: ${userText}`,
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" style={{ background: '#f8fafc' }}>
       <TopBar title="AI Copilot" subtitle="Your always-on GTM intelligence engine" />
       
       <div className="flex flex-1 overflow-hidden">

@@ -49,8 +49,8 @@ const initialAutomations = [
 ];
 
 const statusColors = {
-  active: 'bg-primary/20 text-primary border-primary/30',
-  paused: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  paused: 'bg-amber-50 text-amber-700 border-amber-200',
 };
 
 function AutomationRow({ automation, onToggle, onDelete }) {
@@ -183,7 +183,7 @@ Return JSON with: name (string), trigger (one of: reply_received/deal_stage_chan
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Automations" subtitle="Trigger-based workflows to automate your GTM execution" />
 
       <div className="p-6 space-y-5">

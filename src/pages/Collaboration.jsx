@@ -151,7 +151,7 @@ Provide a concise 3-sentence team summary and 2-3 bullet actionable recommendati
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Team Workspace" subtitle="Collaborate, share insights, and stay aligned on GTM execution" />
 
       <div className="p-6 space-y-5">

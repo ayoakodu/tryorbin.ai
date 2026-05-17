@@ -71,17 +71,16 @@
   }
 
   .glow-green {
-    box-shadow: 0 0 20px rgba(74, 222, 128, 0.15), 0 0 60px rgba(74, 222, 128, 0.05);
+    box-shadow: 0 0 20px rgba(22, 163, 74, 0.12), 0 0 40px rgba(22, 163, 74, 0.04);
   }
 
   .glow-green-sm {
-    box-shadow: 0 0 10px rgba(74, 222, 128, 0.2);
+    box-shadow: 0 0 10px rgba(22, 163, 74, 0.15);
   }
 
   .glass {
-    background: rgba(255, 255, 255, 0.03);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
   }
 
   .gradient-text {
@@ -97,8 +96,8 @@
 
   .mesh-bg {
     background-image: 
-      radial-gradient(at 20% 20%, rgba(74, 222, 128, 0.05) 0px, transparent 50%),
-      radial-gradient(at 80% 80%, rgba(34, 211, 238, 0.05) 0px, transparent 50%),
-      radial-gradient(at 50% 50%, rgba(129, 140, 248, 0.03) 0px, transparent 50%);
+      radial-gradient(at 20% 20%, rgba(22, 163, 74, 0.04) 0px, transparent 50%),
+      radial-gradient(at 80% 80%, rgba(6, 182, 212, 0.04) 0px, transparent 50%),
+      radial-gradient(at 50% 50%, rgba(129, 140, 248, 0.02) 0px, transparent 50%);
   }
 }

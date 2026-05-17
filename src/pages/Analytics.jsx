@@ -67,9 +67,9 @@ const campaignTableData = [
 ];
 
 const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
-    return (
-      <div className="glass rounded-lg px-3 py-2 text-xs border border-border/60">
+if (active && payload && payload.length) {
+  return (
+    <div className="rounded-lg px-3 py-2 text-xs shadow-md" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
         <p className="text-muted-foreground mb-1 font-medium">{label}</p>
         {payload.map((p, i) => (
           <p key={i} style={{ color: p.color }} className="font-bold">
@@ -85,8 +85,8 @@ const CustomTooltip = ({ active, payload, label }) => {
 const channelIcon = { multi: BarChart3, whatsapp: MessageCircle, email: Mail };
 const channelColor = { multi: 'text-amber-400', whatsapp: 'text-primary', email: 'text-blue-400' };
 const statusBadge = {
-  active: 'bg-primary/20 text-primary border-primary/30',
-  paused: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  paused: 'bg-amber-50 text-amber-700 border-amber-200',
 };
 
 export default function Analytics() {
@@ -135,7 +135,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Analytics" subtitle="Campaign performance — sequences, engagement, and pipeline visibility" />
 
       <div className="p-6 space-y-5">
@@ -178,9 +178,9 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-3">
             {aiInsights.map((insight, i) => (
               <div key={i} className={`p-3 rounded-xl border text-xs leading-relaxed flex gap-2.5 ${
-                insight.type === 'danger' ? 'bg-destructive/5 border-destructive/20 text-red-300' :
-                insight.type === 'warning' ? 'bg-amber-500/5 border-amber-500/20 text-amber-200' :
-                'bg-primary/5 border-primary/20 text-foreground'}`}>
+                insight.type === 'danger' ? 'bg-red-50 border-red-200 text-red-700' :
+                insight.type === 'warning' ? 'bg-amber-50 border-amber-200 text-amber-700' :
+                'bg-emerald-50 border-emerald-200 text-emerald-800'}`}>
                 {insight.type === 'danger'
                   ? <AlertTriangle className="w-4 h-4 text-destructive flex-shrink-0 mt-0.5" />
                   : insight.type === 'warning'
@@ -246,7 +246,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                   <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="replies" name="Replies" radius={3}>
                     {timeOfDayData.map((entry, index) => (
-                      <Cell key={index} fill={entry.replies >= 40 ? 'hsl(142 76% 52%)' : entry.replies >= 25 ? 'hsl(197 100% 56%)' : 'hsl(223 47% 18%)'} />
+                      <Cell key={index} fill={entry.replies >= 40 ? 'hsl(142 76% 36%)' : entry.replies >= 25 ? 'hsl(197 100% 40%)' : 'hsl(215 16% 82%)'} />
                     ))}
                   </Bar>
                 </BarChart>
@@ -317,7 +317,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                   <XAxis dataKey="step" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
                   <YAxis tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} axisLine={false} tickLine={false} />
                   <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="sent" name="Sent" fill="hsl(223 47% 18%)" radius={3} />
+                  <Bar dataKey="sent" name="Sent" fill="hsl(215 16% 75%)" radius={3} />
                   <Bar dataKey="opened" name="Opened" fill="hsl(197 100% 56%)" radius={3} opacity={0.8} />
                   <Bar dataKey="replied" name="Replied" fill="hsl(142 76% 52%)" radius={3} />
                 </BarChart>

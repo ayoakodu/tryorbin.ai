@@ -22,16 +22,16 @@ const companies = [
 ];
 
 const statusColors = {
-  prospect: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  customer: 'bg-primary/20 text-primary border-primary/30',
-  churned: 'bg-destructive/20 text-destructive border-destructive/30',
-  partner: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
+  prospect: 'bg-blue-50 text-blue-700 border-blue-200',
+  customer: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  churned: 'bg-red-50 text-red-700 border-red-200',
+  partner: 'bg-violet-50 text-violet-700 border-violet-200',
 };
 
 const tierBadge = {
-  enterprise: 'bg-amber-500/10 text-amber-400',
-  'mid-market': 'bg-violet-500/10 text-violet-400',
-  smb: 'bg-secondary text-muted-foreground',
+  enterprise: 'bg-amber-50 text-amber-700',
+  'mid-market': 'bg-violet-50 text-violet-700',
+  smb: 'bg-slate-100 text-slate-600',
 };
 
 export default function Companies() {
@@ -45,7 +45,7 @@ export default function Companies() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Companies" subtitle={`${companies.length} companies in your database`} />
       
       <div className="p-6 space-y-5">

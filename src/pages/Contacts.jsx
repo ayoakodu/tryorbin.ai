@@ -16,16 +16,16 @@ import { useToast } from '@/components/ui/use-toast';
 import ContactCopilotPanel from '@/components/copilot/ContactCopilotPanel';
 
 const statusColors = {
-  new: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  contacted: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  qualified: 'bg-primary/20 text-primary border-primary/30',
-  nurturing: 'bg-violet-500/20 text-violet-400 border-violet-500/30',
-  converted: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-  lost: 'bg-destructive/20 text-destructive border-destructive/30',
+  new: 'bg-blue-50 text-blue-700 border-blue-200',
+  contacted: 'bg-amber-50 text-amber-700 border-amber-200',
+  qualified: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  nurturing: 'bg-violet-50 text-violet-700 border-violet-200',
+  converted: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+  lost: 'bg-red-50 text-red-700 border-red-200',
 };
 
 const intentColors = {
-  hot: 'text-red-400', warm: 'text-amber-400', cold: 'text-blue-400', unknown: 'text-muted-foreground',
+  hot: 'text-red-600', warm: 'text-amber-600', cold: 'text-blue-600', unknown: 'text-muted-foreground',
 };
 
 const sampleContacts = [
@@ -72,7 +72,7 @@ export default function Contacts() {
   });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Contacts" subtitle={`${displayContacts.length} contacts · Click any contact for AI personalization`} />
 
       <div className="p-6 space-y-5">

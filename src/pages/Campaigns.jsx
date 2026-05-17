@@ -25,19 +25,19 @@ const initialCampaigns = [
 ];
 
 const typeColors = {
-  email: { bg: 'bg-blue-500/10', text: 'text-blue-400', border: 'border-blue-500/20' },
-  linkedin: { bg: 'bg-blue-600/10', text: 'text-blue-500', border: 'border-blue-600/20' },
-  whatsapp: { bg: 'bg-primary/10', text: 'text-primary', border: 'border-primary/20' },
-  'multi-channel': { bg: 'bg-amber-500/10', text: 'text-amber-400', border: 'border-amber-500/20' },
-  event: { bg: 'bg-violet-500/10', text: 'text-violet-400', border: 'border-violet-500/20' },
+  email: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
+  linkedin: { bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
+  whatsapp: { bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
+  'multi-channel': { bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
+  event: { bg: 'bg-violet-50', text: 'text-violet-700', border: 'border-violet-200' },
 };
 
 const statusBadge = {
-  active: 'bg-primary/20 text-primary border-primary/30',
-  completed: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-  scheduled: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
-  draft: 'bg-secondary text-muted-foreground border-border',
-  paused: 'bg-destructive/20 text-destructive border-destructive/30',
+  active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+  completed: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+  scheduled: 'bg-amber-50 text-amber-700 border-amber-200',
+  draft: 'bg-slate-100 text-slate-600 border-slate-200',
+  paused: 'bg-red-50 text-red-700 border-red-200',
 };
 
 function CampaignCard({ campaign, onToggle, onEdit, onDelete }) {
@@ -265,7 +265,7 @@ Keep it specific and actionable for African/emerging markets.`,
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Campaigns" subtitle="Launch, automate, and track multichannel engagement campaigns" />
 
       <div className="p-6 space-y-5">
