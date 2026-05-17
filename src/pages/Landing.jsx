@@ -108,7 +108,7 @@ export default function Landing() {
             <h1 className="text-3xl md:text-4xl font-bold leading-[1.15] tracking-tight mb-5">
               <span className="gradient-text">The AI-Native GTM Execution Platform.</span>
             </h1>
-            <p className="text-base md:text-lg text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+            <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
               RVNU automates the full GTM execution cycle — from multichannel outreach and pipeline management to AI-driven follow-ups and revenue forecasting — built for revenue teams across Africa and emerging markets.
             </p>
           </motion.div>
@@ -137,7 +137,7 @@ export default function Landing() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-5 text-sm text-muted-foreground">
+            className="flex flex-wrap items-center justify-center gap-5 text-sm text-slate-300">
             {earlyAccessBenefits.map(t => (
               <div key={t} className="flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
