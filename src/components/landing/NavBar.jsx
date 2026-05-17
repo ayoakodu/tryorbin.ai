@@ -4,7 +4,8 @@ import {
   Zap, ArrowRight, ChevronDown, Menu, X,
   Target, Shield, Layers, Search, Users, TrendingUp, Brain,
   Database, List, Map, Mail, BookOpen, Building, Briefcase,
-  GraduationCap, RefreshCw, BarChart2, Filter
+  GraduationCap, RefreshCw, BarChart2, Filter,
+  MessageCircle, Sparkles, GitBranch, BarChart, Share2, Eye
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -14,21 +15,26 @@ const navData = {
       {
         label: 'PLATFORM',
         items: [
-          { icon: Target, title: 'Targeting', desc: 'Define and map your full addressable market.' },
-          { icon: Shield, title: 'Qualification', desc: 'Only work accounts that match your exact ICP criteria.' },
-          { icon: Layers, title: 'Enrichment', desc: 'Verified phone numbers and emails for every contact.' },
+          { icon: Mail, title: 'AI Engagement', desc: 'Run AI-powered multichannel outbound campaigns across email, WhatsApp, LinkedIn, and SMS.' },
+          { icon: Brain, title: 'AI Copilot', desc: 'Embedded AI assistants helping teams generate campaigns, personalize messaging, and automate workflows.' },
+          { icon: Target, title: 'Pipeline', desc: 'Lightweight CRM and pipeline visibility for modern revenue execution teams.' },
+          { icon: Zap, title: 'Automation', desc: 'Automate follow-ups, tasks, reminders, and GTM workflows using AI.' },
+          { icon: Users, title: 'Collaboration', desc: 'Shared GTM workspaces for SDRs, AEs, marketing, and revenue teams.' },
+          { icon: BarChart, title: 'Analytics', desc: 'Track engagement, meetings, conversion rates, and campaign performance.' },
         ],
       },
       {
         label: 'FEATURES',
         cols: 2,
         items: [
-          { icon: Search, title: 'Agentic Search', desc: 'Build audiences using natural language.' },
-          { icon: Database, title: 'B2B Database', desc: '300M+ contacts, 1,500+ enrichment fields.' },
-          { icon: Users, title: 'Lookalikes', desc: 'Find companies like your best customers.' },
-          { icon: TrendingUp, title: 'Signals', desc: 'Spot signs of buyer interest in real time.' },
-          { icon: Shield, title: 'AI Qualification', desc: 'Verify and score accounts automatically.' },
-          { icon: Brain, title: 'AI Agents', desc: 'Gather hard-to-find market insights.' },
+          { icon: GitBranch, title: 'AI Sequences', desc: 'Generate and launch AI-powered multichannel outbound campaigns.' },
+          { icon: MessageCircle, title: 'WhatsApp Workflows', desc: 'Run WhatsApp-native engagement campaigns with AI-powered messaging and shared inboxes.' },
+          { icon: Sparkles, title: 'AI Personalization', desc: 'Generate personalized outreach, follow-ups, and messaging at scale.' },
+          { icon: Brain, title: 'AI Agents', desc: 'AI assistants for campaign optimization, pipeline execution, and GTM productivity.' },
+          { icon: Zap, title: 'Workflow Automation', desc: 'Create trigger-based automations for outreach, follow-ups, and pipeline actions.' },
+          { icon: Search, title: 'GTM Intelligence', desc: 'Unified engagement insights, account summaries, and activity visibility.' },
+          { icon: Share2, title: 'Team Workspaces', desc: 'Collaborative campaign execution and shared GTM coordination.' },
+          { icon: Eye, title: 'Revenue Visibility', desc: 'Monitor meetings, conversions, engagement, and pipeline activity in real time.' },
         ],
       },
     ],
@@ -205,7 +211,7 @@ export default function NavBar() {
 
               {activeMenu === menu && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl p-6 z-50"
-                  style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '680px' : menu === 'Solutions' ? '760px' : '580px' }}
+                  style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '760px' : '580px' }}
                 >
                   <DropdownPanel data={navData[menu]} />
                 </div>
