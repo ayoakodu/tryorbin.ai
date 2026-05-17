@@ -190,11 +190,11 @@ export default function Landing() {
       {/* Building For */}
       <section className="py-10 px-6 border-y border-border/30">
         <div className="max-w-5xl mx-auto">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest text-center mb-6">Designed for GTM teams building in</p>
+          <p className="text-xs text-slate-500 uppercase tracking-widest text-center mb-6">Designed for GTM teams building in</p>
           <div className="overflow-hidden relative">
-            <div className="flex animate-marquee whitespace-nowrap gap-10 opacity-40">
+            <div className="flex animate-marquee whitespace-nowrap gap-10 opacity-80">
               {[...africanCountries, ...africanCountries].map((name, i) => (
-                <span key={i} className="text-sm font-semibold text-muted-foreground flex items-center gap-1.5 flex-shrink-0">
+                <span key={i} className="text-sm font-semibold text-slate-500 flex items-center gap-1.5 flex-shrink-0">
                   <Globe className="w-3 h-3" /> {name}
                 </span>
               ))}

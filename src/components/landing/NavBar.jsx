@@ -253,7 +253,7 @@ export default function NavBar() {
               onMouseLeave={handleMouseLeave}
             >
               <button
-                className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm transition-colors ${activeMenu === menu ? 'text-foreground bg-accent/40' : 'text-muted-foreground hover:text-foreground hover:bg-accent/20'}`}
+                className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm transition-colors ${activeMenu === menu ? 'text-white bg-white/10' : 'text-slate-300 hover:text-white hover:bg-white/10'}`}
               >
                 {menu}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMenu === menu ? 'rotate-180' : ''}`} />
@@ -272,7 +272,7 @@ export default function NavBar() {
 
         {/* Right CTAs */}
         <div className="hidden md:flex items-center gap-3 flex-shrink-0">
-          <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap">
+          <a href="#how-it-works" className="text-sm text-slate-300 hover:text-white transition-colors whitespace-nowrap">
             How It Works
           </a>
           <a href="#waitlist">
