@@ -10,7 +10,9 @@ import {
   Megaphone, Rocket, Store, UserCheck, Network,
   CalendarCheck, Inbox, Globe, LineChart,
   Activity, LayoutDashboard, UserCog, Gauge, Send,
-  FileText, Link2, Bell, Stars
+  FileText, Bell, Stars,
+  Newspaper, LifeBuoy, Video, Monitor, MessageSquare,
+  UserPlus, Puzzle, ContactRound
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -114,7 +116,7 @@ const navData = {
         cols: 2,
         items: [
           { icon: BookOpen, title: 'Blog', desc: 'Insights, trends, and GTM strategies from the RVNU team.' },
-          { icon: Megaphone, title: 'Product Updates', desc: 'See the latest features and improvements to RVNU.' },
+          { icon: Newspaper, title: 'Product Updates', desc: 'See the latest features and improvements to RVNU.' },
           { icon: Eye, title: 'Customer Stories', desc: 'How revenue teams use RVNU to grow faster.' },
         ],
       },
@@ -122,13 +124,13 @@ const navData = {
         label: 'LEARN',
         cols: 2,
         items: [
-          { icon: BookOpen, title: 'Help Center' },
+          { icon: LifeBuoy, title: 'Help Center' },
           { icon: Rocket, title: 'Getting Started' },
           { icon: Database, title: 'API Documentation' },
           { icon: Network, title: 'Integrations' },
           { icon: Map, title: 'GTM Playbooks' },
           { icon: FileText, title: 'Revenue Templates' },
-          { icon: Workflow, title: 'Workflow Tutorials' },
+          { icon: Video, title: 'Workflow Tutorials' },
           { icon: GraduationCap, title: 'RVNU Academy' },
         ],
       },
@@ -136,9 +138,9 @@ const navData = {
         label: 'CONNECT',
         cols: 2,
         items: [
-          { icon: LayoutDashboard, title: 'Webinars', desc: 'Live and on-demand sessions with GTM experts.' },
+          { icon: Monitor, title: 'Webinars', desc: 'Live and on-demand sessions with GTM experts.' },
           { icon: Bell, title: 'Events', desc: 'Conferences, meetups, and RVNU-hosted events.' },
-          { icon: Network, title: 'Join the Community', desc: 'Connect with revenue operators using RVNU.' },
+          { icon: MessageSquare, title: 'Join the Community', desc: 'Connect with revenue operators using RVNU.' },
         ],
       },
       {
@@ -146,9 +148,9 @@ const navData = {
         cols: 2,
         items: [
           { icon: Building, title: 'About Us', desc: "It's time we stop working for our software." },
-          { icon: Briefcase, title: 'Careers', desc: 'Join the RVNU team.' },
-          { icon: Link2, title: 'Partners', desc: 'Introducing the RVNU Agency Network.' },
-          { icon: Mail, title: 'Contact', desc: 'Get in touch with our team.' },
+          { icon: UserPlus, title: 'Careers', desc: 'Join the RVNU team.' },
+          { icon: Puzzle, title: 'Partners', desc: 'Introducing the RVNU Agency Network.' },
+          { icon: ContactRound, title: 'Contact', desc: 'Get in touch with our team.' },
         ],
       },
     ],
