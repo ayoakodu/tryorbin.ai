@@ -2,15 +2,15 @@ import { Zap } from 'lucide-react';
 
 const footerLinks = {
   Product: [
-    { label: 'Targeting' },
-    { label: 'Qualification' },
-    { label: 'Enrichment' },
-    { label: 'Agentic Search' },
-    { label: 'B2B Database' },
-    { label: 'Lookalikes' },
-    { label: 'Signals' },
-    { label: 'AI Qualification' },
-    { label: 'AI Agents' },
+    { label: 'Sales Intelligence (Leads & Accounts Data)' },
+    { label: 'Intent Data Signals' },
+    { label: 'Multi-Channel Sequencing (Email, WhatsApp & SMS)' },
+    { label: 'Engagement Automation (Outbound Campaigns)' },
+    { label: 'Built-in Dialer & Call Tracking' },
+    { label: 'Data Enrichment & Verification' },
+    { label: 'Pipeline & CRM Lite' },
+    { label: 'Deliverability & Inbox Management' },
+    { label: 'Analytics & Revenue Insights' },
   ],
   Solutions: [
     { label: 'RevOps' },
