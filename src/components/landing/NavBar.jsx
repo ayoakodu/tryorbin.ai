@@ -5,7 +5,10 @@ import {
   Target, Shield, Layers, Search, Users, TrendingUp, Brain,
   Database, List, Map, Mail, BookOpen, Building, Briefcase,
   GraduationCap, RefreshCw, BarChart2, Filter,
-  MessageCircle, Sparkles, GitBranch, BarChart, Share2, Eye
+  MessageCircle, Sparkles, GitBranch, BarChart, Share2, Eye,
+  Bot, Workflow, PieChart, Handshake, Cpu, Wallet, Truck,
+  Megaphone, Rocket, Store, FlaskConical, UserCheck, Network,
+  CalendarCheck, Inbox, ClipboardList, Globe, LineChart
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -18,9 +21,9 @@ const navData = {
           { icon: Mail, title: 'AI Engagement', desc: 'Run AI-powered multichannel outbound campaigns across email, WhatsApp, LinkedIn, and SMS.' },
           { icon: Brain, title: 'AI Copilot', desc: 'Embedded AI assistants helping teams generate campaigns, personalize messaging, and automate workflows.' },
           { icon: Target, title: 'Pipeline', desc: 'Lightweight CRM and pipeline visibility for modern revenue execution teams.' },
-          { icon: Zap, title: 'Automation', desc: 'Automate follow-ups, tasks, reminders, and GTM workflows using AI.' },
+          { icon: Workflow, title: 'Automation', desc: 'Automate follow-ups, tasks, reminders, and GTM workflows using AI.' },
           { icon: Users, title: 'Collaboration', desc: 'Shared GTM workspaces for SDRs, AEs, marketing, and revenue teams.' },
-          { icon: BarChart, title: 'Analytics', desc: 'Track engagement, meetings, conversion rates, and campaign performance.' },
+          { icon: PieChart, title: 'Analytics', desc: 'Track engagement, meetings, conversion rates, and campaign performance.' },
         ],
       },
       {
@@ -30,11 +33,11 @@ const navData = {
           { icon: GitBranch, title: 'AI Sequences', desc: 'Generate and launch AI-powered multichannel outbound campaigns.' },
           { icon: MessageCircle, title: 'WhatsApp Workflows', desc: 'Run WhatsApp-native engagement campaigns with AI-powered messaging and shared inboxes.' },
           { icon: Sparkles, title: 'AI Personalization', desc: 'Generate personalized outreach, follow-ups, and messaging at scale.' },
-          { icon: Brain, title: 'AI Agents', desc: 'AI assistants for campaign optimization, pipeline execution, and GTM productivity.' },
+          { icon: Bot, title: 'AI Agents', desc: 'AI assistants for campaign optimization, pipeline execution, and GTM productivity.' },
           { icon: Zap, title: 'Workflow Automation', desc: 'Create trigger-based automations for outreach, follow-ups, and pipeline actions.' },
-          { icon: Search, title: 'GTM Intelligence', desc: 'Unified engagement insights, account summaries, and activity visibility.' },
-          { icon: Share2, title: 'Team Workspaces', desc: 'Collaborative campaign execution and shared GTM coordination.' },
-          { icon: Eye, title: 'Revenue Visibility', desc: 'Monitor meetings, conversions, engagement, and pipeline activity in real time.' },
+          { icon: Globe, title: 'GTM Intelligence', desc: 'Unified engagement insights, account summaries, and activity visibility.' },
+          { icon: Network, title: 'Team Workspaces', desc: 'Collaborative campaign execution and shared GTM coordination.' },
+          { icon: LineChart, title: 'Revenue Visibility', desc: 'Monitor meetings, conversions, engagement, and pipeline activity in real time.' },
         ],
       },
     ],
@@ -45,18 +48,18 @@ const navData = {
         label: 'USE CASES',
         items: [
           { icon: Search, title: 'Outbound Prospecting', desc: 'Find and engage your ideal buyers at scale.' },
-          { icon: Target, title: 'Meeting Generation', desc: 'Book more qualified meetings with less effort.' },
+          { icon: CalendarCheck, title: 'Meeting Generation', desc: 'Book more qualified meetings with less effort.' },
           { icon: TrendingUp, title: 'Pipeline Acceleration', desc: 'Move deals faster with AI-driven engagement.' },
-          { icon: RefreshCw, title: 'Lead Follow-Up', desc: 'Never let a warm lead go cold again.' },
+          { icon: Inbox, title: 'Lead Follow-Up', desc: 'Never let a warm lead go cold again.' },
           { icon: ArrowRight, title: 'See all use cases', desc: 'Explore every workflow RVNU supports.', highlight: true, seeAll: true },
         ],
       },
       {
         label: 'INDUSTRIES',
         items: [
-          { icon: Brain, title: 'SaaS & Enterprise Software', desc: 'Target software buyers with precision and intent.' },
-          { icon: Shield, title: 'FinTech & Payments', desc: 'Reach financial decision-makers at the right time.' },
-          { icon: Layers, title: 'Logistics & Supply Chain', desc: 'Engage logistics operators and procurement teams.' },
+          { icon: Cpu, title: 'SaaS & Enterprise Software', desc: 'Target software buyers with precision and intent.' },
+          { icon: Wallet, title: 'FinTech & Payments', desc: 'Reach financial decision-makers at the right time.' },
+          { icon: Truck, title: 'Logistics & Supply Chain', desc: 'Engage logistics operators and procurement teams.' },
           { icon: Briefcase, title: 'Agencies & Consulting', desc: 'Win new retainers and scale client pipelines.' },
           { icon: ArrowRight, title: 'See all 12 industries', desc: 'Explore every vertical RVNU supports.', highlight: true, seeAll: true },
         ],
@@ -64,19 +67,19 @@ const navData = {
       {
         label: 'COMPANY TYPE',
         items: [
-          { icon: TrendingUp, title: 'Startups', desc: 'Launch your GTM motion from day one.' },
-          { icon: BarChart2, title: 'SMB & Mid-Market', desc: 'Scale revenue without scaling headcount.' },
-          { icon: Zap, title: 'High-Growth Companies', desc: 'Accelerate pipeline for teams moving fast.' },
+          { icon: Rocket, title: 'Startups', desc: 'Launch your GTM motion from day one.' },
+          { icon: Store, title: 'SMB & Mid-Market', desc: 'Scale revenue without scaling headcount.' },
+          { icon: FlaskConical, title: 'High-Growth Companies', desc: 'Accelerate pipeline for teams moving fast.' },
           { icon: ArrowRight, title: 'See all company types', desc: 'Find the right fit for your organization.', highlight: true, seeAll: true },
         ],
       },
       {
         label: 'TEAMS',
         items: [
-          { icon: BarChart2, title: 'Sales Teams', desc: 'Close more deals and book more meetings with AI.' },
-          { icon: Sparkles, title: 'Marketing Teams', desc: 'Run campaigns that convert across every channel.' },
-          { icon: RefreshCw, title: 'Revenue Operations', desc: 'Orchestrate data, tools, and GTM execution.' },
-          { icon: Brain, title: 'Founders & GTM Leaders', desc: 'Own your revenue motion from the top down.' },
+          { icon: Handshake, title: 'Sales Teams', desc: 'Close more deals and book more meetings with AI.' },
+          { icon: Megaphone, title: 'Marketing Teams', desc: 'Run campaigns that convert across every channel.' },
+          { icon: ClipboardList, title: 'Revenue Operations', desc: 'Orchestrate data, tools, and GTM execution.' },
+          { icon: UserCheck, title: 'Founders & GTM Leaders', desc: 'Own your revenue motion from the top down.' },
         ],
       },
     ],
