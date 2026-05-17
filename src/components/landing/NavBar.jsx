@@ -88,17 +88,19 @@ const navData = {
   Workflows: {
     sections: [
       {
-        label: 'GTM EXECUTION',
+        label: 'WORKFLOWS',
         cols: 2,
         items: [
-          { icon: List, title: 'List Building' },
-          { icon: Map, title: 'TAM Mapping' },
-          { icon: Filter, title: 'TAM Segmentation' },
-          { icon: Search, title: 'Prospecting' },
-          { icon: Target, title: 'Account-Based Marketing' },
-          { icon: Mail, title: 'Outbound' },
-          { icon: Search, title: 'Account Research' },
-          { icon: Layers, title: 'Inbound Orchestration', comingSoon: true },
+          { icon: GitBranch, title: 'Sequence Builder' },
+          { icon: Bot, title: 'AI Follow-Ups' },
+          { icon: MessageCircle, title: 'WhatsApp Outreach' },
+          { icon: Share2, title: 'Lead Routing' },
+          { icon: BarChart2, title: 'Pipeline Tracking' },
+          { icon: CalendarCheck, title: 'Meeting Handoffs' },
+          { icon: Workflow, title: 'Task Automation' },
+          { icon: Activity, title: 'Engagement Tracking' },
+          { icon: Users, title: 'Team Collaboration' },
+          { icon: Search, title: 'AI Prospect Research' },
         ],
       },
     ],
