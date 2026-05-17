@@ -73,11 +73,10 @@ const navData = {
       {
         label: 'TEAMS',
         items: [
-          { icon: BarChart2, title: 'Sales & SDR Teams', desc: 'Close more deals and book more meetings with AI.' },
+          { icon: BarChart2, title: 'Sales Teams', desc: 'Close more deals and book more meetings with AI.' },
           { icon: Sparkles, title: 'Marketing Teams', desc: 'Run campaigns that convert across every channel.' },
           { icon: RefreshCw, title: 'Revenue Operations', desc: 'Orchestrate data, tools, and GTM execution.' },
           { icon: Brain, title: 'Founders & GTM Leaders', desc: 'Own your revenue motion from the top down.' },
-          { icon: ArrowRight, title: 'See all teams', desc: 'Discover how every team uses RVNU.', highlight: true, seeAll: true },
         ],
       },
     ],
