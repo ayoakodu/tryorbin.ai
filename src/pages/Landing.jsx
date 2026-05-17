@@ -94,7 +94,7 @@ export default function Landing() {
       <NavBar />
 
       {/* Hero */}
-      <section className="relative pt-28 pb-20 px-6 overflow-hidden">
+      <section className="relative pt-28 pb-20 px-6 overflow-hidden" style={{ background: '#060b1a' }}>
         <div className="absolute inset-0 mesh-bg" />
         <div className="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] h-[700px] rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(74, 222, 128, 0.07) 0%, transparent 65%)' }} />
@@ -274,7 +274,7 @@ export default function Landing() {
       </section>
 
       {/* AI Copilot Highlight */}
-      <section id="ai-copilot" className="py-20 px-6 relative overflow-hidden">
+      <section id="ai-copilot" className="py-20 px-6 relative overflow-hidden" style={{ background: '#060b1a' }}>
         <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.05) 0%, transparent 70%)' }} />
         <div className="relative max-w-5xl mx-auto">
           <div className="glass rounded-2xl p-7 md:p-10 border border-primary/20 glow-green">

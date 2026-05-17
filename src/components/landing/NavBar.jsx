@@ -165,16 +165,16 @@ function DropdownPanel({ data }) {
     <div className={`grid gap-8`} style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
       {sections.map((section) => (
         <div key={section.label}>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-4">{section.label}</p>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4">{section.label}</p>
           {section.cols === 2 ? (
             <div className="grid grid-cols-2 gap-2">
               {section.items.map((item) => (
-                <button key={item.title} className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-accent/50 transition-colors text-left group">
+                <button key={item.title} className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-white/5 transition-colors text-left group">
                   <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                     <item.icon className="w-3.5 h-3.5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-xs font-medium text-foreground group-hover:text-primary transition-colors leading-tight">{item.title}</p>
+                    <p className="text-xs font-medium text-slate-200 group-hover:text-primary transition-colors leading-tight">{item.title}</p>
                     {item.comingSoon && (
                       <span className="text-[9px] font-bold uppercase text-muted-foreground/50 border border-border/50 rounded px-1">Coming Soon</span>
                     )}
@@ -187,14 +187,14 @@ function DropdownPanel({ data }) {
               {section.items.map((item) => (
                 <button
                   key={item.title}
-                  className={`flex items-start gap-3 p-2.5 rounded-xl hover:bg-accent/50 transition-colors text-left w-full group ${item.highlight ? 'border border-primary/20 bg-primary/5' : ''}`}
+                  className={`flex items-start gap-3 p-2.5 rounded-xl hover:bg-white/5 transition-colors text-left w-full group ${item.highlight ? 'border border-primary/20 bg-primary/5' : ''}`}
                 >
                   <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5 ${item.highlight ? 'bg-primary/20' : 'bg-primary/10'}`}>
                     <item.icon className="w-3.5 h-3.5 text-primary" />
                   </div>
                   <div>
-                    <p className={`text-xs font-semibold group-hover:text-primary transition-colors leading-tight ${item.highlight ? 'text-primary' : 'text-foreground'}`}>{item.title}</p>
-                    {item.desc && <p className="text-[11px] text-muted-foreground mt-0.5 leading-relaxed">{item.desc}</p>}
+                    <p className={`text-xs font-semibold group-hover:text-primary transition-colors leading-tight ${item.highlight ? 'text-primary' : 'text-slate-200'}`}>{item.title}</p>
+                    {item.desc && <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{item.desc}</p>}
                   </div>
                 </button>
               ))}
@@ -260,7 +260,7 @@ export default function NavBar() {
               </button>
 
               {activeMenu === menu && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl p-6 z-50"
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-white/10 backdrop-blur-xl shadow-2xl p-6 z-50" style={{ background: '#0d1526' }}
                   style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '960px' : menu === 'Resources' ? '780px' : '580px' }}
                 >
                   <DropdownPanel data={navData[menu]} />

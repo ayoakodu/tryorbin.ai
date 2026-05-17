@@ -87,7 +87,7 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border/30 bg-background">
+    <footer className="border-t border-white/10" style={{ background: '#060b1a' }}>
       <div className="max-w-6xl mx-auto px-6 pt-14 pb-8">
 
         {/* Top section */}
@@ -107,7 +107,7 @@ export default function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="w-7 h-7 rounded-md bg-secondary/60 flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.08)' }}
                 >
                   {s.icon}
                 </a>
@@ -118,13 +118,13 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([section, links]) => (
             <div key={section} className="col-span-1 min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70 mb-3">{section}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-3">{section}</p>
               <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link.label}>
                     <a
                       href="#"
-                      className="text-[11px] text-muted-foreground hover:text-foreground transition-colors leading-snug"
+                      className="text-[11px] text-slate-400 hover:text-white transition-colors leading-snug"
                     >
                       {link.label}
                     </a>
@@ -136,13 +136,13 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="border-t border-border/30 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-muted-foreground/60">© 2026 RVNU. Built for Africa's revenue operators.</p>
-          <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-muted-foreground/60">
-            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
-            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
-            <a href="#" className="hover:text-foreground transition-colors">Cookies</a>
-            <a href="#" className="hover:text-foreground transition-colors">Contact</a>
+        <div className="border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-[11px] text-slate-500">© 2026 RVNU. Built for Africa's revenue operators.</p>
+          <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-slate-500">
+            <a href="#" className="hover:text-white transition-colors">Privacy</a>
+            <a href="#" className="hover:text-white transition-colors">Terms</a>
+            <a href="#" className="hover:text-white transition-colors">Cookies</a>
+            <a href="#" className="hover:text-white transition-colors">Contact</a>
           </div>
         </div>
       </div>
