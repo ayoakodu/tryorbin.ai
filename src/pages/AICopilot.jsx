@@ -55,7 +55,7 @@ function Message({ msg }) {
         </div>
       )}
       <div className={`max-w-[80%] ${isUser ? 'items-end' : 'items-start'} flex flex-col gap-1`}>
-        <div className={`rounded-xl px-4 py-3 text-sm leading-relaxed ${
+        <div className={`rounded-xl px-4 py-3 text-xs leading-relaxed ${
           isUser 
             ? 'bg-primary text-primary-foreground' 
             : 'glass border border-border/40 text-foreground'

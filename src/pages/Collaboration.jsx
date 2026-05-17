@@ -78,11 +78,11 @@ function CommentCard({ comment, onLike }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-sm font-semibold text-foreground">{comment.author}</span>
+            <span className="text-xs font-semibold text-foreground">{comment.author}</span>
             <span className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">#{comment.channel}</span>
             <span className="text-[10px] text-muted-foreground ml-auto">{comment.time}</span>
           </div>
-          <p className="text-sm text-foreground/90 leading-relaxed">{comment.text}</p>
+          <p className="text-xs text-foreground/90 leading-relaxed">{comment.text}</p>
           <div className="flex items-center gap-3 mt-2">
             <button onClick={() => onLike(comment.id)} className="flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors">
               <ThumbsUp className="w-3 h-3" /> {comment.likes}
@@ -164,7 +164,7 @@ Provide a concise 3-sentence team summary and 2-3 bullet actionable recommendati
                 <span className="text-xs text-muted-foreground">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+              <p className={`text-base font-bold ${s.color}`}>{s.value}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">{s.change} this month</p>
             </motion.div>
           ))}
@@ -189,9 +189,9 @@ Provide a concise 3-sentence team summary and 2-3 bullet actionable recommendati
                 </Button>
               </div>
               {aiSummary ? (
-                <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-line">{aiSummary}</p>
+                <p className="text-xs text-foreground/90 leading-relaxed whitespace-pre-line">{aiSummary}</p>
               ) : (
-                <p className="text-sm text-muted-foreground">Click "Generate Summary" for an AI-powered digest of your team's GTM activity, performance trends, and strategic recommendations.</p>
+                <p className="text-xs text-muted-foreground">Click "Generate Summary" for an AI-powered digest of your team's GTM activity, performance trends, and strategic recommendations.</p>
               )}
             </div>
 
@@ -270,7 +270,7 @@ Provide a concise 3-sentence team summary and 2-3 bullet actionable recommendati
                       }`} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{member.name}</p>
+                      <p className="text-xs font-medium text-foreground truncate">{member.name}</p>
                       <p className="text-[10px] text-muted-foreground">{member.role}</p>
                     </div>
                     <span className={`text-[10px] capitalize ${

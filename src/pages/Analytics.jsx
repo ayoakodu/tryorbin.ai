@@ -153,7 +153,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">{k.label}</span>
                 <k.icon className={`w-4 h-4 ${k.color}`} />
               </div>
-              <p className={`text-xl font-bold mb-1 ${k.color}`}>{k.value}</p>
+              <p className={`text-base font-bold mb-1 ${k.color}`}>{k.value}</p>
               <p className="text-[10px] text-muted-foreground">{k.sub}</p>
             </motion.div>
           ))}
@@ -196,7 +196,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
         <div className="flex gap-1 flex-wrap">
           {[['overview', 'Overview'], ['channels', 'Channel Performance'], ['sequences', 'Sequence Performance'], ['campaigns', 'Campaign Dashboard']].map(([val, label]) => (
             <button key={val} onClick={() => setActiveTab(val)}
-              className={`text-sm px-4 py-2 rounded-lg font-medium transition-colors ${activeTab === val ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'}`}>
+              className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${activeTab === val ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'}`}>
               {label}
             </button>
           ))}
@@ -206,7 +206,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
           <div className="space-y-5">
             {/* Channel comparison bar chart */}
             <div className="glass rounded-xl p-5">
-              <h3 className="font-bold mb-1 text-foreground">Channel Performance Comparison</h3>
+              <h3 className="font-bold text-sm mb-1 text-foreground">Channel Performance Comparison</h3>
               <p className="text-xs text-muted-foreground mb-4">Open Rate, Reply Rate & Meeting Rate by channel</p>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={channelPerformanceData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -237,7 +237,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
 
             {/* Time-of-day performance */}
             <div className="glass rounded-xl p-5">
-              <h3 className="font-bold mb-1 text-foreground">Best Time to Send</h3>
+              <h3 className="font-bold text-sm mb-1 text-foreground">Best Time to Send</h3>
               <p className="text-xs text-muted-foreground mb-4">Reply volume by hour of day — schedule sends around peak windows</p>
               <ResponsiveContainer width="100%" height={180}>
                 <BarChart data={timeOfDayData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -260,7 +260,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
           <>
             {/* Campaign Trend Line Chart */}
             <div className="glass rounded-xl p-5">
-              <h3 className="font-bold mb-1 text-foreground">Campaign Performance Trend</h3>
+              <h3 className="font-bold text-sm mb-1 text-foreground">Campaign Performance Trend</h3>
               <p className="text-xs text-muted-foreground mb-4">Weekly — Sent, Opened, Replied, Meetings</p>
               <ResponsiveContainer width="100%" height={220}>
                 <LineChart data={campaignTrendData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -277,7 +277,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
 
             {/* Engagement Funnel */}
             <div className="glass rounded-xl p-5">
-              <h3 className="font-bold mb-1 text-foreground">Engagement Funnel</h3>
+              <h3 className="font-bold text-sm mb-1 text-foreground">Engagement Funnel</h3>
               <p className="text-xs text-muted-foreground mb-5">Sent → Delivered → Opened → Replied → Meeting</p>
               <div className="space-y-3">
                 {funnelStages.map((stage, i) => (
@@ -310,7 +310,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
           <div className="space-y-4">
             {/* Step Performance Bar Chart */}
             <div className="glass rounded-xl p-5">
-              <h3 className="font-bold mb-1 text-foreground">Step-by-Step Performance</h3>
+              <h3 className="font-bold text-sm mb-1 text-foreground">Step-by-Step Performance</h3>
               <p className="text-xs text-muted-foreground mb-4">Fintech CTO Outbound — Nigeria · Sent, Opened, Replied per step</p>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={stepPerformanceData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
@@ -345,15 +345,15 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                       const isBest = row.replied === Math.max(...stepPerformanceData.map(r => r.replied));
                       return (
                         <tr key={row.step} className="border-b border-border/20 hover:bg-secondary/30">
-                          <td className="py-3 px-4 text-sm font-medium text-foreground flex items-center gap-2">
+                          <td className="py-3 px-4 text-xs font-medium text-foreground flex items-center gap-2">
                             {row.step}
                             {isBest && <span className="text-[10px] bg-primary/20 text-primary border border-primary/30 px-1.5 py-0.5 rounded-full font-medium">Best</span>}
                           </td>
-                          <td className="py-3 px-4 text-sm text-muted-foreground">{row.sent}</td>
-                          <td className="py-3 px-4 text-sm text-muted-foreground">{row.opened}</td>
-                          <td className="py-3 px-4 text-sm font-medium text-cyan-400">{openRate}%</td>
-                          <td className="py-3 px-4 text-sm text-muted-foreground">{row.replied}</td>
-                          <td className="py-3 px-4 text-sm font-medium text-primary">{replyRate}%</td>
+                          <td className="py-3 px-4 text-xs text-muted-foreground">{row.sent}</td>
+                          <td className="py-3 px-4 text-xs text-muted-foreground">{row.opened}</td>
+                          <td className="py-3 px-4 text-xs font-medium text-cyan-400">{openRate}%</td>
+                          <td className="py-3 px-4 text-xs text-muted-foreground">{row.replied}</td>
+                          <td className="py-3 px-4 text-xs font-medium text-primary">{replyRate}%</td>
                           <td className="py-3 px-4">
                             <span className={`text-xs font-medium ${row.dropoff > 30 ? 'text-amber-400' : 'text-muted-foreground'}`}>
                               {row.dropoff}%
@@ -394,7 +394,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                     return (
                       <tr key={i} className="border-b border-border/20 hover:bg-secondary/30 transition-colors">
                         <td className="py-3.5 px-4">
-                          <p className="text-sm font-medium text-foreground truncate max-w-[200px]">{row.name}</p>
+                          <p className="text-xs font-medium text-foreground truncate max-w-[200px]">{row.name}</p>
                         </td>
                         <td className="py-3.5 px-4">
                           <div className={`flex items-center gap-1 ${channelColor[row.channel]}`}>
@@ -402,7 +402,7 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                             <span className="text-xs capitalize">{row.channel}</span>
                           </div>
                         </td>
-                        <td className="py-3.5 px-4 text-sm text-muted-foreground">{row.sent}</td>
+                        <td className="py-3.5 px-4 text-xs text-muted-foreground">{row.sent}</td>
                         <td className="py-3.5 px-4">
                           <div className="flex items-center gap-2">
                             <div className="w-16 h-1.5 bg-border rounded-full overflow-hidden">
@@ -419,8 +419,8 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
                             <span className="text-xs font-mono text-primary">{row.replyRate}%</span>
                           </div>
                         </td>
-                        <td className="py-3.5 px-4 text-sm font-medium text-violet-400">{row.positiveReply}%</td>
-                        <td className="py-3.5 px-4 text-sm font-bold text-amber-400">{row.meetings}</td>
+                        <td className="py-3.5 px-4 text-xs font-medium text-violet-400">{row.positiveReply}%</td>
+                        <td className="py-3.5 px-4 text-xs font-bold text-amber-400">{row.meetings}</td>
                         <td className="py-3.5 px-4">
                           <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusBadge[row.status]}`}>
                             {row.status}

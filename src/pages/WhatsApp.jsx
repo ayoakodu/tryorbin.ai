@@ -142,7 +142,7 @@ Just write the message text, nothing else.`,
             <div key={s.label} className="glass rounded-xl p-3 flex items-center gap-3">
               <s.icon className={`w-5 h-5 ${s.color} flex-shrink-0`} />
               <div>
-                <p className={`text-base font-bold ${s.color}`}>{s.value}</p>
+                <p className={`text-sm font-bold ${s.color}`}>{s.value}</p>
                 <p className="text-[10px] text-muted-foreground">{s.label}</p>
               </div>
             </div>
@@ -175,7 +175,7 @@ Just write the message text, nothing else.`,
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
-                    <p className="text-sm font-semibold text-foreground truncate">{conv.name}</p>
+                    <p className="text-xs font-semibold text-foreground truncate">{conv.name}</p>
                     <span className="text-[10px] text-muted-foreground flex-shrink-0 ml-1">{conv.lastTime}</span>
                   </div>
                   <div className="flex items-center justify-between">
@@ -208,7 +208,7 @@ Just write the message text, nothing else.`,
                 {selected.avatar}
               </div>
               <div className="flex-1">
-                <p className="font-semibold text-sm text-foreground">{selected.name}</p>
+                <p className="font-semibold text-xs text-foreground">{selected.name}</p>
                 <p className="text-xs text-muted-foreground">{selected.company} · {selected.phone}</p>
               </div>
               <span className={`text-[10px] font-semibold px-2 py-1 rounded-full border ${tagColors[selected.tag]}`}>{selected.tag}</span>
@@ -225,7 +225,7 @@ Just write the message text, nothing else.`,
                   {msg.type === 'voice' ? (
                     <VoiceNotePlayer note={msg} />
                   ) : (
-                    <div className={`max-w-[72%] px-4 py-2.5 rounded-2xl text-sm ${
+                    <div className={`max-w-[72%] px-3 py-2 rounded-2xl text-xs ${
                       msg.role === 'sent'
                         ? 'bg-primary text-primary-foreground rounded-br-sm'
                         : 'glass border border-border/40 text-foreground rounded-bl-sm'

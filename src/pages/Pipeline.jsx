@@ -60,7 +60,7 @@ function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
       className="glass rounded-xl p-4 hover:border-border transition-all duration-200 cursor-pointer group relative">
       <div className="flex items-start justify-between mb-3">
-        <h4 className="text-sm font-semibold text-foreground leading-tight pr-2">{deal.title}</h4>
+        <h4 className="text-xs font-semibold text-foreground leading-tight pr-2">{deal.title}</h4>
         <div className="relative">
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button onClick={e => { e.stopPropagation(); onCollab(deal); }}
@@ -100,7 +100,7 @@ function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <span className="text-sm font-bold text-primary">${deal.value.toLocaleString()}</span>
+        <span className="text-xs font-bold text-primary">${deal.value.toLocaleString()}</span>
         <span className="text-xs text-muted-foreground font-mono">{deal.probability}%</span>
       </div>
 
@@ -223,7 +223,7 @@ Focus on risk, stale deals, or quick wins.`,
                 <span className="text-xs text-muted-foreground uppercase tracking-wider">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <span className={`text-xl font-bold ${s.color}`}>{s.value}</span>
+              <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -236,7 +236,7 @@ Focus on risk, stale deals, or quick wins.`,
           <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-black" />
           </div>
-          <p className="text-sm text-foreground flex-1">
+          <p className="text-xs text-foreground flex-1">
             <span className="font-semibold text-primary">AI Copilot: </span>
             {aiLoading ? 'Analyzing pipeline...' : aiInsight}
           </p>
@@ -290,7 +290,7 @@ Focus on risk, stale deals, or quick wins.`,
             className="fixed right-0 top-0 h-full w-80 bg-card border-l border-border/60 shadow-2xl z-40 flex flex-col">
             <div className="flex items-center justify-between p-4 border-b border-border/30">
               <div>
-                <p className="text-sm font-bold text-foreground">{collabDeal.title}</p>
+                <p className="text-xs font-bold text-foreground">{collabDeal.title}</p>
                 <p className="text-xs text-muted-foreground">{collabDeal.company}</p>
               </div>
               <button onClick={() => setCollabDeal(null)} className="text-muted-foreground hover:text-foreground">

@@ -54,7 +54,7 @@ function CampaignCard({ campaign, onToggle, onEdit, onDelete }) {
             <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border capitalize ${tc.bg} ${tc.text} ${tc.border}`}>{campaign.type}</span>
             <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusBadge[campaign.status]}`}>{campaign.status}</span>
           </div>
-          <h3 className="font-bold text-sm text-foreground leading-tight">{campaign.name}</h3>
+          <h3 className="font-bold text-xs text-foreground leading-tight">{campaign.name}</h3>
           <p className="text-xs text-muted-foreground mt-0.5">{campaign.goal}</p>
         </div>
         <div className="relative">
@@ -98,7 +98,7 @@ function CampaignCard({ campaign, onToggle, onEdit, onDelete }) {
           { label: 'Convert', value: `${campaign.conversion_rate}%`, color: 'text-violet-400' },
         ].map(m => (
           <div key={m.label} className="text-center p-2 rounded-lg bg-secondary/40">
-            <p className={`text-sm font-bold ${m.color}`}>{m.value}</p>
+            <p className={`text-xs font-bold ${m.color}`}>{m.value}</p>
             <p className="text-[10px] text-muted-foreground">{m.label}</p>
           </div>
         ))}
@@ -279,7 +279,7 @@ Keep it specific and actionable for African/emerging markets.`,
           ].map(s => (
             <div key={s.label} className="glass rounded-xl p-4">
               <span className="text-xs text-muted-foreground block mb-2">{s.label}</span>
-              <span className={`text-xl font-bold ${s.color}`}>{s.value}</span>
+              <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -290,7 +290,7 @@ Keep it specific and actionable for African/emerging markets.`,
             <Sparkles className="w-5 h-5 text-black" />
           </div>
           <div className="flex-1 text-center md:text-left">
-            <h3 className="font-bold text-sm mb-0.5">AI Campaign Builder</h3>
+            <h3 className="font-bold text-xs mb-0.5">AI Campaign Builder</h3>
             <p className="text-xs text-muted-foreground">Describe your goal and RVNU AI generates the entire campaign — audience, messaging, channels, and schedule. Ready in minutes.</p>
           </div>
           <Button onClick={() => { setEditingCampaign(null); setShowModal(true); }}

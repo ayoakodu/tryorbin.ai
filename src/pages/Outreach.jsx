@@ -93,7 +93,7 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <p className="text-sm font-semibold text-foreground truncate">{seq.name}</p>
+          <p className="text-xs font-semibold text-foreground truncate">{seq.name}</p>
           <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border flex-shrink-0 ${statusBadge[seq.status]}`}>
             {seq.status}
           </span>
@@ -102,7 +102,7 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
           {seq.tags.map(t => <span key={t} className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">{t}</span>)}
         </div>
       </div>
-      <div className="hidden md:flex items-center gap-6 text-sm flex-shrink-0">
+      <div className="hidden md:flex items-center gap-6 text-xs flex-shrink-0">
         <div className="text-center">
           <p className="font-bold text-foreground">{seq.enrolled}</p>
           <p className="text-[10px] text-muted-foreground">Enrolled</p>
@@ -359,7 +359,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                 <span className="text-xs text-muted-foreground">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <span className={`text-xl font-bold ${s.color}`}>{s.value}</span>
+              <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -400,7 +400,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
               <>
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="font-bold text-sm">{selectedSeq.name}</h3>
+                    <h3 className="font-bold text-xs">{selectedSeq.name}</h3>
                     <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusBadge[selectedSeq.status]}`}>
                       {selectedSeq.status}
                     </span>
@@ -424,7 +424,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                     { label: 'Meetings', value: selectedSeq.meetings, color: 'text-amber-400' },
                   ].map(m => (
                     <div key={m.label} className="text-center p-2 rounded-lg bg-secondary/50">
-                      <p className={`text-sm font-bold ${m.color}`}>{m.value}</p>
+                      <p className={`text-xs font-bold ${m.color}`}>{m.value}</p>
                       <p className="text-[10px] text-muted-foreground">{m.label}</p>
                     </div>
                   ))}

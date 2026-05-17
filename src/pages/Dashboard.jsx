@@ -82,7 +82,7 @@ export default function Dashboard() {
                 <span className="text-xs text-slate-500 uppercase tracking-wider font-medium">{stat.label}</span>
                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
               </div>
-              <p className="text-xl font-bold text-slate-800 mb-1">{stat.value}</p>
+              <p className="text-base font-bold text-slate-800 mb-1">{stat.value}</p>
               <div className="flex items-center gap-1 text-xs text-emerald-500">
                 <TrendingUp className="w-3 h-3" />
                 <span>{stat.change} this month</span>
@@ -97,7 +97,7 @@ export default function Dashboard() {
           <div className="lg:col-span-2 rounded-xl p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="font-bold text-slate-800">Pipeline Growth</h3>
+                <h3 className="text-sm font-bold text-slate-800">Pipeline Growth</h3>
                 <p className="text-xs text-slate-500">Revenue generated YTD</p>
               </div>
               <div className="flex gap-2">
@@ -126,7 +126,7 @@ export default function Dashboard() {
 
           {/* Pipeline Stages */}
           <div className="rounded-xl p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
-            <h3 className="font-bold text-slate-800 mb-4">Pipeline Stages</h3>
+            <h3 className="text-sm font-bold text-slate-800 mb-4">Pipeline Stages</h3>
             <div className="space-y-3">
               {[
                 { name: 'Prospecting', count: 47, value: '$420K', bg: '#eff6ff', border: '#bfdbfe', text: '#2563eb' },
@@ -158,7 +158,7 @@ export default function Dashboard() {
               <div className="w-6 h-6 rounded-lg gradient-brand flex items-center justify-center">
                 <Sparkles className="w-3.5 h-3.5 text-black" />
               </div>
-              <h3 className="font-bold text-slate-800">AI Revenue Insights</h3>
+              <h3 className="text-sm font-bold text-slate-800">AI Revenue Insights</h3>
               <div className="ml-auto w-2 h-2 rounded-full bg-emerald-500 animate-pulse-glow" />
             </div>
             <div className="space-y-3">
@@ -181,7 +181,7 @@ export default function Dashboard() {
           {/* Activity Feed */}
           <div className="rounded-xl p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
             <div className="flex items-center justify-between mb-5">
-              <h3 className="font-bold text-slate-800">GTM Activity Feed</h3>
+              <h3 className="text-sm font-bold text-slate-800">GTM Activity Feed</h3>
               <button className="text-xs text-slate-400 hover:text-emerald-600 transition-colors">View all</button>
             </div>
             <div className="space-y-4">
@@ -202,7 +202,7 @@ export default function Dashboard() {
         <div className="rounded-xl p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
           <div className="flex items-center justify-between mb-5">
             <div>
-              <h3 className="font-bold text-slate-800">Team Activity This Week</h3>
+              <h3 className="text-sm font-bold text-slate-800">Team Activity This Week</h3>
               <p className="text-xs text-slate-500">Emails, calls, and meetings by day</p>
             </div>
           </div>

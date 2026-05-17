@@ -77,7 +77,7 @@ function AutomationRow({ automation, onToggle, onDelete }) {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <h4 className="font-semibold text-sm text-foreground truncate">{automation.name}</h4>
+              <h4 className="font-semibold text-xs text-foreground truncate">{automation.name}</h4>
               <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border flex-shrink-0 ${statusColors[automation.status]}`}>
                 {automation.status}
               </span>
@@ -200,7 +200,7 @@ Return JSON with: name (string), trigger (one of: reply_received/deal_stage_chan
                 <span className="text-xs text-muted-foreground">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <span className={`text-2xl font-black ${s.color}`}>{s.value}</span>
+              <span className={`text-base font-black ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -211,7 +211,7 @@ Return JSON with: name (string), trigger (one of: reply_received/deal_stage_chan
             <Sparkles className="w-5 h-5 text-black" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-sm mb-0.5">AI Automation Builder</h3>
+            <h3 className="font-bold text-xs mb-0.5">AI Automation Builder</h3>
             <p className="text-xs text-muted-foreground">Describe a workflow in plain language and AI will build the automation for you.</p>
           </div>
           <Button onClick={() => setShowCreate(true)} className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 whitespace-nowrap">

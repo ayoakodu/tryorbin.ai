@@ -100,7 +100,7 @@ export default function Companies() {
                     <Building2 className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-foreground">{company.name}</h3>
+                    <h3 className="font-bold text-sm text-foreground">{company.name}</h3>
                     <div className="flex items-center gap-1.5 mt-0.5">
                       <Globe className="w-3 h-3 text-muted-foreground" />
                       <span className="text-xs text-muted-foreground">{company.domain}</span>

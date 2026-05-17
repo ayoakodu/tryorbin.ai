@@ -103,7 +103,7 @@ export default function Contacts() {
           ].map(s => (
             <div key={s.label} className="glass rounded-lg px-4 py-3 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">{s.label}</span>
-              <span className={`font-bold text-lg ${s.color}`}>{s.value}</span>
+              <span className={`font-bold text-sm ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -134,13 +134,13 @@ export default function Contacts() {
                             {contact.first_name[0]}{contact.last_name[0]}
                           </div>
                           <div>
-                            <p className="font-medium text-sm text-foreground">{contact.first_name} {contact.last_name}</p>
+                            <p className="font-medium text-xs text-foreground">{contact.first_name} {contact.last_name}</p>
                             <p className="text-xs text-muted-foreground">{contact.email}</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-4 hidden md:table-cell">
-                        <p className="text-sm font-medium">{contact.company || '—'}</p>
+                        <p className="text-xs font-medium">{contact.company || '—'}</p>
                         <p className="text-xs text-muted-foreground">{contact.title || ''}</p>
                       </td>
                       <td className="px-4 py-4 hidden lg:table-cell">
