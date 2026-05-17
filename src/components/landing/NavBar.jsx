@@ -109,6 +109,7 @@ const navData = {
     sections: [
       {
         label: 'CONTENT',
+        cols: 2,
         items: [
           { icon: BookOpen, title: 'Blog', desc: 'Insights, trends, and GTM strategies from the RVNU team.' },
           { icon: Zap, title: 'Product Updates', desc: 'See the latest features and improvements to RVNU.' },
@@ -131,6 +132,7 @@ const navData = {
       },
       {
         label: 'CONNECT',
+        cols: 2,
         items: [
           { icon: Globe, title: 'Webinars', desc: 'Live and on-demand sessions with GTM experts.' },
           { icon: CalendarCheck, title: 'Events', desc: 'Conferences, meetups, and RVNU-hosted events.' },
@@ -139,6 +141,7 @@ const navData = {
       },
       {
         label: 'COMPANY',
+        cols: 2,
         items: [
           { icon: Building, title: 'About Us', desc: "It's time we stop working for our software." },
           { icon: Briefcase, title: 'Careers', desc: 'Join the RVNU team.' },
