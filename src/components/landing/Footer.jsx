@@ -118,7 +118,7 @@ export default function Footer() {
           {/* Link columns */}
           {Object.entries(footerLinks).map(([section, links]) => (
             <div key={section} className="col-span-1 min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-3">{section}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-300 mb-3">{section}</p>
               <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link.label}>
@@ -137,8 +137,8 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-slate-500">© 2026 RVNU. Built for Africa's revenue operators.</p>
-          <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-slate-500">
+          <p className="text-[11px] text-slate-400">© 2026 RVNU. Built for Africa's revenue operators.</p>
+          <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-slate-400">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>
             <a href="#" className="hover:text-white transition-colors">Cookies</a>
