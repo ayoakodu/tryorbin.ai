@@ -106,6 +106,7 @@ const navData = {
     ],
   },
   Resources: {
+    outerCols: 2,
     sections: [
       {
         label: 'CONTENT',
@@ -155,7 +156,7 @@ const navData = {
 
 function DropdownPanel({ data }) {
   const sections = data.sections;
-  const colCount = sections.length >= 4 ? 4 : sections.length >= 3 ? 3 : sections.length >= 2 ? 2 : 1;
+  const colCount = data.outerCols ?? (sections.length >= 4 ? 4 : sections.length >= 3 ? 3 : sections.length >= 2 ? 2 : 1);
 
   return (
     <div className={`grid gap-8`} style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
@@ -257,7 +258,7 @@ export default function NavBar() {
 
               {activeMenu === menu && (
                 <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl p-6 z-50"
-                  style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '960px' : '580px' }}
+                  style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '960px' : menu === 'Resources' ? '780px' : '580px' }}
                 >
                   <DropdownPanel data={navData[menu]} />
                 </div>
