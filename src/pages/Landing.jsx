@@ -122,7 +122,8 @@ export default function Landing() {
                   placeholder="Enter your work email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="sm:w-72 h-12 bg-secondary/50 border-border/60 text-center sm:text-left"
+                  className="sm:w-72 h-12 border-white/20 text-center sm:text-left text-white placeholder:text-white/60"
+                  style={{ background: 'rgba(255,255,255,0.1)' }}
                 />
                 <Button onClick={handleJoin} className="h-12 px-8 bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 glow-green">
                   Join Waitlist <ArrowRight className="w-4 h-4 ml-2" />
@@ -407,7 +408,8 @@ export default function Landing() {
                     placeholder="Enter your work email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="sm:w-72 h-12 bg-secondary/50 border-border/60 text-center sm:text-left"
+                    className="sm:w-72 h-12 border-white/20 text-center sm:text-left text-white placeholder:text-white/60"
+                    style={{ background: 'rgba(255,255,255,0.1)' }}
                   />
                   <Button onClick={handleJoin} size="lg" className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 glow-green font-semibold">
                     Join Waitlist <ArrowRight className="w-4 h-4 ml-2" />
