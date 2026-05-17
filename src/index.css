@@ -6,31 +6,31 @@
 
 @layer base {
   :root {
-    --background: 224 71% 4%;
-    --foreground: 213 31% 91%;
-    --card: 224 71% 6%;
-    --card-foreground: 213 31% 91%;
-    --popover: 224 71% 6%;
-    --popover-foreground: 213 31% 91%;
-    --primary: 142 76% 52%;
-    --primary-foreground: 224 71% 4%;
-    --secondary: 224 40% 12%;
-    --secondary-foreground: 213 31% 91%;
-    --muted: 223 47% 11%;
-    --muted-foreground: 215 20% 55%;
-    --accent: 224 40% 14%;
-    --accent-foreground: 213 31% 91%;
+    --background: 210 20% 96%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 142 76% 36%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 16% 90%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 16% 93%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 16% 90%;
+    --accent-foreground: 222 47% 11%;
     --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 223 47% 14%;
-    --input: 223 47% 11%;
-    --ring: 142 76% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214 20% 86%;
+    --input: 214 20% 86%;
+    --ring: 142 76% 36%;
     --radius: 0.75rem;
 
-    --neon: 142 76% 52%;
-    --neon-dim: 142 76% 36%;
-    --surface: 224 71% 7%;
-    --surface-hover: 224 40% 10%;
+    --neon: 142 76% 36%;
+    --neon-dim: 142 76% 28%;
+    --surface: 210 20% 94%;
+    --surface-hover: 210 16% 90%;
   }
 }
 
