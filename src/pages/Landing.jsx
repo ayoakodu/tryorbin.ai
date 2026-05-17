@@ -337,11 +337,11 @@ export default function Landing() {
       </section>
 
       {/* Why RVNU */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6" style={{ background: '#060b1a' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold mb-3 text-gray-900">Stop tracking. Start executing.</h2>
-            <p className="text-gray-500 max-w-xl mx-auto">Most GTM tools show you dashboards. RVNU automates the workflows that drive revenue — outreach, follow-ups, pipeline progression, and conversion — with AI embedded throughout.</p>
+            <h2 className="text-2xl font-bold mb-3 text-white">Stop tracking. Start executing.</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">Most GTM tools show you dashboards. RVNU automates the workflows that drive revenue — outreach, follow-ups, pipeline progression, and conversion — with AI embedded throughout.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
@@ -352,12 +352,12 @@ export default function Landing() {
               <motion.div key={item.title}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: i * 0.1 }} viewport={{ once: true }}
-                className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:border-green-300 transition-all group">
-                <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4 group-hover:bg-green-100 transition-colors">
-                  <item.icon className="w-5 h-5 text-green-600" />
+                className="border border-white/10 rounded-xl p-6 hover:border-primary/40 transition-all group" style={{ background: 'rgba(255,255,255,0.04)' }}>
+                <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <item.icon className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="font-bold mb-2 text-gray-900">{item.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{item.desc}</p>
+                <h3 className="font-bold mb-2 text-white">{item.title}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed">{item.desc}</p>
               </motion.div>
             ))}
           </div>
