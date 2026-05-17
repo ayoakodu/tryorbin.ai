@@ -9,7 +9,7 @@ import {
   Bot, Workflow, PieChart, Handshake, Cpu, Wallet, Truck,
   Megaphone, Rocket, Store, UserCheck, Network,
   CalendarCheck, Inbox, Globe, LineChart,
-  Activity, LayoutDashboard, UserCog
+  Activity, LayoutDashboard, UserCog, Gauge, Send
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -96,9 +96,9 @@ const navData = {
           { icon: MessageCircle, title: 'WhatsApp Outreach' },
           { icon: Share2, title: 'Lead Routing' },
           { icon: BarChart2, title: 'Pipeline Tracking' },
-          { icon: CalendarCheck, title: 'Meeting Handoffs' },
+          { icon: Send, title: 'Meeting Handoffs' },
           { icon: Workflow, title: 'Task Automation' },
-          { icon: Activity, title: 'Engagement Tracking' },
+          { icon: Gauge, title: 'Engagement Tracking' },
           { icon: Users, title: 'Team Collaboration' },
           { icon: Search, title: 'AI Prospect Research' },
         ],
