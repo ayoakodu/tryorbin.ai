@@ -108,19 +108,42 @@ const navData = {
   Resources: {
     sections: [
       {
-        label: 'BLOG',
+        label: 'CONTENT',
         items: [
-          { icon: Zap, title: 'RVNU named a Cool Vendor by Gartner®', desc: 'Recognition for AI-driven GTM intelligence.' },
-          { icon: Brain, title: "RVNU's AI Lab launches GTM-2 Omni", desc: 'Our next-generation GTM intelligence model.' },
-          { icon: TrendingUp, title: 'RVNU Raises $30M Series A', desc: 'Funding to help businesses find their next customer.' },
+          { icon: BookOpen, title: 'Blog', desc: 'Insights, trends, and GTM strategies from the RVNU team.' },
+          { icon: Zap, title: 'Product Updates', desc: 'See the latest features and improvements to RVNU.' },
+          { icon: Users, title: 'Customer Stories', desc: 'How revenue teams use RVNU to grow faster.' },
+        ],
+      },
+      {
+        label: 'LEARN',
+        cols: 2,
+        items: [
+          { icon: Inbox, title: 'Help Center' },
+          { icon: Rocket, title: 'Getting Started' },
+          { icon: Database, title: 'API Documentation' },
+          { icon: Network, title: 'Integrations' },
+          { icon: Map, title: 'GTM Playbooks' },
+          { icon: List, title: 'Revenue Templates' },
+          { icon: Workflow, title: 'Workflow Tutorials' },
+          { icon: GraduationCap, title: 'RVNU Academy' },
+        ],
+      },
+      {
+        label: 'CONNECT',
+        items: [
+          { icon: Globe, title: 'Webinars', desc: 'Live and on-demand sessions with GTM experts.' },
+          { icon: CalendarCheck, title: 'Events', desc: 'Conferences, meetups, and RVNU-hosted events.' },
+          { icon: Handshake, title: 'Join the Community', desc: 'Connect with revenue operators using RVNU.' },
         ],
       },
       {
         label: 'COMPANY',
         items: [
           { icon: Building, title: 'About Us', desc: "It's time we stop working for our software." },
-          { icon: Briefcase, title: 'Partners', desc: 'Introducing the RVNU Agency Network.' },
-          { icon: GraduationCap, title: 'Careers', desc: 'Join the RVNU team.' },
+          { icon: Briefcase, title: 'Careers', desc: 'Join the RVNU team.' },
+          { icon: UserCheck, title: 'Partners', desc: 'Introducing the RVNU Agency Network.' },
+          { icon: Mail, title: 'Contact', desc: 'Get in touch with our team.' },
         ],
       },
     ],
