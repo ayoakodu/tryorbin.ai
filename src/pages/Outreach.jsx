@@ -222,7 +222,7 @@ Return 4-6 steps. Make the messaging specific, personalized, and relevant to the
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
         className="w-full max-w-2xl max-h-[90vh] overflow-y-auto glass rounded-2xl border border-border/60 shadow-2xl">
         <div className="flex items-center justify-between p-5 border-b border-border/30">
-          <h2 className="font-bold text-foreground">Create Sequence</h2>
+          <h2 className="text-sm font-bold text-foreground">Create Sequence</h2>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
         </div>
 
@@ -231,7 +231,7 @@ Return 4-6 steps. Make the messaging specific, personalized, and relevant to the
           <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Generate with AI</span>
+              <span className="text-xs font-semibold text-primary">Generate with AI</span>
             </div>
             <div className="flex gap-2">
               <Input value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}
@@ -359,7 +359,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                 <span className="text-xs text-muted-foreground">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
-              <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
+              <span className={`text-sm font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -368,7 +368,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
           {/* Sequences List */}
           <div className="lg:col-span-3 glass rounded-xl overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
-              <h3 className="font-bold text-foreground">All Sequences</h3>
+              <h3 className="text-xs font-bold text-foreground">All Sequences</h3>
               <div className="flex gap-2">
                 <Button size="sm" variant="outline" onClick={() => setShowTaskQueue(!showTaskQueue)} className="gap-1.5 text-xs border-blue-500/30 text-blue-400 hover:bg-blue-500/10">
                   <ListTodo className="w-3.5 h-3.5" /> Task Queue

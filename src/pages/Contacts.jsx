@@ -103,7 +103,7 @@ export default function Contacts() {
           ].map(s => (
             <div key={s.label} className="glass rounded-lg px-4 py-3 flex items-center justify-between">
               <span className="text-xs text-muted-foreground">{s.label}</span>
-              <span className={`font-bold text-sm ${s.color}`}>{s.value}</span>
+              <span className={`font-bold text-xs ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>

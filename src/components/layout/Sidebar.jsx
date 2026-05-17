@@ -32,7 +32,7 @@ export default function Sidebar() {
         <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center">
           <Zap className="w-4 h-4 text-black" strokeWidth={2.5} />
         </div>
-        <span className="text-lg font-bold tracking-tight" style={{ color: '#10b981' }}>RVNU</span>
+        <span className="text-base font-bold tracking-tight" style={{ color: '#10b981' }}>RVNU</span>
         <span className="ml-auto text-[10px] font-mono text-primary/60 bg-primary/10 px-1.5 py-0.5 rounded">BETA</span>
       </div>
 
@@ -45,7 +45,7 @@ export default function Sidebar() {
               key={item.path}
               to={item.path}
               className={cn(
-                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 group',
+                'flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 group',
                 active
                   ? 'bg-emerald-100 text-emerald-700'
                   : item.highlight
@@ -64,11 +64,11 @@ export default function Sidebar() {
 
       {/* Bottom */}
       <div className="px-3 pb-4 space-y-0.5 border-t border-slate-200 pt-3">
-        <Link to="/integrations" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
+        <Link to="/integrations" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
           <Globe className="w-4 h-4 text-slate-500" />
           <span>Integrations</span>
         </Link>
-        <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
+        <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
           <Settings className="w-4 h-4 text-slate-500" />
           <span>Settings</span>
         </Link>

@@ -140,7 +140,7 @@ function CampaignModal({ campaign, onClose, onSave, aiGenerating, onAIGenerate, 
           <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 mb-2">
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-sm font-semibold text-primary">Generate with AI</span>
+              <span className="text-xs font-semibold text-primary">Generate with AI</span>
             </div>
             <div className="flex gap-2">
               <Input value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}
@@ -279,7 +279,7 @@ Keep it specific and actionable for African/emerging markets.`,
           ].map(s => (
             <div key={s.label} className="glass rounded-xl p-4">
               <span className="text-xs text-muted-foreground block mb-2">{s.label}</span>
-              <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
+              <span className={`text-sm font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
@@ -300,7 +300,7 @@ Keep it specific and actionable for African/emerging markets.`,
         </div>
 
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-foreground">All Campaigns ({campaigns.length})</h3>
+          <h3 className="text-xs font-bold text-foreground">All Campaigns ({campaigns.length})</h3>
           <Button onClick={() => { setEditingCampaign(null); setShowModal(true); }}
             className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90">
             <Plus className="w-4 h-4" /> New Campaign

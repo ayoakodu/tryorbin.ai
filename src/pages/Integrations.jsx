@@ -109,8 +109,8 @@ export default function Integrations() {
             <Zap className="w-6 h-6 text-black" />
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-foreground mb-1">GTM Execution Integrations</h3>
-            <p className="text-sm text-muted-foreground">Connect your execution stack. RVNU integrates with email, WhatsApp, CRM, and automation tools so every workflow runs end-to-end.</p>
+            <h3 className="text-sm font-bold text-foreground mb-1">GTM Execution Integrations</h3>
+            <p className="text-xs text-muted-foreground">Connect your execution stack. RVNU integrates with email, WhatsApp, CRM, and automation tools so every workflow runs end-to-end.</p>
           </div>
           <div className="flex items-center gap-2 text-xs text-primary font-semibold px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -137,7 +137,7 @@ export default function Integrations() {
         {/* Available Integrations */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <h3 className="font-bold text-foreground">Available Integrations</h3>
+            <h3 className="text-xs font-bold text-foreground">Available Integrations</h3>
             <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">{integrationsConfig.length}</span>
           </div>
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -153,7 +153,7 @@ export default function Integrations() {
                       {integration.name[0]}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-bold truncate">{integration.name}</h4>
+                      <h4 className="text-xs font-bold truncate">{integration.name}</h4>
                       <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${categoryColors[integration.category] || 'bg-secondary text-muted-foreground'}`}>
                         {integration.category}
                       </span>
@@ -202,7 +202,7 @@ export default function Integrations() {
         {/* Coming Soon */}
         <div>
           <div className="flex items-center gap-2 mb-4">
-            <h3 className="font-bold text-foreground">Coming Soon</h3>
+            <h3 className="text-xs font-bold text-foreground">Coming Soon</h3>
             <span className="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded-full font-medium">{comingSoon.length}</span>
           </div>
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -214,7 +214,7 @@ export default function Integrations() {
                     {integration.name[0]}
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold">{integration.name}</h4>
+                    <h4 className="text-xs font-bold">{integration.name}</h4>
                     <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${categoryColors[integration.category] || 'bg-secondary text-muted-foreground'}`}>
                       {integration.category}
                     </span>

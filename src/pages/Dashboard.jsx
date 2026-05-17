@@ -79,10 +79,10 @@ export default function Dashboard() {
               style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}
               className="rounded-xl p-5 hover:shadow-md transition-all">
               <div className="flex items-start justify-between mb-3">
-                <span className="text-xs text-slate-500 uppercase tracking-wider font-medium">{stat.label}</span>
+                <span className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">{stat.label}</span>
                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
               </div>
-              <p className="text-base font-bold text-slate-800 mb-1">{stat.value}</p>
+              <p className="text-sm font-bold text-slate-800 mb-1">{stat.value}</p>
               <div className="flex items-center gap-1 text-xs text-emerald-500">
                 <TrendingUp className="w-3 h-3" />
                 <span>{stat.change} this month</span>
@@ -140,7 +140,7 @@ export default function Dashboard() {
                     <p className="text-xs font-semibold" style={{ color: stage.text }}>{stage.name}</p>
                     <p className="text-xs text-slate-500 mt-0.5">{stage.count} deals</p>
                   </div>
-                  <span className="text-sm font-bold" style={{ color: stage.text }}>{stage.value}</span>
+                  <span className="text-xs font-bold" style={{ color: stage.text }}>{stage.value}</span>
                 </div>
               ))}
             </div>
