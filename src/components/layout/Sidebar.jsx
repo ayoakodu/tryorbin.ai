@@ -68,15 +68,15 @@ export default function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-4">
+      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-3">
         {navGroups.map((group, gi) => (
           <div key={gi}>
             {group.label && (
-              <p className="px-3 mb-1 text-[10px] font-semibold tracking-widest text-slate-400 uppercase">
+              <p className="px-3 mb-0.5 text-[9px] font-semibold tracking-widest text-slate-400 uppercase">
                 {group.label}
               </p>
             )}
-            <div className="space-y-0.5">
+            <div className="space-y-0">
               {group.items.map((item) => {
                 const active = location.pathname === item.path;
                 return (
@@ -84,7 +84,7 @@ export default function Sidebar() {
                     key={item.path}
                     to={item.path}
                     className={cn(
-                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-all duration-150 group',
+                      'flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-150 group',
                       active
                         ? 'bg-emerald-100 text-emerald-700'
                         : item.highlight
