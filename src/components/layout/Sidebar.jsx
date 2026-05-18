@@ -55,7 +55,7 @@ export default function Sidebar() {
   const location = useLocation();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[220px] flex flex-col z-40 border-r border-slate-200"
+    <aside className="fixed left-0 top-0 h-screen w-[190px] flex flex-col z-40 border-r border-slate-200"
       style={{ background: '#f0f4f8' }}>
       
       {/* Logo */}
