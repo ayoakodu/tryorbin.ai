@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 
 export default function TopBar({ title, subtitle }) {
   return (
-    <header className="h-14 flex items-center justify-between px-6 border-b border-slate-200 sticky top-0 z-30" style={{ background: '#f8fafc' }}>
+    <header className="flex items-center justify-between px-6 py-1.5 border-b border-slate-200 sticky top-0 z-30" style={{ background: '#f8fafc' }}>
       <div>
         <h1 className="text-base font-semibold text-slate-800">{title}</h1>
         {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
