@@ -5,7 +5,7 @@ export default function AppLayout() {
   return (
     <div className="flex min-h-screen" style={{ background: '#f8fafc' }}>
       <Sidebar />
-      <main className="flex-1 ml-[220px] min-h-screen overflow-x-hidden">
+      <main className="flex-1 ml-[190px] min-h-screen overflow-x-hidden">
         <Outlet />
       </main>
     </div>
