@@ -59,7 +59,7 @@ export default function Sidebar() {
       style={{ background: '#f0f4f8' }}>
       
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-3 py-1.5 border-b border-slate-200">
+      <div className="flex items-center gap-2.5 px-3 border-b border-slate-200" style={{ height: '40px', minHeight: '40px', maxHeight: '40px' }}>
         <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0">
           <Zap className="w-4 h-4 text-black" strokeWidth={2.5} />
         </div>
