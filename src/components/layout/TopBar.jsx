@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 
 export default function TopBar({ title, subtitle }) {
   return (
-    <header className="flex items-center justify-between px-6 py-1.5 border-b border-slate-200 sticky top-0 z-30" style={{ background: '#f8fafc' }}>
+    <header className="flex items-center justify-between px-6 py-5 border-b border-slate-200 sticky top-0 z-30" style={{ background: '#f8fafc' }}>
       <div>
         <h1 className="text-base font-semibold text-slate-800">{title}</h1>
         {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
@@ -14,10 +14,10 @@ export default function TopBar({ title, subtitle }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
           <Input
             placeholder="Search anything..."
-            className="pl-9 h-8 w-64 text-sm bg-white border-gray-300 focus:border-emerald-400 text-slate-700"
+            className="pl-9 w-64 text-sm bg-white border-gray-300 focus:border-emerald-400 text-slate-700"
           />
         </div>
-        <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10">
+        <Button variant="outline" size="sm" className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10">
           <Sparkles className="w-3.5 h-3.5" />
           Ask AI
         </Button>
