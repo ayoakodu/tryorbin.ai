@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 
 export default function TopBar({ title, subtitle }) {
   return (
-    <header className="flex items-center justify-between px-6 border-b border-slate-200 sticky top-0 z-30" style={{ background: '#f8fafc', height: '44px' }}>
+    <header className="flex items-center justify-between px-6 border-b border-slate-200 sticky top-0 z-30 min-h-0" style={{ background: '#f8fafc', height: '40px', minHeight: '40px', maxHeight: '40px' }}>
       <div>
         <h1 className="text-sm font-semibold text-slate-800">{title}</h1>
         {subtitle && <p className="text-[11px] text-slate-500">{subtitle}</p>}
