@@ -1,33 +1,32 @@
 import { Bell, Search, ChevronDown, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 export default function TopBar({ title, subtitle }) {
   return (
     <header className="flex items-center justify-between px-6 py-1.5 border-b border-slate-200 sticky top-0 z-30" style={{ background: '#f8fafc' }}>
       <div>
-        <h1 className="text-base font-semibold text-slate-800">{title}</h1>
-        {subtitle && <p className="text-xs text-slate-500">{subtitle}</p>}
+        <h1 className="text-xs font-semibold text-slate-800">{title}</h1>
+        {subtitle && <p className="text-[10px] text-slate-500">{subtitle}</p>}
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <div className="relative hidden md:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-          <Input
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3 h-3 text-muted-foreground" />
+          <input
             placeholder="Search anything..."
-            className="pl-9 w-64 text-sm bg-white border-gray-300 focus:border-emerald-400 text-slate-700"
+            className="pl-7 pr-3 h-6 w-52 text-[11px] rounded-md border border-slate-300 bg-white focus:border-emerald-400 focus:outline-none text-slate-700"
           />
         </div>
-        <Button variant="outline" size="sm" className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10">
-          <Sparkles className="w-3.5 h-3.5" />
+        <Button variant="outline" size="sm" className="h-6 px-2 gap-1 text-[11px] border-primary/30 text-primary hover:bg-primary/10">
+          <Sparkles className="w-3 h-3" />
           Ask AI
         </Button>
-        <button className="relative p-2 rounded-lg hover:bg-white/60 transition-colors">
-          <Bell className="w-4 h-4 text-slate-500" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+        <button className="relative p-1 rounded-lg hover:bg-white/60 transition-colors">
+          <Bell className="w-3.5 h-3.5 text-slate-500" />
+          <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full"></span>
         </button>
-        <button className="flex items-center gap-2 pl-2 pr-1 py-1 rounded-lg hover:bg-white/60 transition-colors">
-          <div className="w-7 h-7 rounded-full bg-emerald-100 flex items-center justify-center">
-            <span className="text-xs font-bold text-emerald-700">JD</span>
+        <button className="flex items-center gap-1.5 pl-1 pr-1 py-0.5 rounded-lg hover:bg-white/60 transition-colors">
+          <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
+            <span className="text-[10px] font-bold text-emerald-700">JD</span>
           </div>
           <ChevronDown className="w-3 h-3 text-slate-500" />
         </button>
