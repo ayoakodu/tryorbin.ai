@@ -3,7 +3,7 @@ import {
   Home, Users, Building2, TrendingUp, 
   Megaphone, Mail, BarChart3, Zap, MessageCircle,
   Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound,
-  Phone, CheckSquare, Radio, List, MailOpen
+  Phone, CheckSquare, Radio, List, MailOpen, Send
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -26,7 +26,7 @@ const navGroups = [
   {
     label: 'ENGAGEMENT',
     items: [
-      { icon: Mail, label: 'Sequences', path: '/outreach' },
+      { icon: Send, label: 'Sequences', path: '/outreach' },
       { icon: MailOpen, label: 'Emails', path: '/emails' },
       { icon: Phone, label: 'Calls', path: '/calls' },
       { icon: MessageCircle, label: 'WhatsApp', path: '/whatsapp' },
