@@ -59,11 +59,11 @@ export default function Sidebar() {
       style={{ background: '#f0f4f8' }}>
       
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-5 py-5 border-b border-slate-200">
-        <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center">
+      <div className="flex items-center gap-2.5 px-3 py-1.5 border-b border-slate-200">
+        <div className="w-7 h-7 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0">
           <Zap className="w-4 h-4 text-black" strokeWidth={2.5} />
         </div>
-        <span className="text-base font-bold tracking-tight" style={{ color: '#10b981' }}>RVNU</span>
+        <span className="text-sm font-bold tracking-tight" style={{ color: '#10b981' }}>RVNU</span>
         <span className="ml-auto text-[10px] font-mono text-primary/60 bg-primary/10 px-1.5 py-0.5 rounded">BETA</span>
       </div>
 
