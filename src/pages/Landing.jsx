@@ -300,18 +300,18 @@ export default function Landing() {
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div>
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-medium mb-6">
-                  <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" /> AI Revenue Copilot — Planned Feature
+                  <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" /> Embedded AI Workflow Assistance
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold mb-4">An AI execution engine embedded in every workflow</h2>
+                <h2 className="text-xl md:text-2xl font-bold mb-4">AI assistance embedded across your GTM workflows</h2>
                 <p className="text-muted-foreground mb-6 leading-relaxed">
-                  We're designing RVNU's AI Copilot to be your always-on GTM execution assistant — generating outbound sequences, automating follow-ups, analysing pipeline risk, and creating personalised messaging on demand. Embedded contextually across every workflow.
+                  RVNU uses embedded AI assistance to help revenue teams draft outreach, generate ideas, summarize account insights, and support day-to-day GTM execution workflows directly inside the platform.
                 </p>
                 <div className="space-y-3">
                   {[
                     '"Generate a 5-step outbound sequence for fintech CTOs in Nigeria"',
-                    '"Which deals in my pipeline are most at risk this quarter?"',
-                    '"Suggest 10 target accounts matching our ICP in East Africa"',
-                    '"Write a LinkedIn post announcing our product launch"',
+                    '"Suggest high-fit B2B startups hiring SDRs in Kenya"',
+                    '"Write a LinkedIn launch post for our new product"',
+                    '"Summarize the top accounts engaged this week"',
                   ].map(prompt => (
                     <div key={prompt} className="flex items-start gap-2 text-sm">
                       <ChevronRight className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
