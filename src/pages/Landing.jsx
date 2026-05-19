@@ -303,7 +303,7 @@ export default function Landing() {
                   <Sparkles className="w-3.5 h-3.5 animate-pulse-glow" /> Embedded AI Workflow Assistance
                 </div>
                 <h2 className="text-xl md:text-2xl font-bold mb-4">AI assistance embedded across your GTM workflows</h2>
-                <p className="text-muted-foreground mb-6 leading-relaxed">
+                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                   RVNU uses embedded AI assistance to help revenue teams draft outreach, generate ideas, summarize account insights, and support day-to-day GTM execution workflows directly inside the platform.
                 </p>
                 <div className="space-y-3">
@@ -313,8 +313,8 @@ export default function Landing() {
                     '"Write a LinkedIn launch post for our new product"',
                     '"Summarize the top accounts engaged this week"',
                   ].map(prompt => (
-                    <div key={prompt} className="flex items-start gap-2 text-sm">
-                      <ChevronRight className="w-3.5 h-3.5 text-primary flex-shrink-0 mt-0.5" />
+                    <div key={prompt} className="flex items-start gap-2 text-xs">
+                      <ChevronRight className="w-3 h-3 text-primary flex-shrink-0 mt-0.5" />
                       <span className="text-muted-foreground italic">{prompt}</span>
                     </div>
                   ))}
