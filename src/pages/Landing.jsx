@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap, ArrowRight, ChevronRight, Check, Sparkles,
   Globe, TrendingUp, Users, Mail, BarChart3,
-  Target, Brain, Search, MessageSquare, PieChart, Layers, Database, Play
+  Target, Brain, Search, MessageSquare, PieChart, Layers, Database, Play, GitBranch
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -363,9 +363,9 @@ export default function Landing() {
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { icon: Globe, title: 'WhatsApp-Native Execution', desc: 'WhatsApp is a core GTM channel across emerging markets. RVNU treats it as a first-class execution channel for outreach, follow-ups, engagement tracking, and workflow coordination.' },
-              { icon: MessageSquare, title: 'Workflow Automation, Not Dashboards', desc: 'RVNU helps revenue teams coordinate outreach, manage follow-ups, and streamline GTM workflows from one unified execution workspace.' },
-              { icon: Layers, title: 'Revenue Outcomes Over Features', desc: 'Every workflow is designed around execution outcomes — helping teams move pipeline, engage accounts, and coordinate GTM activity from one centralized workspace.' },
+              { icon: MessageSquare, title: 'WhatsApp-Native Execution', desc: 'WhatsApp is a core GTM channel across emerging markets. RVNU treats it as a first-class execution channel for outreach, follow-ups, engagement tracking, and workflow coordination.' },
+              { icon: GitBranch, title: 'Workflow Automation, Not Dashboards', desc: 'RVNU helps revenue teams coordinate outreach, manage follow-ups, and streamline GTM workflows from one unified execution workspace.' },
+              { icon: TrendingUp, title: 'Revenue Outcomes Over Features', desc: 'Every workflow is designed around execution outcomes — helping teams move pipeline, engage accounts, and coordinate GTM activity from one centralized workspace.' },
             ].map((item, i) => (
               <motion.div key={item.title}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
