@@ -416,8 +416,11 @@ export default function Landing() {
                 <RVNULogo size={56} className="rounded-2xl" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with RVNU</h2>
+              <p className="text-muted-foreground mb-1 max-w-2xl mx-auto whitespace-nowrap">
+                The AI-native GTM execution platform for Africa's revenue teams.
+              </p>
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
-                The AI-native GTM execution platform for Africa's revenue&nbsp;teams. Coordinate outreach, manage pipeline workflows, and streamline follow-ups from one unified workspace.
+                Coordinate outreach, manage pipeline workflows, and streamline follow-ups from one unified workspace.
               </p>
               <p className="text-xs text-slate-400 mb-8">RVNU is currently in development. Early waitlist members will receive priority access and product updates.</p>
 
