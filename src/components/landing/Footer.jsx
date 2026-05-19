@@ -1,4 +1,4 @@
-import { Zap } from 'lucide-react';
+import RVNULogo from '@/components/ui/RVNULogo.jsx';
 
 const footerLinks = {
   Product: [
@@ -96,9 +96,7 @@ export default function Footer() {
           {/* Brand + social */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-6 h-6 rounded-md gradient-brand flex items-center justify-center">
-                <Zap className="w-3 h-3 text-black" strokeWidth={2.5} />
-              </div>
+              <RVNULogo size={28} className="rounded-md" />
               <span className="text-sm font-bold gradient-text">RVNU</span>
             </div>
             <div className="flex items-center gap-2">
@@ -107,7 +105,8 @@ export default function Footer() {
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-white transition-colors" style={{ background: 'rgba(255,255,255,0.08)' }}
+                  className="w-7 h-7 rounded-md flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                  style={{ background: 'rgba(255,255,255,0.08)' }}
                 >
                   {s.icon}
                 </a>
@@ -122,10 +121,7 @@ export default function Footer() {
               <ul className="space-y-2">
                 {links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      href="#"
-                      className="text-[11px] text-slate-400 hover:text-white transition-colors leading-snug"
-                    >
+                    <a href="#" className="text-[11px] text-slate-400 hover:text-white transition-colors leading-snug">
                       {link.label}
                     </a>
                   </li>
