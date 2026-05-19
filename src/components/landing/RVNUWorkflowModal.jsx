@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ArrowLeft, ArrowRight, Sparkles, Check, Zap, Mail, MessageCircle, Linkedin, Phone, Users, Building2, CheckCircle2, Loader2 } from 'lucide-react';
+import { X, ArrowLeft, ArrowRight, Sparkles, Check, Mail, MessageCircle, Linkedin, Phone, Users, Building2, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import RVNULogo from '@/components/ui/RVNULogo';
 
 // ─── Step 1 ───────────────────────────────────────────────────────────────────
 
@@ -37,7 +38,6 @@ function Step1() {
 
   return (
     <div className="flex flex-col md:flex-row gap-0 h-full overflow-hidden">
-      {/* Left panel */}
       <div className="md:w-[300px] flex-shrink-0 border-r border-slate-200 p-4 flex flex-col gap-3 overflow-hidden">
         <div>
           <div className="flex items-center gap-1.5 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase mb-1.5">
@@ -67,7 +67,6 @@ function Step1() {
         </div>
       </div>
 
-      {/* Right panel */}
       <div className="flex-1 p-4 flex flex-col overflow-hidden">
         {!selected && (
           <div className="flex-1 flex flex-col items-center justify-center text-center">
@@ -350,9 +349,7 @@ function Step4({ onClose }) {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 py-4 text-center max-w-lg mx-auto">
-      <div className="w-11 h-11 rounded-2xl gradient-brand flex items-center justify-center mb-3 shadow-lg">
-        <Zap className="w-5 h-5 text-black" strokeWidth={2.5} />
-      </div>
+      <RVNULogo size={48} className="rounded-xl mb-4 shadow-lg" />
       <h2 className="text-lg font-bold text-emerald-600 mb-2 leading-snug">The Future of GTM Execution for African Revenue Teams</h2>
       <p className="text-sm text-slate-500 mb-4 leading-relaxed">Join the waitlist and get early access to RVNU — the AI-native GTM execution platform built for your market.</p>
 

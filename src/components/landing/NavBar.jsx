@@ -15,6 +15,7 @@ import {
   UserPlus, Puzzle, ContactRound
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import RVNULogo from '@/components/ui/RVNULogo.jsx';
 
 const navData = {
   Product: {
@@ -162,7 +163,7 @@ function DropdownPanel({ data }) {
   const colCount = data.outerCols ?? (sections.length >= 4 ? 4 : sections.length >= 3 ? 3 : sections.length >= 2 ? 2 : 1);
 
   return (
-    <div className={`grid gap-8`} style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
+    <div className="grid gap-8" style={{ gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))` }}>
       {sections.map((section) => (
         <div key={section.label}>
           <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-4">{section.label}</p>
@@ -175,9 +176,6 @@ function DropdownPanel({ data }) {
                   </div>
                   <div>
                     <p className="text-xs font-medium text-slate-700 group-hover:text-primary transition-colors leading-tight">{item.title}</p>
-                    {item.comingSoon && (
-                      <span className="text-[9px] font-bold uppercase text-muted-foreground/50 border border-border/50 rounded px-1">Coming Soon</span>
-                    )}
                   </div>
                 </button>
               ))}
@@ -237,9 +235,7 @@ export default function NavBar() {
 
         {/* Logo */}
         <div className="flex items-center gap-2.5 flex-shrink-0">
-          <div className="w-8 h-8 rounded-lg gradient-brand flex items-center justify-center">
-            <Zap className="w-4 h-4 text-black" strokeWidth={2.5} />
-          </div>
+          <RVNULogo size={32} className="rounded-lg" />
           <span className="text-xl font-bold gradient-text">RVNU</span>
         </div>
 
@@ -260,7 +256,8 @@ export default function NavBar() {
               </button>
 
               {activeMenu === menu && (
-                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-slate-200 shadow-2xl p-6 z-50 bg-white"
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-slate-200 shadow-2xl p-6 z-50 bg-white"
                   style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '960px' : menu === 'Resources' ? '780px' : '580px' }}
                 >
                   <DropdownPanel data={navData[menu]} />
