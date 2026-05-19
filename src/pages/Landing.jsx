@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap, ArrowRight, ChevronRight, Check, Sparkles,
   Globe, TrendingUp, Users, Mail, BarChart3,
-  Target, Brain, Search, MessageSquare, PieChart, Layers, Database
+  Target, Brain, Search, MessageSquare, PieChart, Layers, Database, Play
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
+import RVNUWorkflowModal from '@/components/landing/RVNUWorkflowModal';
 
 const africanCountries = [
   'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
@@ -83,6 +84,7 @@ export default function Landing() {
   const [email, setEmail] = useState('');
   const [joined, setJoined] = useState(false);
   const [openFaq, setOpenFaq] = useState(null);
+  const [showWorkflow, setShowWorkflow] = useState(false);
 
   const handleJoin = () => {
     if (email) setJoined(true);
@@ -137,13 +139,29 @@ export default function Landing() {
           </motion.div>
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-wrap items-center justify-center gap-5 text-sm text-slate-300">
+            className="flex flex-wrap items-center justify-center gap-5 text-sm text-slate-300 mb-8">
             {earlyAccessBenefits.map(t => (
               <div key={t} className="flex items-center gap-1.5">
                 <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
                 <span>{t}</span>
               </div>
             ))}
+          </motion.div>
+
+          {/* Secondary CTA */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.55 }}
+            className="flex justify-center">
+            <button
+              onClick={() => setShowWorkflow(true)}
+              className="group flex items-center gap-2.5 text-sm text-slate-300 hover:text-white transition-colors duration-200"
+            >
+              <span className="w-7 h-7 rounded-full border border-slate-500 group-hover:border-primary/60 flex items-center justify-center transition-colors duration-200 group-hover:bg-primary/10">
+                <Play className="w-3 h-3 text-slate-400 group-hover:text-primary transition-colors duration-200 ml-0.5" />
+              </span>
+              <span className="border-b border-dashed border-slate-600 group-hover:border-primary/50 transition-colors duration-200">
+                See How RVNU Works
+              </span>
+            </button>
           </motion.div>
         </div>
 
@@ -425,6 +443,10 @@ export default function Landing() {
       </section>
 
       <Footer />
+
+      <AnimatePresence>
+        {showWorkflow && <RVNUWorkflowModal onClose={() => setShowWorkflow(false)} />}
+      </AnimatePresence>
     </div>
   );
 }
