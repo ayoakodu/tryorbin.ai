@@ -358,14 +358,14 @@ export default function Landing() {
       <section className="py-16 px-6" style={{ background: '#060b1a' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold mb-3 gradient-text">Stop tracking. Start executing.</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Most GTM tools show you dashboards. RVNU automates the workflows that drive revenue — outreach, follow-ups, pipeline progression, and conversion — with AI embedded throughout.</p>
+            <h2 className="text-2xl font-bold mb-3 gradient-text">Track smarter. Execute faster.</h2>
+            <p className="text-slate-400 max-w-xl mx-auto">Most GTM tools focus on visibility. RVNU helps revenue teams execute outreach, manage follow-ups, coordinate workflows, and move pipeline faster — with AI assistance embedded throughout.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { icon: Globe, title: 'WhatsApp-Native Execution', desc: 'WhatsApp is the primary GTM channel across Africa. RVNU treats it as a first-class execution channel — sequences, tracking, and automation included.' },
-              { icon: MessageSquare, title: 'Workflow Automation, Not Dashboards', desc: 'AI doesn\'t just surface insights — it executes. Automated follow-ups, sequence management, deal progression, and SDR alerts run without manual intervention.' },
-              { icon: Layers, title: 'Revenue Outcomes Over Features', desc: 'Every module is built backwards from a revenue outcome: meetings booked, deals closed, pipeline converted. Not another tool to manage.' },
+              { icon: Globe, title: 'WhatsApp-Native Execution', desc: 'WhatsApp is a core GTM channel across emerging markets. RVNU treats it as a first-class execution channel for outreach, follow-ups, engagement tracking, and workflow coordination.' },
+              { icon: MessageSquare, title: 'Workflow Automation, Not Dashboards', desc: 'RVNU helps revenue teams coordinate outreach, manage follow-ups, and streamline GTM workflows from one unified execution workspace.' },
+              { icon: Layers, title: 'Revenue Outcomes Over Features', desc: 'Every workflow is designed around execution outcomes — helping teams move pipeline, engage accounts, and coordinate GTM activity from one centralized workspace.' },
             ].map((item, i) => (
               <motion.div key={item.title}
                 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
