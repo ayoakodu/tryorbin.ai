@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
 import RVNUWorkflowModal from '@/components/landing/RVNUWorkflowModal';
+import RVNULogo from '@/components/ui/RVNULogo.jsx';
 
 const africanCountries = [
   'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
@@ -411,19 +412,19 @@ export default function Landing() {
           <div className="glass rounded-2xl p-8 md:p-12 border border-primary/20 glow-green relative overflow-hidden">
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
-              <div className="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center mx-auto mb-6">
-                <Zap className="w-7 h-7 text-black" strokeWidth={2.5} />
+              <div className="flex items-center justify-center mx-auto mb-6">
+                <RVNULogo size={56} className="rounded-2xl" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with RVNU</h2>
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
-                The AI-native GTM execution platform for Africa's revenue teams. Automate your outreach, pipeline, and follow-ups — and close faster. Join the waitlist for early access and founder pricing.
+                The AI-native GTM execution platform for Africa's revenue teams. Coordinate outreach, manage pipeline workflows, and streamline follow-ups from one unified workspace.
               </p>
-              <p className="text-xs text-slate-400 mb-8">RVNU is currently in development. No credit card required to join the waitlist.</p>
+              <p className="text-xs text-slate-400 mb-8">RVNU is currently in development. Early waitlist members will receive priority access and product updates.</p>
 
               {!joined ? (
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Input
-                    placeholder="Enter your work email"
+                    placeholder="Enter your work email to join the waitlist"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-slate-800 placeholder:text-slate-500 bg-white"
