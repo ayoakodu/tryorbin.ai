@@ -38,22 +38,22 @@ function Step1({ onNext }) {
   return (
     <div className="flex flex-col md:flex-row gap-0 h-full">
       {/* Left panel */}
-      <div className="md:w-[340px] flex-shrink-0 border-r border-slate-200 p-6 flex flex-col gap-5">
+      <div className="md:w-[320px] flex-shrink-0 border-r border-slate-200 p-4 flex flex-col gap-3">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase mb-3">
+          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase mb-2">
             <Sparkles className="w-3 h-3" /> R1 · Prompt
           </div>
-          <h2 className="text-xl font-bold text-slate-900 leading-snug mb-2">Describe Your Ideal Customers</h2>
-          <p className="text-sm text-slate-500 leading-relaxed">Use AI to discover and prioritize companies across Africa based on your ideal customer profile.</p>
+          <h2 className="text-lg font-bold text-emerald-600 leading-snug mb-1">Describe Your Ideal Customers</h2>
+          <p className="text-xs text-slate-500 leading-relaxed">Use AI to discover and prioritize companies across Africa based on your ideal customer profile.</p>
         </div>
         <div>
-          <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase mb-3">Choose a Prompt</p>
-          <div className="space-y-2">
+          <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase mb-2">Choose a Prompt</p>
+          <div className="space-y-1.5">
             {prompts.map((p, i) => (
               <button
                 key={i}
                 onClick={() => handleSelect(p)}
-                className={`w-full text-left px-3 py-2.5 rounded-lg border text-sm transition-all duration-150 flex items-start gap-2.5 ${
+                className={`w-full text-left px-3 py-2 rounded-lg border text-sm transition-all duration-150 flex items-start gap-2.5 ${
                   selected?.label === p.label
                     ? 'border-emerald-400 bg-emerald-50 text-emerald-800'
                     : 'border-slate-200 bg-white hover:border-emerald-300 hover:bg-emerald-50/50 text-slate-700'
@@ -68,7 +68,7 @@ function Step1({ onNext }) {
       </div>
 
       {/* Right panel */}
-      <div className="flex-1 p-6 flex flex-col">
+      <div className="flex-1 p-4 flex flex-col">
         {!selected && (
           <div className="flex-1 flex flex-col items-center justify-center text-center">
             <div className="w-14 h-14 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-4">
@@ -97,7 +97,7 @@ function Step1({ onNext }) {
         )}
 
         {selected && done && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col gap-3">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col gap-2">
             <div className="flex items-center gap-2 mb-1">
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />
               <span className="text-xs font-semibold text-emerald-700">5 accounts discovered · sorted by fit score</span>
@@ -108,10 +108,10 @@ function Step1({ onNext }) {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.08 }}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-slate-200 bg-white hover:border-emerald-300 transition-all"
+                className="flex items-center gap-3 px-3 py-2 rounded-xl border border-slate-200 bg-white hover:border-emerald-300 transition-all"
               >
-                <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
-                  <Building2 className="w-4 h-4 text-emerald-600" />
+                <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <Building2 className="w-3.5 h-3.5 text-emerald-600" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-800">{a.name}</p>
@@ -154,19 +154,19 @@ const accounts2 = [
 function Step2() {
   return (
     <div className="flex flex-col md:flex-row gap-0 h-full">
-      <div className="md:w-[340px] flex-shrink-0 border-r border-slate-200 p-6 flex flex-col gap-5">
+      <div className="md:w-[320px] flex-shrink-0 border-r border-slate-200 p-4 flex flex-col gap-3">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase mb-3">
+          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase mb-2">
             <Sparkles className="w-3 h-3" /> R2 · Orchestration
           </div>
-          <h2 className="text-xl font-bold text-slate-900 leading-snug mb-2">AI Qualification & Prioritization</h2>
-          <p className="text-sm text-slate-500 leading-relaxed">RVNU automatically enriches, segments, qualifies, and prioritizes accounts so your team focuses on the highest-value opportunities.</p>
+          <h2 className="text-lg font-bold text-emerald-600 leading-snug mb-1">AI Qualification & Prioritization</h2>
+          <p className="text-xs text-slate-500 leading-relaxed">RVNU automatically enriches, segments, qualifies, and prioritizes accounts so your team focuses on the highest-value opportunities.</p>
         </div>
         <div>
-          <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase mb-3">Workflow Stages</p>
-          <div className="space-y-2">
+          <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase mb-2">Workflow Stages</p>
+          <div className="space-y-1.5">
             {workflowStages.map((s, i) => (
-              <div key={i} className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border text-sm ${
+              <div key={i} className={`flex items-center gap-3 px-3 py-2 rounded-lg border text-sm ${
                 s.status === 'completed' ? 'border-emerald-200 bg-emerald-50' :
                 s.status === 'active' ? 'border-emerald-400 bg-emerald-100' :
                 'border-slate-200 bg-white text-slate-400'
@@ -183,24 +183,24 @@ function Step2() {
         </div>
       </div>
 
-      <div className="flex-1 p-6 overflow-auto">
-        <div className="flex items-center justify-between mb-4">
+      <div className="flex-1 p-4 flex flex-col">
+        <div className="flex items-center justify-between mb-3">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Ranked Accounts</p>
           <span className="text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">AI Prioritizing…</span>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-2 flex-1">
           {accounts2.map((a, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: 12 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="p-4 rounded-xl border border-slate-200 bg-white hover:border-emerald-300 transition-all"
+              className="p-3 rounded-xl border border-slate-200 bg-white hover:border-emerald-300 transition-all"
             >
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
-                    <Building2 className="w-3.5 h-3.5 text-emerald-600" />
+                  <div className="w-6 h-6 rounded-lg bg-emerald-100 flex items-center justify-center">
+                    <Building2 className="w-3 h-3 text-emerald-600" />
                   </div>
                   <span className="font-semibold text-sm text-slate-800">{a.name}</span>
                   {a.tier === 1 && <span className="text-[10px] px-1.5 py-0.5 bg-amber-100 text-amber-700 rounded font-semibold">Tier 1</span>}
@@ -208,20 +208,20 @@ function Step2() {
                 <span className="text-sm font-bold text-emerald-600">{a.fit}</span>
               </div>
               <div className="grid grid-cols-3 gap-2 text-xs">
-                <div className="bg-slate-50 rounded-lg p-2 text-center">
+                <div className="bg-slate-50 rounded-lg p-1.5 text-center">
                   <p className="font-semibold text-slate-700">{a.engage}%</p>
                   <p className="text-slate-400 text-[10px]">Engage. Likelihood</p>
                 </div>
-                <div className="bg-slate-50 rounded-lg p-2 text-center">
+                <div className="bg-slate-50 rounded-lg p-1.5 text-center">
                   <p className={`font-semibold ${a.hiring ? 'text-emerald-600' : 'text-slate-400'}`}>{a.hiring ? 'Yes' : 'No'}</p>
                   <p className="text-slate-400 text-[10px]">Hiring SDRs</p>
                 </div>
-                <div className="bg-slate-50 rounded-lg p-2 text-center">
+                <div className="bg-slate-50 rounded-lg p-1.5 text-center">
                   <p className={`font-semibold ${a.growth === 'High' ? 'text-emerald-600' : 'text-amber-500'}`}>{a.growth}</p>
                   <p className="text-slate-400 text-[10px]">Growth Signal</p>
                 </div>
               </div>
-              <div className="mt-2 w-full bg-slate-100 rounded-full h-1">
+              <div className="mt-1.5 w-full bg-slate-100 rounded-full h-1">
                 <motion.div
                   className="bg-gradient-to-r from-emerald-400 to-emerald-600 h-1 rounded-full"
                   initial={{ width: 0 }}
@@ -250,22 +250,22 @@ function Step3() {
   const [activeChannel, setActiveChannel] = useState(0);
   return (
     <div className="flex flex-col md:flex-row gap-0 h-full">
-      <div className="md:w-[340px] flex-shrink-0 border-r border-slate-200 p-6 flex flex-col gap-5">
+      <div className="md:w-[320px] flex-shrink-0 border-r border-slate-200 p-4 flex flex-col gap-3">
         <div>
-          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase mb-3">
+          <div className="flex items-center gap-2 text-[10px] font-semibold tracking-widest text-emerald-600 uppercase mb-2">
             <Sparkles className="w-3 h-3" /> R3 · Execution
           </div>
-          <h2 className="text-xl font-bold text-slate-900 leading-snug mb-2">Launch Multichannel Outreach</h2>
-          <p className="text-sm text-slate-500 leading-relaxed">Execute campaigns across multiple channels from one unified workspace. AI drafts every message, your team reviews and activates.</p>
+          <h2 className="text-lg font-bold text-emerald-600 leading-snug mb-1">Launch Multichannel Outreach</h2>
+          <p className="text-xs text-slate-500 leading-relaxed">Execute campaigns across multiple channels from one unified workspace. AI drafts every message, your team reviews and activates.</p>
         </div>
         <div>
-          <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase mb-3">Channels</p>
-          <div className="space-y-2">
+          <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase mb-2">Channels</p>
+          <div className="space-y-1.5">
             {channels.map((c, i) => (
               <button
                 key={i}
                 onClick={() => setActiveChannel(i)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg border text-sm transition-all ${
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border text-sm transition-all ${
                   activeChannel === i ? `${c.border} ${c.bg}` : 'border-slate-200 bg-white hover:bg-slate-50'
                 }`}
               >
@@ -276,8 +276,8 @@ function Step3() {
             ))}
           </div>
         </div>
-        <div className="mt-auto p-3 rounded-xl bg-slate-900 border border-slate-700">
-          <div className="flex items-center gap-2 mb-2">
+        <div className="mt-auto p-2.5 rounded-xl bg-slate-900 border border-slate-700">
+          <div className="flex items-center gap-2 mb-1">
             <Users className="w-3.5 h-3.5 text-emerald-400" />
             <span className="text-xs font-semibold text-emerald-400">Team Workspace</span>
           </div>
@@ -285,7 +285,7 @@ function Step3() {
         </div>
       </div>
 
-      <div className="flex-1 p-6 overflow-auto flex flex-col gap-4">
+      <div className="flex-1 p-4 flex flex-col gap-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {(() => { const C = channels[activeChannel]; return <C.icon className={`w-4 h-4 ${C.color}`} />; })()}
@@ -296,14 +296,14 @@ function Step3() {
           </span>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1.5">
           {channels[activeChannel].steps.map((step, i) => (
             <motion.div
               key={`${activeChannel}-${i}`}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              className="flex items-start gap-3 p-3 rounded-xl border border-slate-200 bg-white"
+              className="flex items-start gap-3 p-2.5 rounded-xl border border-slate-200 bg-white"
             >
               <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
                 <span className="text-[10px] font-bold text-emerald-700">{i + 1}</span>
@@ -319,8 +319,8 @@ function Step3() {
           ))}
         </div>
 
-        <div className="mt-2 p-3 rounded-xl border border-slate-200 bg-slate-50">
-          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-2">Campaign Stats</p>
+        <div className="p-2.5 rounded-xl border border-slate-200 bg-slate-50">
+          <p className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1.5">Campaign Stats</p>
           <div className="grid grid-cols-3 gap-2 text-center">
             {[['5 accounts', 'Enrolled'], ['62%', 'Open Rate'], ['3 replies', 'Received']].map(([v, l]) => (
               <div key={l} className="bg-white rounded-lg p-2 border border-slate-200">
@@ -349,14 +349,14 @@ function Step4({ onClose }) {
   const [joined, setJoined] = useState(false);
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center px-8 py-10 text-center max-w-lg mx-auto">
-      <div className="w-14 h-14 rounded-2xl gradient-brand flex items-center justify-center mb-6 shadow-lg">
-        <Zap className="w-7 h-7 text-black" strokeWidth={2.5} />
+    <div className="flex-1 flex flex-col items-center justify-center px-8 py-6 text-center max-w-lg mx-auto">
+      <div className="w-12 h-12 rounded-2xl gradient-brand flex items-center justify-center mb-4 shadow-lg">
+        <Zap className="w-6 h-6 text-black" strokeWidth={2.5} />
       </div>
-      <h2 className="text-2xl font-bold text-slate-900 mb-3 leading-snug">The Future of GTM Execution for African Revenue Teams</h2>
-      <p className="text-sm text-slate-500 mb-6 leading-relaxed">Join the waitlist and get early access to RVNU — the AI-native GTM execution platform built for your market.</p>
+      <h2 className="text-xl font-bold text-emerald-600 mb-2 leading-snug">The Future of GTM Execution for African Revenue Teams</h2>
+      <p className="text-sm text-slate-500 mb-5 leading-relaxed">Join the waitlist and get early access to RVNU — the AI-native GTM execution platform built for your market.</p>
 
-      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-8">
+      <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-6">
         {bullets.map(b => (
           <div key={b} className="flex items-center gap-1.5 text-xs text-slate-600">
             <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
@@ -371,11 +371,11 @@ function Step4({ onClose }) {
             placeholder="Enter your work email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            className="flex-1 h-11 border-slate-300 text-slate-800"
+            className="flex-1 h-10 border-slate-300 text-slate-800"
           />
           <Button
             onClick={() => { if (email) setJoined(true); }}
-            className="h-11 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold whitespace-nowrap"
+            className="h-10 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold whitespace-nowrap"
           >
             Join Waitlist <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
@@ -384,12 +384,12 @@ function Step4({ onClose }) {
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-medium"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-medium"
         >
           <Check className="w-5 h-5" /> You're on the waitlist! We'll be in touch soon.
         </motion.div>
       )}
-      <p className="text-[11px] text-slate-400 mt-4">No credit card required · Early access pricing locked in</p>
+      <p className="text-[11px] text-slate-400 mt-3">No credit card required · Early access pricing locked in</p>
     </div>
   );
 }
@@ -406,7 +406,6 @@ const STEPS = [
 export default function RVNUWorkflowModal({ onClose }) {
   const [step, setStep] = useState(0);
 
-  // Lock body scroll
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = ''; };
@@ -430,11 +429,11 @@ export default function RVNUWorkflowModal({ onClose }) {
         exit={{ opacity: 0, scale: 0.96, y: 16 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
         className="bg-white rounded-2xl shadow-2xl w-full overflow-hidden flex flex-col"
-        style={{ maxWidth: '840px', height: 'min(88vh, 620px)' }}
+        style={{ maxWidth: '860px', height: 'min(85vh, 580px)' }}
         onClick={e => e.stopPropagation()}
       >
         {/* Progress bar */}
-        <div className="flex items-center gap-2 px-6 pt-5 pb-0">
+        <div className="flex items-center gap-2 px-5 pt-4 pb-0">
           {STEPS.map((s, i) => (
             <div key={i} className="flex-1 flex flex-col gap-1">
               <div className={`h-1 rounded-full transition-all duration-300 ${i <= step ? 'bg-emerald-500' : 'bg-slate-200'}`} />
@@ -449,7 +448,7 @@ export default function RVNUWorkflowModal({ onClose }) {
         </div>
 
         {/* Step labels */}
-        <div className="flex items-center gap-2 px-6 pt-2 pb-3 border-b border-slate-100">
+        <div className="flex items-center gap-2 px-5 pt-1.5 pb-2 border-b border-slate-100">
           {STEPS.map((s, i) => (
             <div key={i} className="flex-1 text-center">
               <p className={`text-[10px] font-semibold transition-colors truncate ${i === step ? 'text-emerald-600' : i < step ? 'text-slate-400' : 'text-slate-300'}`}>
@@ -480,7 +479,7 @@ export default function RVNUWorkflowModal({ onClose }) {
         </div>
 
         {/* Bottom navigation */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
+        <div className="flex items-center justify-between px-5 py-3 border-t border-slate-100">
           <button
             onClick={() => canGoBack && setStep(s => s - 1)}
             disabled={!canGoBack}
@@ -492,7 +491,7 @@ export default function RVNUWorkflowModal({ onClose }) {
           {canGoNext ? (
             <Button
               onClick={() => setStep(s => s + 1)}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white h-9 px-5 text-sm"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white h-8 px-5 text-sm"
             >
               Next <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
