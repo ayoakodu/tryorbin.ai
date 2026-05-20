@@ -20,6 +20,12 @@ import AICopilot from './pages/AICopilot';
 import Integrations from './pages/Integrations';
 import Automations from './pages/Automations';
 import Collaboration from './pages/Collaboration';
+import Lists from './pages/Lists';
+import Emails from './pages/Emails';
+import Calls from './pages/Calls';
+import Broadcasts from './pages/Broadcasts';
+import Tasks from './pages/Tasks';
+import Settings from './pages/Settings';
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
@@ -67,6 +73,12 @@ const AuthenticatedApp = () => {
         <Route path="/integrations" element={<Integrations />} />
         <Route path="/automations" element={<Automations />} />
         <Route path="/collaboration" element={<Collaboration />} />
+        <Route path="/lists" element={<Lists />} />
+        <Route path="/emails" element={<Emails />} />
+        <Route path="/calls" element={<Calls />} />
+        <Route path="/broadcasts" element={<Broadcasts />} />
+        <Route path="/tasks" element={<Tasks />} />
+        <Route path="/settings" element={<Settings />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
