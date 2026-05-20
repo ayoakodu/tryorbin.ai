@@ -1,4 +1,5 @@
 import { Sparkles, Home, Users, List, Mail, Phone, MessageSquare, Megaphone, Radio, CheckSquare, BarChart3, Zap, GitBranch, Settings, Link2, TrendingUp, ChevronRight, Search, Bell, ArrowUpRight } from 'lucide-react';
+import RVNULogo from '@/components/ui/RVNULogo.jsx';
 
 const kpis = [
   { label: 'TOTAL PIPELINE', value: '$2.4M', change: '+18% this month', icon: '💲', iconBg: 'bg-blue-50', iconColor: 'text-blue-500' },
@@ -59,9 +60,7 @@ export default function HeroDashboardPreview() {
           <div className="hidden md:flex flex-col w-40 bg-white border-r border-gray-100 flex-shrink-0 py-3 px-2">
             {/* Logo */}
             <div className="flex items-center gap-1.5 px-2 pb-3 mb-2 border-b border-gray-100">
-              <div className="w-5 h-5 rounded flex items-center justify-center bg-green-500">
-                <span className="text-white font-black text-[8px]">RV</span>
-              </div>
+              <RVNULogo size={18} className="rounded" />
               <span className="text-[11px] font-bold text-gray-800">RVNU</span>
               <span className="ml-auto text-[7px] px-1 py-0.5 rounded bg-gray-100 text-gray-500 font-semibold border border-gray-200">BETA</span>
             </div>
