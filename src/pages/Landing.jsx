@@ -11,6 +11,7 @@ import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
 import RVNUWorkflowModal from '@/components/landing/RVNUWorkflowModal';
 import RVNULogo from '@/components/ui/RVNULogo.jsx';
+import HeroDashboardPreview from '@/components/landing/HeroDashboardPreview';
 
 const africanCountries = [
   'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
@@ -167,42 +168,8 @@ export default function Landing() {
         </div>
 
         {/* Hero Dashboard Preview */}
-        <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.5 }}
-          className="relative max-w-5xl mx-auto mt-24">
-          <div className="glass rounded-2xl overflow-hidden border border-border/60 glow-green shadow-2xl">
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-border/40 bg-secondary/20">
-              <div className="flex gap-1.5">
-                <div className="w-3 h-3 rounded-full bg-destructive/50" />
-                <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                <div className="w-3 h-3 rounded-full bg-primary/50" />
-              </div>
-              <div className="flex-1 h-6 bg-secondary/50 rounded-md mx-4 flex items-center px-3">
-                <span className="text-xs text-muted-foreground">app.uservnu.io — Early Access Preview</span>
-              </div>
-              <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-primary/10 border border-primary/20">
-                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
-                <span className="text-xs text-primary font-medium">In Development</span>
-              </div>
-            </div>
-            <div className="h-64 md:h-80 bg-gradient-to-br from-background via-secondary/20 to-background flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 mesh-bg" />
-              <div className="relative grid grid-cols-2 md:grid-cols-4 gap-4 p-6 w-full max-w-3xl">
-                {[
-                  { label: 'Pipeline Value', value: '$2.4M', color: 'text-primary', sub: 'Planned module' },
-                  { label: 'AI Actions', value: '234', color: 'text-cyan-400', sub: 'Planned module' },
-                  { label: 'Active Sequences', value: '12', color: 'text-violet-400', sub: 'Planned module' },
-                  { label: 'Meetings Booked', value: '47', color: 'text-amber-400', sub: 'Planned module' },
-                ].map((stat) => (
-                  <div key={stat.label} className="glass rounded-xl p-4 text-center">
-                    <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{stat.label}</p>
-                    <p className="text-[10px] text-muted-foreground/50 mt-0.5">{stat.sub}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-          <p className="text-center text-xs text-muted-foreground/50 mt-3">Illustrative preview — RVNU is currently in active development.</p>
+        <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.5 }}>
+          <HeroDashboardPreview />
         </motion.div>
       </section>
 
