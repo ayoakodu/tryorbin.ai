@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, Users, Building2, TrendingUp, 
-  Megaphone, Mail, BarChart3, Zap, MessageCircle,
+  Megaphone, BarChart3, MessageCircle,
   Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound,
-  Phone, CheckSquare, Radio, List, MailOpen, Send
+  Phone, CheckSquare, Radio, List, MailOpen, Send,
+  PanelLeftClose, PanelLeftOpen
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RVNULogo from '@/components/ui/RVNULogo.jsx';
@@ -52,29 +53,36 @@ const navGroups = [
   },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ collapsed, onToggle }) {
   const location = useLocation();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-[190px] flex flex-col z-40 border-r border-slate-200"
-      style={{ background: '#f0f4f8' }}>
-      
+    <aside
+      className="fixed left-0 top-0 h-screen flex flex-col z-40 border-r border-slate-200 transition-all duration-300"
+      style={{ background: '#f0f4f8', width: collapsed ? '60px' : '190px' }}
+    >
       {/* Logo */}
-      <div className="flex items-center gap-2.5 px-3 border-b border-slate-200" style={{ height: '40px', minHeight: '40px', maxHeight: '40px' }}>
+      <div className="flex items-center gap-2.5 px-3 border-b border-slate-200 flex-shrink-0 overflow-hidden"
+        style={{ height: '40px', minHeight: '40px', maxHeight: '40px' }}>
         <RVNULogo size={26} className="rounded-md flex-shrink-0" />
-        <span className="text-sm font-bold tracking-tight" style={{ color: '#10b981' }}>RVNU</span>
-        <span className="ml-auto text-[10px] font-mono text-primary/60 bg-primary/10 px-1.5 py-0.5 rounded">BETA</span>
+        {!collapsed && (
+          <>
+            <span className="text-sm font-bold tracking-tight whitespace-nowrap" style={{ color: '#10b981' }}>RVNU</span>
+            <span className="ml-auto text-[10px] font-mono text-primary/60 bg-primary/10 px-1.5 py-0.5 rounded whitespace-nowrap">BETA</span>
+          </>
+        )}
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-3 overflow-y-auto space-y-3">
+      <nav className="flex-1 px-2 py-3 overflow-y-auto overflow-x-hidden space-y-3">
         {navGroups.map((group, gi) => (
           <div key={gi}>
-            {group.label && (
+            {!collapsed && group.label && (
               <p className="px-3 mb-0.5 text-[9px] font-semibold tracking-widest text-slate-400 uppercase">
                 {group.label}
               </p>
             )}
+            {collapsed && group.label && <div className="border-t border-slate-200 my-1" />}
             <div className="space-y-0">
               {group.items.map((item) => {
                 const active = location.pathname === item.path;
@@ -82,8 +90,10 @@ export default function Sidebar() {
                   <Link
                     key={item.path}
                     to={item.path}
+                    title={collapsed ? item.label : undefined}
                     className={cn(
-                      'flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all duration-150 group',
+                      'flex items-center gap-2.5 rounded-lg text-[11px] font-medium transition-all duration-150',
+                      collapsed ? 'justify-center px-0 py-2' : 'px-3 py-1.5',
                       active
                         ? 'bg-emerald-100 text-emerald-700'
                         : item.highlight
@@ -92,9 +102,13 @@ export default function Sidebar() {
                     )}
                   >
                     <item.icon className={cn('w-4 h-4 flex-shrink-0', active ? 'text-emerald-700' : item.highlight ? 'text-emerald-600' : 'text-slate-500')} />
-                    <span>{item.label}</span>
-                    {item.highlight && !active && <span className="ml-auto text-[9px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">AI</span>}
-                    {active && <ChevronRight className="w-3 h-3 ml-auto text-primary/60" />}
+                    {!collapsed && (
+                      <>
+                        <span>{item.label}</span>
+                        {item.highlight && !active && <span className="ml-auto text-[9px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full">AI</span>}
+                        {active && <ChevronRight className="w-3 h-3 ml-auto text-primary/60" />}
+                      </>
+                    )}
                   </Link>
                 );
               })}
@@ -104,25 +118,47 @@ export default function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div className="px-3 pb-4 space-y-0.5 border-t border-slate-200 pt-3">
-        <Link to="/integrations" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
-          <Globe className="w-4 h-4 text-slate-500" />
-          <span>Integrations</span>
+      <div className="px-2 pb-3 border-t border-slate-200 pt-2 flex-shrink-0">
+        <Link to="/integrations" title={collapsed ? 'Integrations' : undefined}
+          className={cn('flex items-center gap-3 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all py-2',
+            collapsed ? 'justify-center px-0' : 'px-3')}>
+          <Globe className="w-4 h-4 text-slate-500 flex-shrink-0" />
+          {!collapsed && <span>Integrations</span>}
         </Link>
-        <Link to="/settings" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all">
-          <Settings className="w-4 h-4 text-slate-500" />
-          <span>Settings</span>
+        <Link to="/settings" title={collapsed ? 'Settings' : undefined}
+          className={cn('flex items-center gap-3 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all py-2',
+            collapsed ? 'justify-center px-0' : 'px-3')}>
+          <Settings className="w-4 h-4 text-slate-500 flex-shrink-0" />
+          {!collapsed && <span>Settings</span>}
         </Link>
-        <div className="mt-3 mx-1 p-3 rounded-lg bg-white border border-emerald-200">
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-            <span className="text-xs font-semibold text-emerald-700">AI Credits</span>
+
+        {!collapsed && (
+          <div className="mt-2 mx-1 p-3 rounded-lg bg-white border border-emerald-200">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="text-xs font-semibold text-emerald-700">AI Credits</span>
+            </div>
+            <div className="w-full bg-slate-200 rounded-full h-1.5 mb-1">
+              <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: '73%' }} />
+            </div>
+            <p className="text-[10px] text-slate-500">730 / 1000 used</p>
           </div>
-          <div className="w-full bg-slate-200 rounded-full h-1.5 mb-1">
-            <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: '73%' }} />
-          </div>
-          <p className="text-[10px] text-slate-500">730 / 1000 used</p>
-        </div>
+        )}
+
+        {/* Toggle */}
+        <button
+          onClick={onToggle}
+          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          className={cn(
+            'w-full flex items-center gap-2 rounded-lg text-xs text-slate-400 hover:text-slate-600 hover:bg-white/60 transition-all mt-2 py-2',
+            collapsed ? 'justify-center px-0' : 'px-3'
+          )}
+        >
+          {collapsed
+            ? <PanelLeftOpen className="w-4 h-4 flex-shrink-0" />
+            : <><PanelLeftClose className="w-4 h-4 flex-shrink-0" /><span>Collapse</span></>
+          }
+        </button>
       </div>
     </aside>
   );
