@@ -145,12 +145,12 @@ User request: ${userText}`,
   };
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#f8fafc' }}>
+    <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#f8fafc' }}>
       <TopBar title="AI Copilot" subtitle="Your always-on GTM intelligence engine" />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Prompts */}
-        <div className="hidden lg:flex w-64 flex-col border-r border-border/30 p-4 gap-3">
+        <div className="hidden lg:flex w-64 flex-col border-r border-border/30 p-4 gap-3 overflow-y-auto">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Quick Prompts</p>
           <div className="space-y-2">
             {suggestionPrompts.map((p, i) => (
