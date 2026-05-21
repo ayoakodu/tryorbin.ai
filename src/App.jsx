@@ -26,6 +26,7 @@ import Calls from './pages/Calls';
 import Broadcasts from './pages/Broadcasts';
 import Tasks from './pages/Tasks';
 import Settings from './pages/Settings';
+import Deliverability from './pages/Deliverability';
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
@@ -79,6 +80,7 @@ const AuthenticatedApp = () => {
         <Route path="/broadcasts" element={<Broadcasts />} />
         <Route path="/tasks" element={<Tasks />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/deliverability" element={<Deliverability />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />

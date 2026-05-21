@@ -3,8 +3,7 @@ import {
   Home, Users, Building2, TrendingUp, 
   Megaphone, BarChart3, MessageCircle,
   Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound,
-  Phone, CheckSquare, Radio, List, MailOpen, Send,
-
+  Phone, CheckSquare, List, MailOpen, Send, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RVNULogo from '@/components/ui/RVNULogo.jsx';
@@ -33,7 +32,6 @@ const navGroups = [
       { icon: Phone, label: 'Calls', path: '/calls' },
       { icon: MessageCircle, label: 'WhatsApp', path: '/whatsapp' },
       { icon: Megaphone, label: 'Campaigns', path: '/campaigns' },
-      { icon: Radio, label: 'Broadcasts', path: '/broadcasts' },
       { icon: CheckSquare, label: 'Tasks', path: '/tasks' },
     ],
   },
@@ -49,6 +47,12 @@ const navGroups = [
     items: [
       { icon: TrendingUp, label: 'Pipeline', path: '/pipeline' },
       { icon: UsersRound, label: 'Collaboration', path: '/collaboration' },
+    ],
+  },
+  {
+    label: 'INFRASTRUCTURE',
+    items: [
+      { icon: ShieldCheck, label: 'Deliverability', path: '/deliverability' },
     ],
   },
 ];
