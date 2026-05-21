@@ -4,7 +4,7 @@ import {
   Megaphone, BarChart3, MessageCircle,
   Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound,
   Phone, CheckSquare, Radio, List, MailOpen, Send,
-  PanelLeftClose, PanelLeftOpen
+
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RVNULogo from '@/components/ui/RVNULogo.jsx';
@@ -146,19 +146,17 @@ export default function Sidebar({ collapsed, onToggle }) {
         )}
 
         {/* Toggle */}
-        <button
-          onClick={onToggle}
-          title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className={cn(
-            'w-full flex items-center gap-2 rounded-lg text-xs text-slate-400 hover:text-slate-600 hover:bg-white/60 transition-all mt-2 py-2',
-            collapsed ? 'justify-center px-0' : 'px-3'
-          )}
-        >
-          {collapsed
-            ? <PanelLeftOpen className="w-4 h-4 flex-shrink-0" />
-            : <><PanelLeftClose className="w-4 h-4 flex-shrink-0" /><span>Collapse</span></>
-          }
-        </button>
+        <div className={cn('mt-2 flex', collapsed ? 'justify-center' : 'justify-end px-1')}>
+          <button
+            onClick={onToggle}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            className="w-7 h-7 flex items-center justify-center rounded-md bg-slate-200 hover:bg-slate-300 text-slate-500 hover:text-slate-700 transition-all"
+          >
+            <span className="text-[11px] font-bold tracking-tighter leading-none">
+              {collapsed ? '>>' : '<<'}
+            </span>
+          </button>
+        </div>
       </div>
     </aside>
   );
