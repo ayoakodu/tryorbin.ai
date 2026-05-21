@@ -1,5 +1,6 @@
-import { Bell, Search, ChevronDown, Sparkles } from 'lucide-react';
+import { Bell, Search, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import UserProfileMenu from './UserProfileMenu';
 
 export default function TopBar({ title, subtitle }) {
   return (
@@ -24,12 +25,7 @@ export default function TopBar({ title, subtitle }) {
           <Bell className="w-3.5 h-3.5 text-slate-500" />
           <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-primary rounded-full"></span>
         </button>
-        <button className="flex items-center gap-1.5 pl-1 pr-1 py-0.5 rounded-lg hover:bg-white/60 transition-colors">
-          <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center">
-            <span className="text-[10px] font-bold text-emerald-700">JD</span>
-          </div>
-          <ChevronDown className="w-3 h-3 text-slate-500" />
-        </button>
+        <UserProfileMenu />
       </div>
     </header>
   );

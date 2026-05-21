@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RVNULogo from '@/components/ui/RVNULogo.jsx';
+import WorkspaceMenu from './WorkspaceMenu';
 
 const navGroups = [
   {
@@ -135,6 +136,7 @@ export default function Sidebar({ collapsed, onToggle }) {
           <Settings className="w-4 h-4 text-slate-500 flex-shrink-0" />
           {!collapsed && <span>Settings</span>}
         </Link>
+        <WorkspaceMenu collapsed={collapsed} />
 
         {!collapsed && (
           <div className="mt-2 mx-1 p-3 rounded-lg bg-white border border-emerald-200">
