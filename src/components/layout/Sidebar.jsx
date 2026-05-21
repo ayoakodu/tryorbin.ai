@@ -2,12 +2,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, Users, Building2, TrendingUp, 
   Megaphone, BarChart3, MessageCircle,
-  Settings, ChevronRight, Sparkles, Globe, Workflow, UsersRound,
+  ChevronRight, Sparkles, Globe, Workflow, UsersRound,
   Phone, CheckSquare, List, MailOpen, Send, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import RVNULogo from '@/components/ui/RVNULogo.jsx';
-import WorkspaceMenu from './WorkspaceMenu';
+import SettingsMenu from './SettingsMenu';
+import OnboardingHub from './OnboardingHub';
 
 const navGroups = [
   {
@@ -130,26 +131,9 @@ export default function Sidebar({ collapsed, onToggle }) {
           <Globe className="w-4 h-4 text-slate-500 flex-shrink-0" />
           {!collapsed && <span>Integrations</span>}
         </Link>
-        <Link to="/settings" title={collapsed ? 'Settings' : undefined}
-          className={cn('flex items-center gap-3 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all py-2',
-            collapsed ? 'justify-center px-0' : 'px-3')}>
-          <Settings className="w-4 h-4 text-slate-500 flex-shrink-0" />
-          {!collapsed && <span>Settings</span>}
-        </Link>
-        <WorkspaceMenu collapsed={collapsed} />
+        <SettingsMenu collapsed={collapsed} />
 
-        {!collapsed && (
-          <div className="mt-2 mx-1 p-3 rounded-lg bg-white border border-emerald-200">
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="text-xs font-semibold text-emerald-700">AI Credits</span>
-            </div>
-            <div className="w-full bg-slate-200 rounded-full h-1.5 mb-1">
-              <div className="bg-emerald-500 h-1.5 rounded-full" style={{ width: '73%' }} />
-            </div>
-            <p className="text-[10px] text-slate-500">730 / 1000 used</p>
-          </div>
-        )}
+        {!collapsed && <OnboardingHub />}
 
         {/* Toggle */}
         <div className={cn('mt-2 flex', collapsed ? 'justify-center' : 'justify-end px-1')}>
