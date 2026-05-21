@@ -3,22 +3,16 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import {
-  User, Bell, Settings, Palette, Zap, CreditCard, LogOut,
-  Keyboard, UserPlus, ChevronDown
+  User, Bell, Palette, Zap, CreditCard, LogOut, ChevronDown
 } from 'lucide-react';
 
 const menuItems = [
   { icon: User, label: 'My Profile', path: '/settings' },
   { icon: Bell, label: 'Notifications', path: '/settings' },
-  { divider: true },
-  { icon: Settings, label: 'Workspace Settings', path: '/settings' },
   { icon: Palette, label: 'Appearance', path: '/settings' },
   { divider: true },
   { icon: Zap, label: 'AI Usage & Credits', path: '/settings' },
   { icon: CreditCard, label: 'Billing & Plan', path: '/settings' },
-  { divider: true },
-  { icon: UserPlus, label: 'Invite Teammates', path: '/collaboration' },
-  { icon: Keyboard, label: 'Keyboard Shortcuts', action: 'shortcuts' },
   { divider: true },
   { icon: LogOut, label: 'Logout', action: 'logout', danger: true },
 ];
