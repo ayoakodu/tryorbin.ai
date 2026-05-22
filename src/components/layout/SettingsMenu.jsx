@@ -3,25 +3,26 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import {
-  Settings, LayoutDashboard, Users, ShieldCheck, Mail,
-  Globe, CreditCard, Lock, LogOut, ChevronRight
+  Settings, Users, ShieldCheck, Globe, Lock, LogOut, ChevronRight, LayoutGrid, CreditCard
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
+const ONBOARDING_TOTAL = 9;
+const ONBOARDING_DONE = 1; // Connect Mailbox completed
+
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Workspace Overview', path: '/settings' },
-  { icon: Users, label: 'Team Members', path: '/settings' },
-  { icon: ShieldCheck, label: 'Roles & Permissions', path: '/settings' },
-  { icon: Mail, label: 'Deliverability Settings', path: '/deliverability' },
-  { icon: Mail, label: 'Connected Mailboxes', path: '/settings' },
-  { icon: Globe, label: 'Integrations', path: '/integrations' },
-  { icon: CreditCard, label: 'Billing & Usage', path: '/settings' },
-  { icon: Lock, label: 'Security', path: '/settings' },
+  { icon: Users,        label: 'Users & Teams',      path: '/settings' },
+  { icon: ShieldCheck,  label: 'Roles & Permissions', path: '/settings' },
+  { icon: Globe,        label: 'Integrations',        path: '/integrations' },
+  { icon: Lock,         label: 'Security',            path: '/settings' },
+  { icon: CreditCard,   label: 'Plan Overview',       path: '/settings' },
+  { icon: LayoutGrid,   label: 'All Settings',        path: '/settings' },
 ];
 
 export default function SettingsMenu({ collapsed }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
+  const pct = Math.round((ONBOARDING_DONE / ONBOARDING_TOTAL) * 100);
 
   useEffect(() => {
     const handler = (e) => {
@@ -59,18 +60,25 @@ export default function SettingsMenu({ collapsed }) {
             exit={{ opacity: 0, x: -8, scale: 0.97 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             className="absolute left-full bottom-0 ml-2 w-52 rounded-xl border border-slate-200 bg-white shadow-xl z-50 py-1.5 overflow-hidden"
-            style={{ minWidth: '210px' }}
           >
-            <p className="px-3 pt-1 pb-1.5 text-[9px] font-semibold tracking-widest text-slate-400 uppercase border-b border-slate-100 mb-1">
-              Settings & Admin
-            </p>
+            {/* Header: Workspace Overview */}
+            <div className="px-3 pt-2 pb-2.5 border-b border-slate-100 mb-1">
+              <p className="text-[10px] font-semibold text-slate-700 mb-1.5">Workspace Overview</p>
+              <div className="w-full bg-slate-100 rounded-full h-1 mb-1">
+                <div
+                  className="bg-emerald-500 h-1 rounded-full transition-all duration-500"
+                  style={{ width: `${pct}%` }}
+                />
+              </div>
+              <p className="text-[10px] text-slate-400">{pct}% setup complete</p>
+            </div>
 
             {menuItems.map(({ icon: Icon, label, path }) => (
               <Link
                 key={label}
                 to={path}
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                className="flex items-center gap-2.5 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
               >
                 <Icon className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                 {label}
@@ -81,7 +89,7 @@ export default function SettingsMenu({ collapsed }) {
 
             <button
               onClick={() => { setOpen(false); base44.auth.logout(); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5 text-red-400 flex-shrink-0" />
               Logout

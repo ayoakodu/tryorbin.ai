@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, Users, Building2, TrendingUp, 
   Megaphone, BarChart3, MessageCircle,
-  ChevronRight, Sparkles, Globe, Workflow, UsersRound,
+  ChevronRight, Sparkles, Workflow, UsersRound,
   Phone, CheckSquare, List, MailOpen, Send, ShieldCheck
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -124,12 +124,6 @@ export default function Sidebar({ collapsed, onToggle }) {
             collapsed ? 'justify-center px-0' : 'px-3')}>
           <ShieldCheck className="w-4 h-4 text-slate-500 flex-shrink-0" />
           {!collapsed && <span>Deliverability</span>}
-        </Link>
-        <Link to="/integrations" title={collapsed ? 'Integrations' : undefined}
-          className={cn('flex items-center gap-3 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-white/60 transition-all py-2',
-            collapsed ? 'justify-center px-0' : 'px-3')}>
-          <Globe className="w-4 h-4 text-slate-500 flex-shrink-0" />
-          {!collapsed && <span>Integrations</span>}
         </Link>
         <SettingsMenu collapsed={collapsed} />
 
