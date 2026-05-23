@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 import {
   Plus, Play, Pause, Mail, MessageCircle,
   Phone, MoreHorizontal, Sparkles, Users, TrendingUp,
-  Reply, Zap, X, Loader2,
+  Reply, Zap, X, Loader2, Trash2,
   BarChart3, BookOpen, ListTodo, ArrowRight, Clock, Edit3, Copy,
   AlertTriangle, Activity, Stethoscope
 } from 'lucide-react';
@@ -82,7 +82,7 @@ export const initialSequences = [
   },
 ];
 
-function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
+function SequenceRow({ seq, isSelected, onSelect, onToggleStatus, onDelete }) {
   const replyRate = seq.enrolled > 0 ? ((seq.replied / seq.enrolled) * 100).toFixed(1) : 0;
   const meetingRate = seq.enrolled > 0 ? ((seq.meetings / seq.enrolled) * 100).toFixed(1) : 0;
   const ChannelIcon = seq.channel === 'multi-channel' ? Zap : (channelIcons[seq.channel] || Mail);
@@ -135,8 +135,12 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
         >
           {seq.status === 'active' ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
         </button>
-        <button className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400">
-          <MoreHorizontal className="w-3.5 h-3.5" />
+        <button
+          onClick={e => { e.stopPropagation(); onDelete(seq.id); }}
+          className="p-1.5 rounded-md hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
+          title="Delete sequence"
+        >
+          <Trash2 className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
@@ -244,6 +248,11 @@ export default function Outreach() {
     setSequences(prev => [...prev, newSeq]);
     setSelectedSeq(newSeq);
     setShowCreate(false);
+  };
+
+  const deleteSequence = (id) => {
+    setSequences(prev => prev.filter(s => s.id !== id));
+    if (selectedSeq?.id === id) setSelectedSeq(null);
   };
 
   const duplicateSequence = (seq) => {
@@ -409,7 +418,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                   <div>
                     {sequences.map(seq => (
                       <SequenceRow key={seq.id} seq={seq} isSelected={selectedSeq?.id === seq.id}
-                        onSelect={setSelectedSeq} onToggleStatus={toggleStatus} />
+                        onSelect={setSelectedSeq} onToggleStatus={toggleStatus} onDelete={deleteSequence} />
                     ))}
                   </div>
                 </div>
