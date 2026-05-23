@@ -1,27 +1,26 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import {
-  Plus, Play, Pause, Mail, Linkedin, MessageCircle,
+  Plus, Play, Pause, Mail, MessageCircle,
   Phone, MoreHorizontal, Sparkles, Users, TrendingUp,
-  Reply, Zap, X, ChevronRight, Copy, Trash2,
-  Clock, GitBranch, CheckCircle2, Loader2, Edit3,
-  BarChart3, AlertCircle, ArrowRight, BookOpen, ListTodo
+  Reply, Zap, X, Loader2,
+  BarChart3, BookOpen, ListTodo, ArrowRight, Clock, Edit3, Copy
 } from 'lucide-react';
+import { Linkedin } from 'lucide-react';
 import SequenceTemplates from '@/components/outreach/SequenceTemplates';
 import TaskQueuePanel from '@/components/outreach/TaskQueuePanel';
-import { ChannelStatusBadge, StepExecutionStatus } from '@/components/outreach/ChannelStatusBadge';
 import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
-import BranchingStepEditor from '@/components/outreach/BranchingStepEditor';
 import ProspectManager from '@/components/outreach/ProspectManager';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
 
 const channelIcons = { email: Mail, linkedin: Linkedin, whatsapp: MessageCircle, sms: MessageCircle, call: Phone };
-const channelColors = { email: 'text-blue-400', linkedin: 'text-blue-500', whatsapp: 'text-primary', sms: 'text-violet-400', call: 'text-amber-400' };
-const channelBg = { email: 'bg-blue-500/10', linkedin: 'bg-blue-500/10', whatsapp: 'bg-primary/10', sms: 'bg-violet-500/10', call: 'bg-amber-500/10' };
+const channelColors = { email: 'text-blue-400', linkedin: 'text-blue-500', whatsapp: 'text-emerald-500', sms: 'text-violet-400', call: 'text-amber-400' };
+const channelBg = { email: 'bg-blue-50', linkedin: 'bg-blue-50', whatsapp: 'bg-emerald-50', sms: 'bg-violet-50', call: 'bg-amber-50' };
 
 const statusBadge = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -29,7 +28,7 @@ const statusBadge = {
   draft: 'bg-slate-100 text-slate-600 border-slate-200',
 };
 
-const initialSequences = [
+export const initialSequences = [
   {
     id: 1, name: 'Fintech CTO Outbound — Nigeria', channel: 'multi-channel', status: 'active',
     enrolled: 142, replied: 31, meetings: 8, opens: 89,
@@ -86,42 +85,53 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
   const channelColor = seq.channel === 'multi-channel' ? 'text-amber-400' : (channelColors[seq.channel] || 'text-blue-400');
 
   return (
-    <div onClick={() => onSelect(seq)}
-      className={`flex items-center gap-4 px-5 py-4 border-b border-border/20 hover:bg-secondary/30 transition-colors cursor-pointer ${isSelected ? 'bg-primary/5 border-l-2 border-l-primary' : ''}`}>
-      <div className={`w-8 h-8 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0`}>
+    <div
+      onClick={() => onSelect(seq)}
+      className={cn(
+        'flex items-center gap-4 px-4 py-3.5 border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer',
+        isSelected && 'bg-emerald-50/50 border-l-2 border-l-emerald-500'
+      )}
+    >
+      <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
         <ChannelIcon className={`w-4 h-4 ${channelColor}`} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <p className="text-xs font-semibold text-foreground truncate">{seq.name}</p>
-          <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border flex-shrink-0 ${statusBadge[seq.status]}`}>
+          <p className="text-xs font-semibold text-slate-800 truncate">{seq.name}</p>
+          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full border flex-shrink-0 ${statusBadge[seq.status]}`}>
             {seq.status}
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          {seq.tags.map(t => <span key={t} className="text-[10px] text-muted-foreground bg-secondary px-1.5 py-0.5 rounded">{t}</span>)}
+        <div className="flex items-center gap-1.5">
+          {seq.tags.slice(0, 2).map(t => (
+            <span key={t} className="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">{t}</span>
+          ))}
         </div>
       </div>
-      <div className="hidden md:flex items-center gap-6 text-xs flex-shrink-0">
+      <div className="hidden md:flex items-center gap-5 text-xs flex-shrink-0">
         <div className="text-center">
-          <p className="font-bold text-foreground">{seq.enrolled}</p>
-          <p className="text-[10px] text-muted-foreground">Enrolled</p>
+          <p className="font-bold text-slate-700">{seq.enrolled}</p>
+          <p className="text-[10px] text-slate-400">Enrolled</p>
         </div>
         <div className="text-center">
-          <p className="font-bold text-primary">{replyRate}%</p>
-          <p className="text-[10px] text-muted-foreground">Reply</p>
+          <p className="font-bold text-emerald-600">{replyRate}%</p>
+          <p className="text-[10px] text-slate-400">Reply</p>
         </div>
         <div className="text-center">
-          <p className="font-bold text-cyan-400">{meetingRate}%</p>
-          <p className="text-[10px] text-muted-foreground">Meeting</p>
+          <p className="font-bold text-cyan-500">{meetingRate}%</p>
+          <p className="text-[10px] text-slate-400">Meeting</p>
         </div>
       </div>
-      <div className="flex items-center gap-1.5 flex-shrink-0">
-        <button onClick={e => { e.stopPropagation(); onToggleStatus(seq.id); }}
-          className={`p-1.5 rounded-md transition-colors ${seq.status === 'active' ? 'hover:bg-amber-500/10 text-amber-400' : 'hover:bg-primary/10 text-primary'}`}>
+      <div className="flex items-center gap-1 flex-shrink-0">
+        <button
+          onClick={e => { e.stopPropagation(); onToggleStatus(seq.id); }}
+          className={cn('p-1.5 rounded-md transition-colors',
+            seq.status === 'active' ? 'hover:bg-amber-50 text-amber-500' : 'hover:bg-emerald-50 text-emerald-600'
+          )}
+        >
           {seq.status === 'active' ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
         </button>
-        <button className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground">
+        <button className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400">
           <MoreHorizontal className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -129,147 +139,64 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus }) {
   );
 }
 
-function StepEditor({ step, index, onUpdate, onRemove, onOpenPersonalize }) {
-  const Icon = channelIcons[step.type] || Mail;
-  return (
-    <div className="flex gap-3">
-      <div className="flex flex-col items-center">
-        <div className={`w-8 h-8 rounded-full ${channelBg[step.type] || 'bg-secondary'} flex items-center justify-center flex-shrink-0`}>
-          <Icon className={`w-3.5 h-3.5 ${channelColors[step.type] || 'text-muted-foreground'}`} />
-        </div>
-        {index < 10 && <div className="w-px h-8 bg-border/40 mt-1" />}
-      </div>
-      <div className="flex-1 pb-4">
-        <div className="glass rounded-lg p-3 border border-border/30">
-          <div className="flex items-center gap-2 mb-2">
-            <select value={step.type} onChange={e => onUpdate(index, { ...step, type: e.target.value })}
-              className="bg-secondary text-foreground text-xs rounded-md px-2 py-1 border border-border/50 outline-none">
-              <option value="email">Email</option>
-              <option value="linkedin">LinkedIn</option>
-              <option value="whatsapp">WhatsApp</option>
-              <option value="sms">SMS</option>
-              <option value="call">Call Task</option>
-            </select>
-            <span className="text-xs text-muted-foreground">Day</span>
-            <input type="number" value={step.day} min={0}
-              onChange={e => onUpdate(index, { ...step, day: parseInt(e.target.value) || 0 })}
-              className="w-14 bg-secondary text-foreground text-xs rounded-md px-2 py-1 border border-border/50 outline-none" />
-            <button onClick={() => onRemove(index)} className="ml-auto text-muted-foreground hover:text-destructive">
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </div>
-          <Input value={step.subject} onChange={e => onUpdate(index, { ...step, subject: e.target.value })}
-            placeholder="Subject / Task description" className="text-xs mb-2 h-8" />
-          <Textarea value={step.body} onChange={e => onUpdate(index, { ...step, body: e.target.value })}
-            placeholder="Message body... use {{first_name}}, {{company}} for personalization"
-            className="text-xs resize-none" rows={2} />
-          <button onClick={onOpenPersonalize} type="button"
-            className="mt-1.5 flex items-center gap-1 text-[10px] text-primary/70 hover:text-primary transition-colors">
-            <Sparkles className="w-2.5 h-2.5" /> AI Personalize — analyze a company website
-          </button>
-          <BranchingStepEditor step={step} index={index} onUpdate={onUpdate} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function CreateSequenceModal({ onClose, onSave, onOpenPersonalize }) {
   const [name, setName] = useState('');
-  const [steps, setSteps] = useState([{ type: 'email', day: 0, subject: '', body: '' }]);
   const [aiLoading, setAiLoading] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
-
-  const addStep = () => setSteps([...steps, { type: 'email', day: (steps[steps.length - 1]?.day || 0) + 3, subject: '', body: '' }]);
-  const updateStep = (i, s) => setSteps(steps.map((st, idx) => idx === i ? s : st));
-  const removeStep = (i) => setSteps(steps.filter((_, idx) => idx !== i));
 
   const generateWithAI = async () => {
     if (!aiPrompt.trim()) return;
     setAiLoading(true);
     const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are an expert B2B sales sequence writer for African and emerging markets.
-      
-Generate a complete outbound sequence based on this goal: "${aiPrompt}"
-
-Return a JSON object with:
-- name: sequence name (string)
-- steps: array of steps, each with:
-  - type: "email" | "linkedin" | "whatsapp" | "sms" | "call"
-  - day: number (when to send, starting from 0)
-  - subject: string (subject line or task title)
-  - body: string (message body, use {{first_name}} and {{company}} placeholders)
-
-Return 4-6 steps. Make the messaging specific, personalized, and relevant to the goal.`,
+      prompt: `Generate a B2B outreach sequence name and basic info for: "${aiPrompt}". Return JSON with: name (string), channel (email|whatsapp|multi-channel), tags (array of strings, max 3).`,
       response_json_schema: {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          steps: { type: 'array', items: { type: 'object', properties: {
-            type: { type: 'string' }, day: { type: 'number' },
-            subject: { type: 'string' }, body: { type: 'string' }
-          }}}
+          channel: { type: 'string' },
+          tags: { type: 'array', items: { type: 'string' } }
         }
       }
     });
     if (result?.name) setName(result.name);
-    if (result?.steps?.length) setSteps(result.steps);
     setAiLoading(false);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-2xl max-h-[90vh] overflow-y-auto glass rounded-2xl border border-border/60 shadow-2xl">
-        <div className="flex items-center justify-between p-5 border-b border-border/30">
-          <h2 className="text-sm font-bold text-foreground">Create Sequence</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground"><X className="w-5 h-5" /></button>
+        className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl">
+        <div className="flex items-center justify-between p-5 border-b border-slate-100">
+          <h2 className="text-sm font-bold text-slate-800">New Sequence</h2>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
         </div>
-
         <div className="p-5 space-y-4">
-          {/* AI Generator */}
-          <div className="p-4 rounded-xl bg-primary/5 border border-primary/20">
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles className="w-4 h-4 text-primary" />
-              <span className="text-xs font-semibold text-primary">Generate with AI</span>
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-100">
+            <div className="flex items-center gap-2 mb-2.5">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+              <span className="text-xs font-semibold text-emerald-700">Generate name with AI</span>
             </div>
             <div className="flex gap-2">
               <Input value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}
-                placeholder="e.g. 5-step sequence for fintech CFOs in Lagos focused on cost reduction"
-                className="text-sm flex-1" />
-              <Button onClick={generateWithAI} disabled={aiLoading || !aiPrompt.trim()}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 whitespace-nowrap">
-                {aiLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                {aiLoading ? 'Generating...' : 'Generate'}
+                placeholder="e.g. Fintech CFOs in Lagos focused on cost reduction"
+                className="text-xs flex-1 h-8" />
+              <Button onClick={generateWithAI} disabled={aiLoading || !aiPrompt.trim()} size="sm"
+                className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs px-3">
+                {aiLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
               </Button>
             </div>
           </div>
-
           <div>
-            <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 block">Sequence Name</label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Fintech CTO — Q3 Outbound" />
+            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Sequence Name</label>
+            <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Fintech CTO — Q3 Outbound" className="text-sm" />
           </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Steps ({steps.length})</label>
-              <button onClick={addStep} className="text-xs text-primary hover:text-primary/80 flex items-center gap-1">
-                <Plus className="w-3.5 h-3.5" /> Add Step
-              </button>
-            </div>
-            <div className="space-y-0">
-              {steps.map((step, i) => (
-                <StepEditor key={i} step={step} index={i} onUpdate={updateStep} onRemove={removeStep} onOpenPersonalize={onOpenPersonalize} />
-              ))}
-            </div>
-          </div>
+          <p className="text-[11px] text-slate-400">You'll build the workflow steps in the Sequence Builder after creating.</p>
         </div>
-
-        <div className="flex justify-end gap-3 p-5 border-t border-border/30">
-          <Button variant="outline" onClick={onClose}>Cancel</Button>
-          <Button onClick={() => onSave({ name: name || 'New Sequence', steps, status: 'draft', channel: 'multi-channel', enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: [] })}
-            disabled={!name.trim()} className="bg-primary text-primary-foreground hover:bg-primary/90">
-            Save Sequence
+        <div className="flex justify-end gap-2 p-5 border-t border-slate-100">
+          <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
+          <Button size="sm" onClick={() => onSave({ name: name || 'New Sequence', steps: [], status: 'draft', channel: 'multi-channel', enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: [] })}
+            disabled={!name.trim()} className="bg-emerald-600 text-white hover:bg-emerald-700">
+            Create Sequence
           </Button>
         </div>
       </motion.div>
@@ -278,15 +205,16 @@ Return 4-6 steps. Make the messaging specific, personalized, and relevant to the
 }
 
 export default function Outreach() {
+  const navigate = useNavigate();
   const [sequences, setSequences] = useState(initialSequences);
   const [selectedSeq, setSelectedSeq] = useState(initialSequences[0]);
   const [showCreate, setShowCreate] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showTaskQueue, setShowTaskQueue] = useState(false);
-  const [aiSuggesting, setAiSuggesting] = useState(false);
-  const [aiSuggestion, setAiSuggestion] = useState(null);
   const [showPersonalize, setShowPersonalize] = useState(false);
   const [showProspects, setShowProspects] = useState(false);
+  const [aiSuggesting, setAiSuggesting] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState(null);
 
   const totalEnrolled = sequences.reduce((s, seq) => s + seq.enrolled, 0);
   const totalReplied = sequences.reduce((s, seq) => s + seq.replied, 0);
@@ -295,7 +223,7 @@ export default function Outreach() {
   const toggleStatus = (id) => {
     setSequences(prev => prev.map(s => {
       if (s.id !== id) return s;
-      const next = s.status === 'active' ? 'paused' : s.status === 'paused' ? 'active' : 'active';
+      const next = s.status === 'active' ? 'paused' : 'active';
       return { ...s, status: next };
     }));
   };
@@ -313,11 +241,7 @@ export default function Outreach() {
   };
 
   const useTemplate = (template) => {
-    const newSeq = {
-      id: Date.now(), name: template.name, channel: template.channel, status: 'draft',
-      enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: template.tags,
-      steps: template.steps_data
-    };
+    const newSeq = { id: Date.now(), name: template.name, channel: template.channel, status: 'draft', enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: template.tags, steps: template.steps_data };
     setSequences(prev => [...prev, newSeq]);
     setSelectedSeq(newSeq);
     setShowTemplates(false);
@@ -331,9 +255,8 @@ export default function Outreach() {
       prompt: `Analyze this outreach sequence and suggest ONE specific improvement:
 Sequence: "${selectedSeq.name}"
 Steps: ${selectedSeq.steps.length} steps
-Reply rate: ${selectedSeq.enrolled > 0 ? ((selectedSeq.replied/selectedSeq.enrolled)*100).toFixed(1) : 0}%
-Meeting rate: ${selectedSeq.enrolled > 0 ? ((selectedSeq.meetings/selectedSeq.enrolled)*100).toFixed(1) : 0}%
-Tags: ${selectedSeq.tags.join(', ')}
+Reply rate: ${selectedSeq.enrolled > 0 ? ((selectedSeq.replied / selectedSeq.enrolled) * 100).toFixed(1) : 0}%
+Meeting rate: ${selectedSeq.enrolled > 0 ? ((selectedSeq.meetings / selectedSeq.enrolled) * 100).toFixed(1) : 0}%
 
 Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
     });
@@ -342,45 +265,51 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
   };
 
   return (
-    <div className="min-h-screen" style={{ background: '#f8fafc' }}>
+    <div className="flex-1 flex flex-col min-h-0" style={{ background: '#f8fafc' }}>
       <TopBar title="Sequences" subtitle="AI-powered multichannel outreach engine" />
 
-      <div className="p-6 space-y-5">
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="flex-1 overflow-y-auto p-5 space-y-4">
+
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { label: 'Active Sequences', value: sequences.filter(s => s.status === 'active').length, icon: Zap, color: 'text-primary' },
-            { label: 'Total Enrolled', value: totalEnrolled.toLocaleString(), icon: Users, color: 'text-cyan-400' },
-            { label: 'Overall Reply Rate', value: `${totalEnrolled > 0 ? ((totalReplied/totalEnrolled)*100).toFixed(1) : 0}%`, icon: Reply, color: 'text-violet-400' },
-            { label: 'Meetings Booked', value: totalMeetings, icon: TrendingUp, color: 'text-amber-400' },
+            { label: 'Active Sequences', value: sequences.filter(s => s.status === 'active').length, icon: Zap, color: 'text-emerald-600' },
+            { label: 'Total Enrolled', value: totalEnrolled.toLocaleString(), icon: Users, color: 'text-cyan-500' },
+            { label: 'Overall Reply Rate', value: `${totalEnrolled > 0 ? ((totalReplied / totalEnrolled) * 100).toFixed(1) : 0}%`, icon: Reply, color: 'text-violet-500' },
+            { label: 'Meetings Booked', value: totalMeetings, icon: TrendingUp, color: 'text-amber-500' },
           ].map(s => (
-            <div key={s.label} className="glass rounded-xl p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs text-muted-foreground">{s.label}</span>
-                <s.icon className={`w-4 h-4 ${s.color}`} />
+            <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[11px] text-slate-500">{s.label}</span>
+                <s.icon className={`w-3.5 h-3.5 ${s.color}`} />
               </div>
-              <span className={`text-sm font-bold ${s.color}`}>{s.value}</span>
+              <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
             </div>
           ))}
         </div>
 
         <div className="grid lg:grid-cols-5 gap-4">
-          {/* Sequences List */}
-          <div className="lg:col-span-3 glass rounded-xl overflow-hidden">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
-              <h3 className="text-xs font-bold text-foreground">All Sequences</h3>
+
+          {/* Left: Sequences List */}
+          <div className="lg:col-span-3 bg-white border border-slate-200 rounded-xl overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+              <h3 className="text-xs font-bold text-slate-800">All Sequences</h3>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setShowTaskQueue(!showTaskQueue)} className="gap-1.5 text-xs border-blue-500/30 text-blue-400 hover:bg-blue-500/10">
-                  <ListTodo className="w-3.5 h-3.5" /> Task Queue
+                <Button size="sm" variant="outline" onClick={() => setShowTaskQueue(!showTaskQueue)}
+                  className="gap-1.5 text-[11px] h-7 border-blue-200 text-blue-600 hover:bg-blue-50">
+                  <ListTodo className="w-3 h-3" /> Task Queue
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)} className="gap-1.5 text-xs border-border/60">
-                  <BookOpen className="w-3.5 h-3.5" /> Templates
+                <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)}
+                  className="gap-1.5 text-[11px] h-7">
+                  <BookOpen className="w-3 h-3" /> Templates
                 </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowPersonalize(true)} className="gap-1.5 text-xs border-primary/30 text-primary hover:bg-primary/10">
-                  <Sparkles className="w-3.5 h-3.5" /> AI Personalize
+                <Button size="sm" variant="outline" onClick={() => setShowPersonalize(true)}
+                  className="gap-1.5 text-[11px] h-7 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+                  <Sparkles className="w-3 h-3" /> AI
                 </Button>
-                <Button size="sm" onClick={() => setShowCreate(true)} className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 text-xs">
-                  <Plus className="w-3.5 h-3.5" /> New Sequence
+                <Button size="sm" onClick={() => setShowCreate(true)}
+                  className="gap-1.5 text-[11px] h-7 bg-emerald-600 text-white hover:bg-emerald-700">
+                  <Plus className="w-3 h-3" /> New
                 </Button>
               </div>
             </div>
@@ -392,96 +321,25 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
             </div>
           </div>
 
-          {/* Task Queue or Sequence Detail */}
-          <div className="lg:col-span-2 glass rounded-xl p-5">
+          {/* Right: Preview Panel */}
+          <div className="lg:col-span-2">
             {showTaskQueue ? (
-              <TaskQueuePanel onClose={() => setShowTaskQueue(false)} />
+              <div className="bg-white border border-slate-200 rounded-xl p-4">
+                <TaskQueuePanel onClose={() => setShowTaskQueue(false)} />
+              </div>
             ) : selectedSeq ? (
-              <>
-                <div className="flex items-center justify-between mb-4">
-                  <div>
-                    <h3 className="font-bold text-xs">{selectedSeq.name}</h3>
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full border ${statusBadge[selectedSeq.status]}`}>
-                      {selectedSeq.status}
-                    </span>
-                  </div>
-                  <div className="flex gap-1.5">
-                    <button onClick={() => setShowProspects(true)} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground hover:text-primary" title="Manage Prospects">
-                      <Users className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={() => duplicateSequence(selectedSeq)} className="p-1.5 rounded-md hover:bg-secondary text-muted-foreground" title="Duplicate">
-                      <Copy className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Performance */}
-                <div className="grid grid-cols-4 gap-2 mb-4">
-                  {[
-                    { label: 'Enrolled', value: selectedSeq.enrolled, color: 'text-foreground' },
-                    { label: 'Opens', value: selectedSeq.opens, color: 'text-cyan-400' },
-                    { label: 'Replies', value: selectedSeq.replied, color: 'text-primary' },
-                    { label: 'Meetings', value: selectedSeq.meetings, color: 'text-amber-400' },
-                  ].map(m => (
-                    <div key={m.label} className="text-center p-2 rounded-lg bg-secondary/50">
-                      <p className={`text-xs font-bold ${m.color}`}>{m.value}</p>
-                      <p className="text-[10px] text-muted-foreground">{m.label}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Steps */}
-                <div className="mb-4">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-                    Sequence Steps ({selectedSeq.steps.length})
-                  </p>
-                  <div className="space-y-0 max-h-52 overflow-y-auto pr-1">
-                    {selectedSeq.steps.length === 0 ? (
-                      <p className="text-xs text-muted-foreground text-center py-4">No steps yet. Edit to add steps.</p>
-                    ) : selectedSeq.steps.map((step, i) => {
-                      const Icon = channelIcons[step.type] || Mail;
-                      return (
-                        <div key={i} className="flex items-start gap-3 py-1.5">
-                          <div className="flex flex-col items-center flex-shrink-0">
-                            <div className={`w-6 h-6 rounded-full ${channelBg[step.type] || 'bg-secondary'} flex items-center justify-center`}>
-                              <Icon className={`w-3 h-3 ${channelColors[step.type]}`} />
-                            </div>
-                            {i < selectedSeq.steps.length - 1 && <div className="w-px h-4 bg-border/40 mt-0.5" />}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium text-foreground truncate">{step.subject}</p>
-                            <p className="text-[10px] text-muted-foreground mb-1">Day {step.day} · {step.type}</p>
-                            <StepExecutionStatus step={step} />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* AI Insight */}
-                <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-semibold text-primary">AI Copilot</span>
-                    </div>
-                    <button onClick={getAISuggestion} disabled={aiSuggesting}
-                      className="text-[10px] text-primary/70 hover:text-primary flex items-center gap-1">
-                      {aiSuggesting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                      {aiSuggesting ? 'Analyzing...' : 'Refresh'}
-                    </button>
-                  </div>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
-                    {aiSuggestion || (selectedSeq.replied > 0
-                      ? `Reply rate of ${((selectedSeq.replied/selectedSeq.enrolled)*100).toFixed(1)}% — consider A/B testing your subject lines to push above 25%.`
-                      : 'Click Refresh for AI-powered optimization suggestions for this sequence.')}
-                  </p>
-                </div>
-              </>
+              <SequencePreviewPanel
+                seq={selectedSeq}
+                onOpenBuilder={() => navigate(`/sequence-builder?id=${selectedSeq.id}`)}
+                onDuplicate={() => duplicateSequence(selectedSeq)}
+                onManageProspects={() => setShowProspects(true)}
+                aiSuggestion={aiSuggestion}
+                aiSuggesting={aiSuggesting}
+                onGetAISuggestion={getAISuggestion}
+              />
             ) : (
-              <div className="flex items-center justify-center h-48 text-muted-foreground text-sm">
-                Select a sequence to view details
+              <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-48 text-slate-400 text-sm">
+                Select a sequence to preview
               </div>
             )}
           </div>
@@ -494,6 +352,126 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
       </AnimatePresence>
       {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}
       {showProspects && <ProspectManager sequence={selectedSeq} onClose={() => setShowProspects(false)} />}
+    </div>
+  );
+}
+
+function SequencePreviewPanel({ seq, onOpenBuilder, onDuplicate, onManageProspects, aiSuggestion, aiSuggesting, onGetAISuggestion }) {
+  const replyRate = seq.enrolled > 0 ? ((seq.replied / seq.enrolled) * 100).toFixed(1) : 0;
+  const meetingRate = seq.enrolled > 0 ? ((seq.meetings / seq.enrolled) * 100).toFixed(1) : 0;
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden flex flex-col">
+
+      {/* Header */}
+      <div className="px-4 py-3 border-b border-slate-100">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="min-w-0">
+            <h3 className="text-xs font-bold text-slate-800 truncate leading-tight">{seq.name}</h3>
+            <span className={`inline-block text-[10px] font-medium px-1.5 py-0.5 rounded-full border mt-1 ${statusBadge[seq.status]}`}>
+              {seq.status}
+            </span>
+          </div>
+          <div className="flex gap-1 flex-shrink-0">
+            <button onClick={onManageProspects} title="Manage Prospects"
+              className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+              <Users className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={onDuplicate} title="Duplicate"
+              className="p-1.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600">
+              <Copy className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Metrics */}
+      <div className="grid grid-cols-4 gap-px bg-slate-100 border-b border-slate-100">
+        {[
+          { label: 'Enrolled', value: seq.enrolled, color: 'text-slate-700' },
+          { label: 'Opens', value: seq.opens, color: 'text-cyan-600' },
+          { label: 'Reply', value: `${replyRate}%`, color: 'text-emerald-600' },
+          { label: 'Meetings', value: seq.meetings, color: 'text-amber-600' },
+        ].map(m => (
+          <div key={m.label} className="bg-white text-center py-2.5">
+            <p className={`text-xs font-bold ${m.color}`}>{m.value}</p>
+            <p className="text-[10px] text-slate-400">{m.label}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Mini Workflow Preview */}
+      <div className="px-4 py-3 border-b border-slate-100">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+            Workflow Preview
+          </p>
+          <span className="text-[10px] text-slate-400">{seq.steps.length} steps</span>
+        </div>
+
+        {seq.steps.length === 0 ? (
+          <p className="text-[11px] text-slate-400 py-2">No steps yet. Open the builder to add steps.</p>
+        ) : (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {seq.steps.map((step, i) => {
+              const Icon = channelIcons[step.type] || Mail;
+              return (
+                <div key={i} className="flex items-center gap-1.5">
+                  <div className={`flex items-center gap-1 px-2 py-1 rounded-md ${channelBg[step.type] || 'bg-slate-100'}`}>
+                    <Icon className={`w-3 h-3 ${channelColors[step.type] || 'text-slate-400'}`} />
+                    <span className="text-[10px] text-slate-600 font-medium">D{step.day}</span>
+                  </div>
+                  {i < seq.steps.length - 1 && (
+                    <ArrowRight className="w-3 h-3 text-slate-300 flex-shrink-0" />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {seq.steps.length > 0 && (
+          <div className="flex items-center gap-3 mt-2.5">
+            <div className="flex items-center gap-1 text-[10px] text-slate-400">
+              <Clock className="w-3 h-3" />
+              <span>{seq.steps[seq.steps.length - 1]?.day || 0} day span</span>
+            </div>
+            <div className="flex items-center gap-1 text-[10px] text-slate-400">
+              <BarChart3 className="w-3 h-3" />
+              <span>{meetingRate}% meeting rate</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* AI Insight */}
+      <div className="px-4 py-3 border-b border-slate-100">
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3 text-emerald-500" />
+            <span className="text-[11px] font-semibold text-slate-700">AI Insight</span>
+          </div>
+          <button onClick={onGetAISuggestion} disabled={aiSuggesting}
+            className="text-[10px] text-emerald-600 hover:text-emerald-700 flex items-center gap-1">
+            {aiSuggesting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+            {aiSuggesting ? 'Analyzing...' : 'Analyze'}
+          </button>
+        </div>
+        <p className="text-[11px] text-slate-500 leading-relaxed">
+          {aiSuggestion || (seq.replied > 0
+            ? `Reply rate of ${replyRate}% — consider A/B testing subject lines to push above 25%.`
+            : 'Click Analyze for AI-powered optimization suggestions.')}
+        </p>
+      </div>
+
+      {/* Primary CTA */}
+      <div className="px-4 py-3">
+        <Button onClick={onOpenBuilder} className="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold h-9 gap-2">
+          <Edit3 className="w-3.5 h-3.5" />
+          Open Workflow Builder
+          <ArrowRight className="w-3.5 h-3.5 ml-auto" />
+        </Button>
+      </div>
     </div>
   );
 }

@@ -28,6 +28,7 @@ import Tasks from './pages/Tasks';
 import Settings from './pages/Settings';
 import Deliverability from './pages/Deliverability';
 import OnboardingHub from './pages/OnboardingHub';
+import SequenceBuilder from './pages/SequenceBuilder';
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
@@ -83,6 +84,7 @@ const AuthenticatedApp = () => {
         <Route path="/settings" element={<Settings />} />
         <Route path="/deliverability" element={<Deliverability />} />
         <Route path="/onboarding-hub" element={<OnboardingHub />} />
+        <Route path="/sequence-builder" element={<SequenceBuilder />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />
