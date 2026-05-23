@@ -14,7 +14,7 @@ import SequenceTemplates from '@/components/outreach/SequenceTemplates';
 import TaskQueuePanel from '@/components/outreach/TaskQueuePanel';
 import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
 import ProspectManager from '@/components/outreach/ProspectManager';
-import SequenceEmptyState from '@/components/outreach/SequenceEmptyState';
+import SequenceActivationPage from '@/components/outreach/SequenceActivationPage';
 import SequenceAnalyticsTab from '@/components/outreach/SequenceAnalyticsTab';
 import SequenceDiagnosticsTab from '@/components/outreach/SequenceDiagnosticsTab';
 import TopBar from '@/components/layout/TopBar';
@@ -210,7 +210,7 @@ function CreateSequenceModal({ onClose, onSave, onOpenPersonalize }) {
 
 export default function Outreach() {
   const navigate = useNavigate();
-  const [sequences, setSequences] = useState(initialSequences);
+  const [sequences, setSequences] = useState([]);
   const [selectedSeq, setSelectedSeq] = useState(initialSequences[0]);
   const [showCreate, setShowCreate] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
@@ -274,6 +274,35 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
     setAiSuggestion(result);
     setAiSuggesting(false);
   };
+
+  // Activation/onboarding experience for first-time users
+  if (sequences.length === 0) {
+    return (
+      <div className="flex-1 flex flex-col min-h-0" style={{ background: '#f8fafc' }}>
+        <TopBar title="Sequences" subtitle="AI-powered multichannel outreach engine" />
+        <div className="flex items-center justify-end gap-2 px-6 py-2 border-b border-slate-200 bg-white">
+          <Button size="sm" variant="outline" onClick={() => setShowCreate(true)}
+            className="gap-1.5 text-[11px] h-7">
+            <Plus className="w-3 h-3" /> Create sequence
+          </Button>
+          <Button size="sm" onClick={() => setShowCreate(true)}
+            className="gap-1.5 text-[11px] h-7 bg-emerald-600 text-white hover:bg-emerald-700">
+            <Sparkles className="w-3 h-3" /> Create with AI
+          </Button>
+        </div>
+        <SequenceActivationPage
+          onCreateAI={() => setShowCreate(true)}
+          onCreate={() => setShowCreate(true)}
+          alerts={alerts}
+          onDismissAlert={(id) => setDismissedAlerts(p => [...p, id])}
+        />
+        <AnimatePresence>
+          {showCreate && <CreateSequenceModal onClose={() => setShowCreate(false)} onSave={saveSequence} onOpenPersonalize={() => setShowPersonalize(true)} />}
+        </AnimatePresence>
+        {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 flex flex-col min-h-0" style={{ background: '#f8fafc' }}>
@@ -357,15 +386,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
               ))}
             </div>
 
-            {sequences.length === 0 ? (
-              <div className="bg-white border border-slate-200 rounded-xl">
-                <SequenceEmptyState
-                  onCreateAI={() => { setShowCreate(true); }}
-                  onCreate={() => setShowCreate(true)}
-                />
-              </div>
-            ) : (
-              <div className="grid lg:grid-cols-5 gap-4">
+            <div className="grid lg:grid-cols-5 gap-4">
                 {/* Left: Sequences List */}
                 <div className="lg:col-span-3 bg-white border border-slate-200 rounded-xl overflow-hidden">
                   <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
@@ -416,7 +437,6 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
                   )}
                 </div>
               </div>
-            )}
           </div>
         )}
       </div>
