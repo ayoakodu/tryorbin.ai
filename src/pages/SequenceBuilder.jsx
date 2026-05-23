@@ -153,7 +153,7 @@ function EmptyWorkflowState({ onAddStep, onShowTemplates, onGenerateWithAI }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2 }}
-      className="flex-1 flex flex-col items-center justify-center text-center px-6"
+      className="flex flex-col items-center text-center px-6"
     >
       <MultichannelIllustration />
 
@@ -309,7 +309,7 @@ Return JSON with suggestions array: { type: "warning"|"tip"|"insight", title: st
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex" style={{ minHeight: 0 }}>
 
         {/* Non-builder placeholder */}
         {activeTab !== 'builder' && (
@@ -324,12 +324,14 @@ Return JSON with suggestions array: { type: "warning"|"tip"|"insight", title: st
         {activeTab === 'builder' && (
           <>
             {seq.steps.length === 0 ? (
-              /* EMPTY STATE: full width, centered, no side panels */
-              <EmptyWorkflowState
-                onAddStep={addStep}
-                onShowTemplates={() => {}}
-                onGenerateWithAI={() => setShowPersonalize(true)}
-              />
+              /* EMPTY STATE: full width, truly centered */
+              <div className="flex-1 flex items-center justify-center overflow-visible">
+                <EmptyWorkflowState
+                  onAddStep={addStep}
+                  onShowTemplates={() => {}}
+                  onGenerateWithAI={() => setShowPersonalize(true)}
+                />
+              </div>
             ) : (
               /* POPULATED STATE: 3-column split */
               <>

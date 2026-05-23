@@ -69,7 +69,9 @@ export const STEP_SUBTYPE_LABELS = {
 export default function AddStepMenu({ onAdd, trigger = 'inline' }) {
   const [open, setOpen] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const ref = useRef(null);
+  const btnRef = useRef(null);
 
   useEffect(() => {
     const handler = (e) => {
@@ -92,12 +94,22 @@ export default function AddStepMenu({ onAdd, trigger = 'inline' }) {
     setExpandedGroup(prev => prev === label ? null : label);
   };
 
+  const openMenu = () => {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setDropdownPos({ top: rect.bottom + 6, left: rect.left + rect.width / 2 });
+    }
+    setOpen(o => !o);
+    setExpandedGroup(null);
+  };
+
   return (
     <div ref={ref} className="relative flex flex-col items-center">
       {trigger === 'inline' && <div className="w-px h-4 bg-slate-200" />}
 
       <button
-        onClick={() => { setOpen(o => !o); setExpandedGroup(null); }}
+        ref={btnRef}
+        onClick={openMenu}
         className={cn(
           'flex items-center gap-1.5 px-3.5 py-2 rounded-lg border text-xs font-semibold transition-colors',
           trigger === 'empty'
@@ -115,8 +127,8 @@ export default function AddStepMenu({ onAdd, trigger = 'inline' }) {
 
       {open && (
         <div
-          className="absolute z-30 bg-white rounded-xl border border-slate-200 shadow-xl"
-          style={{ top: 'calc(100% + 6px)', minWidth: 240, left: '50%', transform: 'translateX(-50%)' }}
+          className="fixed z-[9999] bg-white rounded-xl border border-slate-200 shadow-xl"
+          style={{ top: dropdownPos.top, left: dropdownPos.left, transform: 'translateX(-50%)', minWidth: 240 }}
         >
           {STEP_GROUPS.map((group) => {
             const GroupIcon = group.icon;
