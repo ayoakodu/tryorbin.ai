@@ -163,19 +163,26 @@ function EmptyWorkflowState({ onAddStep, onShowTemplates, onGenerateWithAI }) {
       </p>
 
       {/* Primary CTA — inline Add Step menu */}
-      <div className="mb-2">
+      <div className="mb-3">
         <AddStepMenu onAdd={onAddStep} trigger="empty" />
       </div>
 
+      {/* Or divider */}
+      <div className="flex items-center gap-2 w-40 mb-3">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-[11px] text-slate-400 font-medium">Or</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
+
       {/* Secondary CTAs */}
-      <div className="flex items-center gap-2 mt-1">
+      <div className="flex items-center gap-2">
         <button onClick={onShowTemplates}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-[11px] text-slate-600 hover:bg-slate-50 transition-colors font-medium">
           <BookOpen className="w-3 h-3" /> Use Template
         </button>
         <button onClick={onGenerateWithAI}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-[11px] text-emerald-700 hover:bg-emerald-100 transition-colors font-medium">
-          <Sparkles className="w-3 h-3 text-emerald-500" /> Generate with AI
+          <Sparkles className="w-3 h-3 text-emerald-500" /> AI-Assisted Sequence
         </button>
       </div>
     </motion.div>
