@@ -43,10 +43,27 @@ const CREATION_METHODS = [
 ];
 
 const SCHEDULES = [
-  { id: 'business', label: 'Business Hours', desc: 'Mon–Fri, 8AM–5PM' },
-  { id: 'weekdays', label: 'Weekdays Only', desc: 'Mon–Fri, all hours' },
-  { id: 'custom', label: 'Custom Schedule', desc: 'Set your own window' },
+  { id: 'business', label: 'Business Hours', desc: 'Timezone-aware, Mon–Fri' },
+  { id: 'custom', label: 'Custom Schedule', desc: 'Set your own windows' },
 ];
+
+const TIMEZONES = [
+  { label: 'GMT+0 (London)', value: 'GMT+0' },
+  { label: 'GMT+1 (Lagos, Paris)', value: 'GMT+1' },
+  { label: 'GMT+2 (Johannesburg, Cairo)', value: 'GMT+2' },
+  { label: 'GMT+3 (Nairobi, Riyadh)', value: 'GMT+3' },
+  { label: 'GMT+4 (Dubai)', value: 'GMT+4' },
+  { label: 'GMT+5:30 (Mumbai)', value: 'GMT+5:30' },
+  { label: 'GMT+8 (Singapore, Beijing)', value: 'GMT+8' },
+  { label: 'GMT+9 (Tokyo)', value: 'GMT+9' },
+  { label: 'GMT-5 (New York)', value: 'GMT-5' },
+  { label: 'GMT-6 (Chicago)', value: 'GMT-6' },
+  { label: 'GMT-7 (Denver)', value: 'GMT-7' },
+  { label: 'GMT-8 (Los Angeles)', value: 'GMT-8' },
+];
+
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const TIMES = ['6:00 AM','7:00 AM','8:00 AM','9:00 AM','10:00 AM','11:00 AM','12:00 PM','1:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM','6:00 PM','7:00 PM','8:00 PM'];
 
 // Step 1 — Method Selection
 function MethodStep({ selected, onSelect, onNext, onClose }) {
@@ -110,7 +127,38 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
   const [aiPrompt, setAiPrompt] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
 
+  // Business Hours state
+  const [timezone, setTimezone] = useState('GMT+1');
+  const [activeDays, setActiveDays] = useState(['Mon','Tue','Wed','Thu','Fri']);
+  const [startTime, setStartTime] = useState('8:00 AM');
+  const [endTime, setEndTime] = useState('5:00 PM');
+
+  // Custom schedule state: array of { day, start, end }
+  const [customWindows, setCustomWindows] = useState([
+    { day: 'Mon', start: '9:00 AM', end: '5:00 PM' }
+  ]);
+
   const methodInfo = CREATION_METHODS.find(m => m.id === method);
+  const tzLabel = TIMEZONES.find(t => t.value === timezone)?.label || timezone;
+
+  const toggleDay = (day) => {
+    setActiveDays(prev =>
+      prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]
+    );
+  };
+
+  const addCustomWindow = () => {
+    const unusedDay = DAYS.find(d => !customWindows.find(w => w.day === d));
+    if (unusedDay) setCustomWindows(prev => [...prev, { day: unusedDay, start: '9:00 AM', end: '5:00 PM' }]);
+  };
+
+  const updateCustomWindow = (idx, field, value) => {
+    setCustomWindows(prev => prev.map((w, i) => i === idx ? { ...w, [field]: value } : w));
+  };
+
+  const removeCustomWindow = (idx) => {
+    setCustomWindows(prev => prev.filter((_, i) => i !== idx));
+  };
 
   const generateName = async () => {
     if (!aiPrompt.trim()) return;
@@ -126,7 +174,10 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
     setAiLoading(false);
   };
 
-  const selectedSchedule = SCHEDULES.find(s => s.id === schedule);
+  // Build schedule preview text
+  const schedulePreview = schedule === 'business'
+    ? `${activeDays.join(', ')} · ${startTime} – ${endTime} · ${tzLabel}`
+    : customWindows.map(w => `${w.day}: ${w.start}–${w.end}`).join('  ·  ');
 
   return (
     <motion.div key="config" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}>
@@ -137,9 +188,7 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
           </button>
           <div>
             <h2 className="text-sm font-bold text-slate-800">Set up your sequence</h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              {methodInfo?.label} — configure the basics before building.
-            </p>
+            <p className="text-xs text-slate-400 mt-0.5">{methodInfo?.label} — configure the basics before building.</p>
           </div>
         </div>
         <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
@@ -147,7 +196,7 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
         </button>
       </div>
 
-      <div className="p-6 space-y-5">
+      <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
 
         {/* Sequence Name */}
         <div>
@@ -163,7 +212,7 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
           />
         </div>
 
-        {/* AI name generator (only for AI method) */}
+        {/* AI name generator */}
         {method === 'ai' && (
           <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-100">
             <div className="flex items-center gap-2 mb-2">
@@ -178,35 +227,26 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
                 className="text-xs flex-1 h-8"
                 onKeyDown={e => e.key === 'Enter' && generateName()}
               />
-              <Button
-                onClick={generateName}
-                disabled={aiLoading || !aiPrompt.trim()}
-                size="sm"
-                className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs px-3 h-8"
-              >
+              <Button onClick={generateName} disabled={aiLoading || !aiPrompt.trim()}
+                size="sm" className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs px-3 h-8">
                 {aiLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
               </Button>
             </div>
           </div>
         )}
 
-        {/* Sending Schedule */}
+        {/* Schedule Type Toggle */}
         <div>
           <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">
             Sending Schedule
           </label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2">
             {SCHEDULES.map(s => (
-              <button
-                key={s.id}
-                onClick={() => setSchedule(s.id)}
+              <button key={s.id} onClick={() => setSchedule(s.id)}
                 className={cn(
-                  'p-2.5 rounded-lg border text-left transition-all',
-                  schedule === s.id
-                    ? 'border-emerald-400 bg-emerald-50'
-                    : 'border-slate-200 hover:border-slate-300'
-                )}
-              >
+                  'p-3 rounded-xl border-2 text-left transition-all',
+                  schedule === s.id ? 'border-emerald-400 bg-emerald-50' : 'border-slate-200 hover:border-slate-300'
+                )}>
                 <p className={cn('text-xs font-semibold', schedule === s.id ? 'text-emerald-700' : 'text-slate-700')}>{s.label}</p>
                 <p className="text-[10px] text-slate-400 mt-0.5">{s.desc}</p>
               </button>
@@ -214,34 +254,132 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
           </div>
         </div>
 
-        {/* Sending Window Preview */}
-        <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200">
-          <Clock className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
-          <div>
-            <p className="text-[11px] font-semibold text-slate-600">Sending Window</p>
-            <p className="text-[10px] text-slate-400 mt-0.5">{selectedSchedule?.desc}</p>
-          </div>
-          <div className="ml-auto flex items-center gap-1">
-            {['M','T','W','T','F'].map((d, i) => (
-              <span key={i} className={cn(
-                'w-5 h-5 rounded text-[9px] font-bold flex items-center justify-center',
-                schedule === 'custom' ? 'bg-slate-200 text-slate-500' : 'bg-emerald-100 text-emerald-700'
-              )}>{d}</span>
-            ))}
+        {/* Business Hours Config */}
+        {schedule === 'business' && (
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+            className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+
+            {/* Timezone */}
+            <div>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Timezone</label>
+              <select
+                value={timezone}
+                onChange={e => setTimezone(e.target.value)}
+                className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 outline-none focus:border-emerald-400">
+                {TIMEZONES.map(tz => (
+                  <option key={tz.value} value={tz.value}>{tz.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Days */}
+            <div>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1.5">Sending Days</label>
+              <div className="flex gap-1.5">
+                {DAYS.map(day => (
+                  <button key={day} onClick={() => toggleDay(day)}
+                    className={cn(
+                      'flex-1 py-1.5 rounded-lg text-[10px] font-semibold border transition-all',
+                      activeDays.includes(day)
+                        ? 'bg-emerald-500 text-white border-emerald-500'
+                        : 'bg-white text-slate-500 border-slate-200 hover:border-slate-300'
+                    )}>
+                    {day.slice(0, 2)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Times */}
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Start Time</label>
+                <select value={startTime} onChange={e => setStartTime(e.target.value)}
+                  className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 outline-none focus:border-emerald-400">
+                  {TIMES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">End Time</label>
+                <select value={endTime} onChange={e => setEndTime(e.target.value)}
+                  className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 outline-none focus:border-emerald-400">
+                  {TIMES.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Custom Schedule Config */}
+        {schedule === 'custom' && (
+          <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+            className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-3">
+
+            {/* Timezone */}
+            <div>
+              <label className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">Timezone</label>
+              <select value={timezone} onChange={e => setTimezone(e.target.value)}
+                className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2.5 py-2 text-slate-700 outline-none focus:border-emerald-400">
+                {TIMEZONES.map(tz => <option key={tz.value} value={tz.value}>{tz.label}</option>)}
+              </select>
+            </div>
+
+            {/* Custom Windows */}
+            <div className="space-y-2">
+              {customWindows.map((win, idx) => (
+                <div key={idx} className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 py-2">
+                  <select value={win.day} onChange={e => updateCustomWindow(idx, 'day', e.target.value)}
+                    className="text-xs bg-transparent border-none outline-none text-slate-700 font-semibold w-16 cursor-pointer">
+                    {DAYS.map(d => <option key={d} value={d}>{d}</option>)}
+                  </select>
+                  <span className="text-[10px] text-slate-300">→</span>
+                  <select value={win.start} onChange={e => updateCustomWindow(idx, 'start', e.target.value)}
+                    className="text-xs bg-transparent border-none outline-none text-slate-600 flex-1 cursor-pointer">
+                    {TIMES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  <span className="text-[10px] text-slate-400">–</span>
+                  <select value={win.end} onChange={e => updateCustomWindow(idx, 'end', e.target.value)}
+                    className="text-xs bg-transparent border-none outline-none text-slate-600 flex-1 cursor-pointer">
+                    {TIMES.map(t => <option key={t} value={t}>{t}</option>)}
+                  </select>
+                  {customWindows.length > 1 && (
+                    <button onClick={() => removeCustomWindow(idx)}
+                      className="text-slate-300 hover:text-red-400 transition-colors ml-1 flex-shrink-0">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {customWindows.length < 7 && (
+              <button onClick={addCustomWindow}
+                className="flex items-center gap-1.5 text-[11px] text-emerald-600 hover:text-emerald-700 font-medium transition-colors">
+                <Clock className="w-3 h-3" /> Add another window
+              </button>
+            )}
+          </motion.div>
+        )}
+
+        {/* Live Preview */}
+        <div className="flex items-start gap-2.5 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200">
+          <Clock className="w-3.5 h-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
+          <div className="min-w-0">
+            <p className="text-[11px] font-semibold text-slate-600 mb-0.5">Schedule Preview</p>
+            <p className="text-[10px] text-slate-400 leading-relaxed break-words">{schedulePreview || '—'}</p>
           </div>
         </div>
 
       </div>
 
-      <div className="flex items-center justify-between px-6 pb-6">
+      <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100">
         <button onClick={onBack} className="text-xs text-slate-400 hover:text-slate-600 transition-colors">
           ← Back
         </button>
         <Button
-          onClick={() => onSave({ name, schedule, method })}
+          onClick={() => onSave({ name, schedule, method, timezone, activeDays, startTime, endTime, customWindows })}
           disabled={!name.trim()}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-5"
-        >
+          className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-5">
           Create Sequence
         </Button>
       </div>
@@ -261,7 +399,7 @@ export default function CreateSequenceFlow({ onClose, onSave, defaultMethod = nu
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.97 }}
         transition={{ duration: 0.15 }}
-        className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden"
+        className="w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl overflow-hidden"
       >
         <AnimatePresence mode="wait">
           {step === 'method' && (
