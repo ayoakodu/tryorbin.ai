@@ -6,13 +6,17 @@ import {
   Plus, Play, Pause, Mail, MessageCircle,
   Phone, MoreHorizontal, Sparkles, Users, TrendingUp,
   Reply, Zap, X, Loader2,
-  BarChart3, BookOpen, ListTodo, ArrowRight, Clock, Edit3, Copy
+  BarChart3, BookOpen, ListTodo, ArrowRight, Clock, Edit3, Copy,
+  AlertTriangle, Activity, Stethoscope
 } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import SequenceTemplates from '@/components/outreach/SequenceTemplates';
 import TaskQueuePanel from '@/components/outreach/TaskQueuePanel';
 import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
 import ProspectManager from '@/components/outreach/ProspectManager';
+import SequenceEmptyState from '@/components/outreach/SequenceEmptyState';
+import SequenceAnalyticsTab from '@/components/outreach/SequenceAnalyticsTab';
+import SequenceDiagnosticsTab from '@/components/outreach/SequenceDiagnosticsTab';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -215,6 +219,13 @@ export default function Outreach() {
   const [showProspects, setShowProspects] = useState(false);
   const [aiSuggesting, setAiSuggesting] = useState(false);
   const [aiSuggestion, setAiSuggestion] = useState(null);
+  const [activeTab, setActiveTab] = useState('sequences');
+  const [dismissedAlerts, setDismissedAlerts] = useState([]);
+
+  const alerts = [
+    { id: 'ai-content', type: 'warning', message: 'Update your AI content center to ensure research is tailored to your unique value proposition.', action: 'Review settings', route: '/settings' },
+    { id: 'mailbox', type: 'warning', message: 'You have no mailboxes linked. Please connect your email account to start managing and sending emails via RVNU.', action: 'Link mailbox', route: '/integrations' },
+  ].filter(a => !dismissedAlerts.includes(a.id));
 
   const totalEnrolled = sequences.reduce((s, seq) => s + seq.enrolled, 0);
   const totalReplied = sequences.reduce((s, seq) => s + seq.replied, 0);
@@ -268,82 +279,146 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
     <div className="flex-1 flex flex-col min-h-0" style={{ background: '#f8fafc' }}>
       <TopBar title="Sequences" subtitle="AI-powered multichannel outreach engine" />
 
-      <div className="flex-1 overflow-y-auto p-5 space-y-4">
-
-        {/* Stats Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      {/* Tabs Bar */}
+      <div className="flex items-center justify-between px-5 border-b border-slate-200 bg-white">
+        <div className="flex items-center gap-0">
           {[
-            { label: 'Active Sequences', value: sequences.filter(s => s.status === 'active').length, icon: Zap, color: 'text-emerald-600' },
-            { label: 'Total Enrolled', value: totalEnrolled.toLocaleString(), icon: Users, color: 'text-cyan-500' },
-            { label: 'Overall Reply Rate', value: `${totalEnrolled > 0 ? ((totalReplied / totalEnrolled) * 100).toFixed(1) : 0}%`, icon: Reply, color: 'text-violet-500' },
-            { label: 'Meetings Booked', value: totalMeetings, icon: TrendingUp, color: 'text-amber-500' },
-          ].map(s => (
-            <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4">
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[11px] text-slate-500">{s.label}</span>
-                <s.icon className={`w-3.5 h-3.5 ${s.color}`} />
-              </div>
-              <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
-            </div>
+            { id: 'sequences', label: 'All Sequences', icon: ListTodo },
+            { id: 'analytics', label: 'Analytics', icon: Activity },
+            { id: 'diagnostics', label: 'Diagnostics', icon: Stethoscope },
+          ].map(tab => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={cn(
+                'flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium border-b-2 transition-colors',
+                activeTab === tab.id
+                  ? 'border-emerald-500 text-emerald-700'
+                  : 'border-transparent text-slate-500 hover:text-slate-700'
+              )}
+            >
+              <tab.icon className="w-3.5 h-3.5" />
+              {tab.label}
+            </button>
           ))}
         </div>
+        {activeTab === 'sequences' && (
+          <Button size="sm" onClick={() => setShowCreate(true)}
+            className="gap-1.5 text-[11px] h-7 bg-emerald-600 text-white hover:bg-emerald-700">
+            <Plus className="w-3 h-3" /> Create sequence
+          </Button>
+        )}
+      </div>
 
-        <div className="grid lg:grid-cols-5 gap-4">
+      <div className="flex-1 overflow-y-auto">
 
-          {/* Left: Sequences List */}
-          <div className="lg:col-span-3 bg-white border border-slate-200 rounded-xl overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
-              <h3 className="text-xs font-bold text-slate-800">All Sequences</h3>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setShowTaskQueue(!showTaskQueue)}
-                  className="gap-1.5 text-[11px] h-7 border-blue-200 text-blue-600 hover:bg-blue-50">
-                  <ListTodo className="w-3 h-3" /> Task Queue
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)}
-                  className="gap-1.5 text-[11px] h-7">
-                  <BookOpen className="w-3 h-3" /> Templates
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setShowPersonalize(true)}
-                  className="gap-1.5 text-[11px] h-7 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-                  <Sparkles className="w-3 h-3" /> AI
-                </Button>
-                <Button size="sm" onClick={() => setShowCreate(true)}
-                  className="gap-1.5 text-[11px] h-7 bg-emerald-600 text-white hover:bg-emerald-700">
-                  <Plus className="w-3 h-3" /> New
-                </Button>
+        {/* Contextual Alerts */}
+        {activeTab === 'sequences' && alerts.length > 0 && (
+          <div className="px-5 pt-4 space-y-2">
+            {alerts.map(alert => (
+              <div key={alert.id} className="flex items-start gap-2.5 px-3 py-2.5 rounded-lg bg-amber-50 border border-amber-200">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
+                <p className="flex-1 text-[11px] text-amber-800">{alert.message}</p>
+                <button
+                  onClick={() => navigate(alert.route)}
+                  className="text-[11px] font-semibold text-amber-700 hover:text-amber-900 underline underline-offset-2 flex-shrink-0"
+                >
+                  {alert.action}
+                </button>
+                <button onClick={() => setDismissedAlerts(p => [...p, alert.id])} className="text-amber-400 hover:text-amber-600 flex-shrink-0">
+                  <X className="w-3.5 h-3.5" />
+                </button>
               </div>
-            </div>
-            <div>
-              {sequences.map(seq => (
-                <SequenceRow key={seq.id} seq={seq} isSelected={selectedSeq?.id === seq.id}
-                  onSelect={setSelectedSeq} onToggleStatus={toggleStatus} />
+            ))}
+          </div>
+        )}
+
+        {/* Tab Content */}
+        {activeTab === 'analytics' && <SequenceAnalyticsTab sequences={sequences} />}
+        {activeTab === 'diagnostics' && <SequenceDiagnosticsTab />}
+
+        {activeTab === 'sequences' && (
+          <div className="p-5 space-y-4">
+            {/* Stats Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { label: 'Active Sequences', value: sequences.filter(s => s.status === 'active').length, icon: Zap, color: 'text-emerald-600' },
+                { label: 'Total Enrolled', value: totalEnrolled.toLocaleString(), icon: Users, color: 'text-cyan-500' },
+                { label: 'Overall Reply Rate', value: `${totalEnrolled > 0 ? ((totalReplied / totalEnrolled) * 100).toFixed(1) : 0}%`, icon: Reply, color: 'text-violet-500' },
+                { label: 'Meetings Booked', value: totalMeetings, icon: TrendingUp, color: 'text-amber-500' },
+              ].map(s => (
+                <div key={s.label} className="bg-white border border-slate-200 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] text-slate-500">{s.label}</span>
+                    <s.icon className={`w-3.5 h-3.5 ${s.color}`} />
+                  </div>
+                  <span className={`text-base font-bold ${s.color}`}>{s.value}</span>
+                </div>
               ))}
             </div>
-          </div>
 
-          {/* Right: Preview Panel */}
-          <div className="lg:col-span-2">
-            {showTaskQueue ? (
-              <div className="bg-white border border-slate-200 rounded-xl p-4">
-                <TaskQueuePanel onClose={() => setShowTaskQueue(false)} />
+            {sequences.length === 0 ? (
+              <div className="bg-white border border-slate-200 rounded-xl">
+                <SequenceEmptyState
+                  onCreateAI={() => { setShowCreate(true); }}
+                  onCreate={() => setShowCreate(true)}
+                />
               </div>
-            ) : selectedSeq ? (
-              <SequencePreviewPanel
-                seq={selectedSeq}
-                onOpenBuilder={() => navigate(`/sequence-builder?id=${selectedSeq.id}`)}
-                onDuplicate={() => duplicateSequence(selectedSeq)}
-                onManageProspects={() => setShowProspects(true)}
-                aiSuggestion={aiSuggestion}
-                aiSuggesting={aiSuggesting}
-                onGetAISuggestion={getAISuggestion}
-              />
             ) : (
-              <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-48 text-slate-400 text-sm">
-                Select a sequence to preview
+              <div className="grid lg:grid-cols-5 gap-4">
+                {/* Left: Sequences List */}
+                <div className="lg:col-span-3 bg-white border border-slate-200 rounded-xl overflow-hidden">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100">
+                    <h3 className="text-xs font-bold text-slate-800">All Sequences</h3>
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => setShowTaskQueue(!showTaskQueue)}
+                        className="gap-1.5 text-[11px] h-7 border-blue-200 text-blue-600 hover:bg-blue-50">
+                        <ListTodo className="w-3 h-3" /> Task Queue
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowTemplates(true)}
+                        className="gap-1.5 text-[11px] h-7">
+                        <BookOpen className="w-3 h-3" /> Templates
+                      </Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowPersonalize(true)}
+                        className="gap-1.5 text-[11px] h-7 border-emerald-200 text-emerald-700 hover:bg-emerald-50">
+                        <Sparkles className="w-3 h-3" /> AI
+                      </Button>
+                    </div>
+                  </div>
+                  <div>
+                    {sequences.map(seq => (
+                      <SequenceRow key={seq.id} seq={seq} isSelected={selectedSeq?.id === seq.id}
+                        onSelect={setSelectedSeq} onToggleStatus={toggleStatus} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Right: Preview Panel */}
+                <div className="lg:col-span-2">
+                  {showTaskQueue ? (
+                    <div className="bg-white border border-slate-200 rounded-xl p-4">
+                      <TaskQueuePanel onClose={() => setShowTaskQueue(false)} />
+                    </div>
+                  ) : selectedSeq ? (
+                    <SequencePreviewPanel
+                      seq={selectedSeq}
+                      onOpenBuilder={() => navigate(`/sequence-builder?id=${selectedSeq.id}`)}
+                      onDuplicate={() => duplicateSequence(selectedSeq)}
+                      onManageProspects={() => setShowProspects(true)}
+                      aiSuggestion={aiSuggestion}
+                      aiSuggesting={aiSuggesting}
+                      onGetAISuggestion={getAISuggestion}
+                    />
+                  ) : (
+                    <div className="bg-white border border-slate-200 rounded-xl flex items-center justify-center h-48 text-slate-400 text-sm">
+                      Select a sequence to preview
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>
-        </div>
+        )}
       </div>
 
       <AnimatePresence>
