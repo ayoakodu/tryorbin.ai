@@ -146,7 +146,7 @@ function EmptyWorkflowState({ onAddStep, onUseTemplate, onGenerateWithAI }) {
 
       {/* Primary CTA */}
       <button
-        onClick={onAddStep}
+        onClick={() => onAddStep()}
         className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors mb-3"
       >
         <Plus className="w-3.5 h-3.5" /> Add Step
