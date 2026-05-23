@@ -97,34 +97,87 @@ function WorkflowStep({ step, index, total, isSelected, onSelect, onRemove }) {
   );
 }
 
-// Empty state for a fresh sequence
-function EmptyWorkflowState({ onAddStep, onGenerateWithAI }) {
-  return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="flex flex-col items-center justify-center py-14 px-6 text-center">
-      <div className="relative mb-5">
-        <div className="w-12 h-12 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center">
-          <GitBranch className="w-5 h-5 text-slate-400" />
-        </div>
-        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center">
-          <Plus className="w-2.5 h-2.5 text-emerald-600" />
-        </div>
-      </div>
+// Multichannel illustration for empty state
+function MultichannelIllustration() {
+  const orbitIcons = [
+    { Icon: Mail, color: 'text-blue-500', bg: 'bg-blue-50 border-blue-100', angle: 0 },
+    { Icon: Linkedin, color: 'text-blue-600', bg: 'bg-blue-50 border-blue-100', angle: 72 },
+    { Icon: MessageCircle, color: 'text-emerald-500', bg: 'bg-emerald-50 border-emerald-100', angle: 144 },
+    { Icon: Phone, color: 'text-amber-500', bg: 'bg-amber-50 border-amber-100', angle: 216 },
+    { Icon: CheckCircle2, color: 'text-violet-500', bg: 'bg-violet-50 border-violet-100', angle: 288 },
+  ];
+  const R = 52;
 
-      <h3 className="text-sm font-bold text-slate-800 mb-1.5">Sequence is empty</h3>
-      <p className="text-xs text-slate-400 mb-5 max-w-xs leading-relaxed">
+  return (
+    <div className="relative flex items-center justify-center" style={{ width: 140, height: 140 }}>
+      {/* Orbit ring */}
+      <svg className="absolute inset-0" width="140" height="140">
+        <circle cx="70" cy="70" r={R} fill="none" stroke="#e2e8f0" strokeWidth="1" strokeDasharray="4 5" />
+      </svg>
+      {/* Center paper plane */}
+      <motion.div
+        animate={{ y: [0, -4, 0] }}
+        transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+        className="w-10 h-10 rounded-2xl bg-white border border-slate-200 shadow-sm flex items-center justify-center z-10"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M22 2L11 13" /><path d="M22 2L15 22 11 13 2 9l20-7z" />
+        </svg>
+      </motion.div>
+      {/* Orbit icons */}
+      {orbitIcons.map(({ Icon, color, bg, angle }, i) => {
+        const rad = (angle - 90) * (Math.PI / 180);
+        const x = 70 + R * Math.cos(rad) - 12;
+        const y = 70 + R * Math.sin(rad) - 12;
+        return (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: i * 0.08, duration: 0.3 }}
+            className={`absolute w-6 h-6 rounded-lg border flex items-center justify-center ${bg}`}
+            style={{ left: x, top: y }}
+          >
+            <Icon className={`w-3 h-3 ${color}`} />
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Empty state for a fresh sequence — full width, centered, no side panels
+function EmptyWorkflowState({ onAddStep, onShowTemplates, onGenerateWithAI }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2 }}
+      className="flex-1 flex flex-col items-center justify-center text-center px-6"
+    >
+      <MultichannelIllustration />
+
+      <h3 className="text-sm font-bold text-slate-800 mt-5 mb-1.5">Sequence is empty</h3>
+      <p className="text-xs text-slate-400 mb-6 max-w-[260px] leading-relaxed">
         Add your first step to start building a multichannel outreach workflow.
       </p>
 
-      {/* Inline add step menu for empty state */}
-      <div className="mb-3">
+      {/* Primary CTA — inline Add Step menu */}
+      <div className="mb-2">
         <AddStepMenu onAdd={onAddStep} trigger="empty" />
       </div>
 
-      <button onClick={onGenerateWithAI}
-        className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-emerald-200 bg-emerald-50 text-xs text-emerald-700 hover:bg-emerald-100 transition-colors font-medium">
-        <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> Generate with AI
-      </button>
+      {/* Secondary CTAs */}
+      <div className="flex items-center gap-2 mt-1">
+        <button onClick={onShowTemplates}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-[11px] text-slate-600 hover:bg-slate-50 transition-colors font-medium">
+          <BookOpen className="w-3 h-3" /> Use Template
+        </button>
+        <button onClick={onGenerateWithAI}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-[11px] text-emerald-700 hover:bg-emerald-100 transition-colors font-medium">
+          <Sparkles className="w-3 h-3 text-emerald-500" /> Generate with AI
+        </button>
+      </div>
     </motion.div>
   );
 }
@@ -270,18 +323,19 @@ Return JSON with suggestions array: { type: "warning"|"tip"|"insight", title: st
 
         {activeTab === 'builder' && (
           <>
-            {/* Left: Workflow Canvas */}
-            <div className="flex-1 overflow-y-auto p-6 border-r border-slate-200">
-              <div className="max-w-xs mx-auto">
-
-                {seq.steps.length === 0 ? (
-                  <EmptyWorkflowState
-                    onAddStep={addStep}
-                    onGenerateWithAI={() => setShowPersonalize(true)}
-                  />
-                ) : (
-                  <>
-                    {/* Sequence start */}
+            {seq.steps.length === 0 ? (
+              /* EMPTY STATE: full width, centered, no side panels */
+              <EmptyWorkflowState
+                onAddStep={addStep}
+                onShowTemplates={() => {}}
+                onGenerateWithAI={() => setShowPersonalize(true)}
+              />
+            ) : (
+              /* POPULATED STATE: 3-column split */
+              <>
+                {/* Left: Workflow Canvas */}
+                <div className="flex-1 overflow-y-auto p-6 border-r border-slate-200">
+                  <div className="max-w-xs mx-auto">
                     <div className="flex justify-center mb-1">
                       <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
@@ -311,71 +365,69 @@ Return JSON with suggestions array: { type: "warning"|"tip"|"insight", title: st
                         <span className="text-[10px] font-medium text-slate-500">Sequence End</span>
                       </div>
                     </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* Center: Step Editor */}
-            <div className="w-64 xl:w-72 flex-shrink-0 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
-              {selectedStep ? (
-                <StepEditor
-                  step={selectedStep}
-                  index={selectedStepIdx}
-                  onUpdate={(updated) => updateStep(selectedStepIdx, updated)}
-                  onPersonalize={() => setShowPersonalize(true)}
-                />
-              ) : (
-                <div className="flex-1 flex items-center justify-center p-6 text-center">
-                  <div>
-                    <Edit3 className="w-7 h-7 text-slate-200 mx-auto mb-2" />
-                    <p className="text-xs text-slate-400">Select a step to edit</p>
                   </div>
                 </div>
-              )}
 
-              {/* AI Recommendations */}
-              <div className="border-t border-slate-100 flex-shrink-0">
-                <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
-                  <div className="flex items-center gap-1.5">
-                    <Sparkles className="w-3 h-3 text-emerald-500" />
-                    <p className="text-[11px] font-semibold text-slate-700">AI Tips</p>
-                  </div>
-                  <button onClick={getAISuggestions} disabled={aiSuggesting}
-                    className="text-[10px] text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors">
-                    {aiSuggesting ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Analyze'}
-                  </button>
-                </div>
-                <div className="p-3 space-y-2 max-h-40 overflow-y-auto">
-                  {aiSuggestions.length === 0 ? (
-                    <p className="text-[11px] text-slate-400 leading-relaxed">
-                      {seq.steps.length > 0 ? 'Click Analyze for AI tips.' : 'Add steps to get tips.'}
-                    </p>
+                {/* Center: Step Editor */}
+                <div className="w-64 xl:w-72 flex-shrink-0 border-r border-slate-200 bg-white flex flex-col overflow-hidden">
+                  {selectedStep ? (
+                    <StepEditor
+                      step={selectedStep}
+                      index={selectedStepIdx}
+                      onUpdate={(updated) => updateStep(selectedStepIdx, updated)}
+                      onPersonalize={() => setShowPersonalize(true)}
+                    />
                   ) : (
-                    aiSuggestions.map((s, i) => (
-                      <div key={i} className={cn('rounded-lg p-2.5 border text-[11px]',
-                        s.type === 'warning' ? 'bg-amber-50 border-amber-100' :
-                        s.type === 'insight' ? 'bg-blue-50 border-blue-100' :
-                        'bg-emerald-50 border-emerald-100'
-                      )}>
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          {s.type === 'warning' ? <AlertCircle className="w-3 h-3 text-amber-500" /> :
-                           s.type === 'insight' ? <BarChart3 className="w-3 h-3 text-blue-500" /> :
-                           <Sparkles className="w-3 h-3 text-emerald-500" />}
-                          <span className="font-semibold text-slate-700 text-[10px]">{s.title}</span>
-                        </div>
-                        <p className="text-slate-500 leading-relaxed">{s.body}</p>
+                    <div className="flex-1 flex items-center justify-center p-6 text-center">
+                      <div>
+                        <Edit3 className="w-7 h-7 text-slate-200 mx-auto mb-2" />
+                        <p className="text-xs text-slate-400">Select a step to edit</p>
                       </div>
-                    ))
+                    </div>
                   )}
-                </div>
-              </div>
-            </div>
 
-            {/* Right: Live Preview */}
-            <div className="w-64 xl:w-72 flex-shrink-0 bg-white flex flex-col overflow-hidden">
-              <StepPreview step={selectedStep} />
-            </div>
+                  {/* AI Tips */}
+                  <div className="border-t border-slate-100 flex-shrink-0">
+                    <div className="px-4 py-2.5 border-b border-slate-100 flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles className="w-3 h-3 text-emerald-500" />
+                        <p className="text-[11px] font-semibold text-slate-700">AI Tips</p>
+                      </div>
+                      <button onClick={getAISuggestions} disabled={aiSuggesting}
+                        className="text-[10px] text-emerald-600 hover:text-emerald-700 flex items-center gap-1 transition-colors">
+                        {aiSuggesting ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Analyze'}
+                      </button>
+                    </div>
+                    <div className="p-3 space-y-2 max-h-40 overflow-y-auto">
+                      {aiSuggestions.length === 0 ? (
+                        <p className="text-[11px] text-slate-400 leading-relaxed">Click Analyze for AI tips.</p>
+                      ) : (
+                        aiSuggestions.map((s, i) => (
+                          <div key={i} className={cn('rounded-lg p-2.5 border text-[11px]',
+                            s.type === 'warning' ? 'bg-amber-50 border-amber-100' :
+                            s.type === 'insight' ? 'bg-blue-50 border-blue-100' :
+                            'bg-emerald-50 border-emerald-100'
+                          )}>
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              {s.type === 'warning' ? <AlertCircle className="w-3 h-3 text-amber-500" /> :
+                               s.type === 'insight' ? <BarChart3 className="w-3 h-3 text-blue-500" /> :
+                               <Sparkles className="w-3 h-3 text-emerald-500" />}
+                              <span className="font-semibold text-slate-700 text-[10px]">{s.title}</span>
+                            </div>
+                            <p className="text-slate-500 leading-relaxed">{s.body}</p>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right: Live Preview */}
+                <div className="w-64 xl:w-72 flex-shrink-0 bg-white flex flex-col overflow-hidden">
+                  <StepPreview step={selectedStep} />
+                </div>
+              </>
+            )}
           </>
         )}
       </div>
