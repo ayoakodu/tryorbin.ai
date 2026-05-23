@@ -6,7 +6,7 @@ import {
   ArrowLeft, Play, Pause, Plus, Mail, MessageCircle, Phone,
   Sparkles, Users, Zap, Clock, Trash2, Edit3, CheckCircle2,
   BarChart3, TrendingUp, Reply, AlertCircle, Loader2, Save,
-  ArrowDown, Copy, GitBranch
+  ArrowDown, Copy, GitBranch, BookOpen
 } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -86,14 +86,17 @@ function WorkflowStep({ step, index, total, isSelected, onSelect, onUpdate, onRe
   );
 }
 
+const STEP_TYPES = [
+  { type: 'email', icon: Mail, label: 'Email', color: 'text-blue-500', bg: 'bg-blue-50 hover:bg-blue-100 border-blue-100' },
+  { type: 'linkedin', icon: Linkedin, label: 'LinkedIn', color: 'text-blue-600', bg: 'bg-blue-50 hover:bg-blue-100 border-blue-100' },
+  { type: 'whatsapp', icon: MessageCircle, label: 'WhatsApp', color: 'text-emerald-500', bg: 'bg-emerald-50 hover:bg-emerald-100 border-emerald-100' },
+  { type: 'call', icon: Phone, label: 'Call Task', color: 'text-amber-500', bg: 'bg-amber-50 hover:bg-amber-100 border-amber-100' },
+  { type: 'delay', icon: Clock, label: 'Delay', color: 'text-slate-500', bg: 'bg-slate-50 hover:bg-slate-100 border-slate-200' },
+  { type: 'task', icon: CheckCircle2, label: 'Manual Task', color: 'text-violet-500', bg: 'bg-violet-50 hover:bg-violet-100 border-violet-100' },
+];
+
 function AddStepButton({ onAdd }) {
   const [open, setOpen] = useState(false);
-  const channels = [
-    { type: 'email', icon: Mail, label: 'Email', color: 'text-blue-500' },
-    { type: 'linkedin', icon: Linkedin, label: 'LinkedIn', color: 'text-blue-600' },
-    { type: 'whatsapp', icon: MessageCircle, label: 'WhatsApp', color: 'text-emerald-500' },
-    { type: 'call', icon: Phone, label: 'Call Task', color: 'text-amber-500' },
-  ];
 
   return (
     <div className="flex flex-col items-center">
@@ -104,10 +107,10 @@ function AddStepButton({ onAdd }) {
           <Plus className="w-3.5 h-3.5" /> Add Step
         </button>
         {open && (
-          <div className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 bg-white rounded-xl border border-slate-200 shadow-lg py-1 z-10 min-w-[140px]">
-            {channels.map(ch => (
+          <div className="absolute top-full mt-1.5 left-1/2 -translate-x-1/2 bg-white rounded-xl border border-slate-200 shadow-lg py-1.5 z-10 min-w-[150px]">
+            {STEP_TYPES.map(ch => (
               <button key={ch.type} onClick={() => { onAdd(ch.type); setOpen(false); }}
-                className="flex items-center gap-2 w-full px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors">
+                className="flex items-center gap-2.5 w-full px-3 py-2 text-xs text-slate-700 hover:bg-slate-50 transition-colors">
                 <ch.icon className={cn('w-3.5 h-3.5', ch.color)} />
                 {ch.label}
               </button>
@@ -119,6 +122,72 @@ function AddStepButton({ onAdd }) {
   );
 }
 
+function EmptyWorkflowState({ onAddStep, onUseTemplate, onGenerateWithAI }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex flex-col items-center justify-center py-16 px-6 text-center"
+    >
+      {/* Icon cluster */}
+      <div className="relative mb-6">
+        <div className="w-14 h-14 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center">
+          <GitBranch className="w-6 h-6 text-slate-400" />
+        </div>
+        <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+          <Plus className="w-2.5 h-2.5 text-emerald-600" />
+        </div>
+      </div>
+
+      <h3 className="text-sm font-bold text-slate-800 mb-1.5">Your sequence is empty</h3>
+      <p className="text-xs text-slate-400 mb-6 max-w-xs leading-relaxed">
+        Start building your outreach workflow by adding steps, using a template, or letting AI generate it for you.
+      </p>
+
+      {/* Primary CTA */}
+      <button
+        onClick={onAddStep}
+        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-semibold hover:bg-emerald-700 transition-colors mb-3"
+      >
+        <Plus className="w-3.5 h-3.5" /> Add Step
+      </button>
+
+      {/* Secondary options */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={onUseTemplate}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-slate-200 bg-white text-xs text-slate-600 hover:border-slate-300 hover:bg-slate-50 transition-all"
+        >
+          <BookOpen className="w-3.5 h-3.5 text-slate-400" /> Use Template
+        </button>
+        <button
+          onClick={onGenerateWithAI}
+          className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-emerald-200 bg-emerald-50 text-xs text-emerald-700 hover:bg-emerald-100 transition-all"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-emerald-500" /> Generate with AI
+        </button>
+      </div>
+
+      {/* Step type hints */}
+      <div className="mt-8 grid grid-cols-3 gap-2 w-full max-w-xs">
+        {STEP_TYPES.slice(0, 6).map(t => (
+          <button
+            key={t.type}
+            onClick={() => onAddStep(t.type)}
+            className={cn(
+              'flex flex-col items-center gap-1.5 p-2.5 rounded-xl border text-center transition-all',
+              t.bg
+            )}
+          >
+            <t.icon className={cn('w-4 h-4', t.color)} />
+            <span className="text-[10px] font-medium text-slate-600">{t.label}</span>
+          </button>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function SequenceBuilder() {
   const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
@@ -126,14 +195,16 @@ export default function SequenceBuilder() {
 
   const [seq, setSeq] = useState(() => {
     const found = initialSequences.find(s => s.id === seqId);
-    return found || initialSequences[0];
+    return found || { id: seqId || Date.now(), name: 'New Sequence', status: 'draft', steps: [], enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: [] };
   });
 
+  const [activeTab, setActiveTab] = useState('builder');
   const [selectedStepIdx, setSelectedStepIdx] = useState(0);
   const [showPersonalize, setShowPersonalize] = useState(false);
   const [aiSuggesting, setAiSuggesting] = useState(false);
   const [aiSuggestions, setAiSuggestions] = useState([]);
   const [saved, setSaved] = useState(false);
+  const [addStepOpen, setAddStepOpen] = useState(false);
 
   const selectedStep = seq.steps[selectedStepIdx];
   const replyRate = seq.enrolled > 0 ? ((seq.replied / seq.enrolled) * 100).toFixed(1) : 0;
@@ -196,11 +267,19 @@ Return JSON with suggestions array of objects: { type: "warning"|"tip"|"insight"
     setAiSuggesting(false);
   };
 
+  const handleAddFirstStep = (type = null) => {
+    if (type) {
+      addStep(type);
+    } else {
+      setAddStepOpen(true);
+    }
+  };
+
   return (
     <div className="flex-1 flex flex-col min-h-0" style={{ background: '#f8fafc' }}>
 
       {/* Top Bar */}
-      <div className="flex items-center justify-between px-5 py-2.5 bg-white border-b border-slate-200 flex-shrink-0">
+      <div className="flex items-center justify-between px-5 py-2 bg-white border-b border-slate-200 flex-shrink-0">
         <div className="flex items-center gap-3">
           <button onClick={() => navigate('/outreach')}
             className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-800 transition-colors">
@@ -209,83 +288,103 @@ Return JSON with suggestions array of objects: { type: "warning"|"tip"|"insight"
           </button>
           <span className="text-slate-300">/</span>
           <h1 className="text-sm font-bold text-slate-800 max-w-xs truncate">{seq.name}</h1>
-          <span className={cn('text-[10px] font-medium px-2 py-0.5 rounded-full border', statusBadge[seq.status])}>
+          <button
+            onClick={toggleStatus}
+            className={cn('text-[10px] font-medium px-2 py-0.5 rounded-full border transition-colors cursor-pointer', statusBadge[seq.status])}
+          >
             {seq.status}
-          </span>
+          </button>
         </div>
         <div className="flex items-center gap-2">
-          <div className="hidden md:flex items-center gap-4 mr-3">
-            {[
-              { label: 'Enrolled', value: seq.enrolled, color: 'text-slate-700' },
-              { label: 'Reply', value: `${replyRate}%`, color: 'text-emerald-600' },
-              { label: 'Meetings', value: seq.meetings, color: 'text-amber-600' },
-            ].map(m => (
-              <div key={m.label} className="text-center">
-                <p className={cn('text-xs font-bold', m.color)}>{m.value}</p>
-                <p className="text-[10px] text-slate-400">{m.label}</p>
-              </div>
-            ))}
-          </div>
-          <Button size="sm" variant="outline" onClick={toggleStatus}
-            className={cn('gap-1.5 text-xs h-7',
-              seq.status === 'active' ? 'border-amber-200 text-amber-600 hover:bg-amber-50' : 'border-emerald-200 text-emerald-700 hover:bg-emerald-50'
-            )}>
-            {seq.status === 'active' ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-            {seq.status === 'active' ? 'Pause' : 'Launch'}
+          <Button size="sm" variant="outline"
+            className="gap-1.5 text-[11px] h-7 border-slate-200 text-slate-600 hover:bg-slate-50">
+            <Users className="w-3 h-3" /> Add Contacts
           </Button>
           <Button size="sm" onClick={handleSave}
-            className={cn('gap-1.5 text-xs h-7', saved ? 'bg-emerald-500' : 'bg-emerald-600 hover:bg-emerald-700', 'text-white')}>
+            className={cn('gap-1.5 text-[11px] h-7', saved ? 'bg-emerald-500' : 'bg-emerald-600 hover:bg-emerald-700', 'text-white')}>
             {saved ? <CheckCircle2 className="w-3 h-3" /> : <Save className="w-3 h-3" />}
             {saved ? 'Saved' : 'Save'}
           </Button>
         </div>
       </div>
 
+      {/* Tabs */}
+      <div className="flex items-center px-5 bg-white border-b border-slate-200 flex-shrink-0">
+        {[
+          { id: 'builder', label: 'Builder' },
+          { id: 'contacts', label: 'Contacts' },
+          { id: 'activity', label: 'Activity' },
+          { id: 'settings', label: 'Settings' },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={cn(
+              'px-4 py-2.5 text-xs font-medium border-b-2 transition-colors',
+              activeTab === tab.id
+                ? 'border-emerald-500 text-emerald-700'
+                : 'border-transparent text-slate-500 hover:text-slate-700'
+            )}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
 
+        {/* Non-builder tabs placeholder */}
+        {activeTab !== 'builder' && (
+          <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+            <div className="text-center">
+              <p className="font-medium text-slate-600 capitalize">{activeTab}</p>
+              <p className="text-xs text-slate-400 mt-1">Coming soon</p>
+            </div>
+          </div>
+        )}
+
         {/* Center: Workflow Canvas */}
+        {activeTab === 'builder' && (
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-md mx-auto">
 
-            {/* Sequence start node */}
-            <div className="flex justify-center mb-2">
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">
-                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-[11px] font-semibold text-emerald-700">Sequence Start</span>
-                <span className="text-[10px] text-emerald-500">{seq.enrolled} contacts enrolled</span>
-              </div>
-            </div>
-            <div className="w-px h-4 bg-slate-200 mx-auto mb-0" />
-
             {seq.steps.length === 0 ? (
-              <div className="flex flex-col items-center py-12 text-center">
-                <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center mb-3">
-                  <GitBranch className="w-5 h-5 text-slate-400" />
-                </div>
-                <p className="text-sm font-semibold text-slate-600 mb-1">No steps yet</p>
-                <p className="text-xs text-slate-400 mb-4">Add your first step to start building the sequence workflow.</p>
-              </div>
+              <EmptyWorkflowState
+                onAddStep={handleAddFirstStep}
+                onUseTemplate={() => {}}
+                onGenerateWithAI={() => setShowPersonalize(true)}
+              />
             ) : (
-              seq.steps.map((step, i) => (
-                <WorkflowStep
-                  key={i}
-                  step={step}
-                  index={i}
-                  total={seq.steps.length}
-                  isSelected={selectedStepIdx === i}
-                  onSelect={setSelectedStepIdx}
-                  onUpdate={updateStep}
-                  onRemove={removeStep}
-                  onOpenPersonalize={() => setShowPersonalize(true)}
-                />
-              ))
-            )}
-
-            <AddStepButton onAdd={addStep} />
-
-            {seq.steps.length > 0 && (
               <>
+                {/* Sequence start node */}
+                <div className="flex justify-center mb-2">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span className="text-[11px] font-semibold text-emerald-700">Sequence Start</span>
+                    {seq.enrolled > 0 && (
+                      <span className="text-[10px] text-emerald-500">{seq.enrolled} enrolled</span>
+                    )}
+                  </div>
+                </div>
+                <div className="w-px h-4 bg-slate-200 mx-auto mb-0" />
+
+                {seq.steps.map((step, i) => (
+                  <WorkflowStep
+                    key={i}
+                    step={step}
+                    index={i}
+                    total={seq.steps.length}
+                    isSelected={selectedStepIdx === i}
+                    onSelect={setSelectedStepIdx}
+                    onUpdate={updateStep}
+                    onRemove={removeStep}
+                    onOpenPersonalize={() => setShowPersonalize(true)}
+                  />
+                ))}
+
+                <AddStepButton onAdd={addStep} />
+
                 <div className="w-px h-4 bg-slate-200 mx-auto" />
                 <div className="flex justify-center">
                   <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
@@ -297,9 +396,10 @@ Return JSON with suggestions array of objects: { type: "warning"|"tip"|"insight"
             )}
           </div>
         </div>
+        )}
 
-        {/* Right: Step Editor + AI Insights */}
-        <div className="w-72 xl:w-80 flex-shrink-0 border-l border-slate-200 bg-white flex flex-col overflow-hidden">
+        {/* Right: Step Editor + AI Insights (only in builder tab) */}
+        {activeTab === 'builder' && <div className="w-72 xl:w-80 flex-shrink-0 border-l border-slate-200 bg-white flex flex-col overflow-hidden">
 
           {/* Step Editor */}
           {selectedStep ? (
@@ -410,7 +510,7 @@ Return JSON with suggestions array of objects: { type: "warning"|"tip"|"insight"
               )}
             </div>
           </div>
-        </div>
+        </div>}
       </div>
 
       {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}

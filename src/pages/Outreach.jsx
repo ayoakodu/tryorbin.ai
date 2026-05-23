@@ -4,10 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import {
   Plus, Play, Pause, Mail, MessageCircle,
-  Phone, MoreHorizontal, Sparkles, Users, TrendingUp,
-  Reply, Zap, X, Loader2, Trash2,
+  Phone, Sparkles, Users, TrendingUp,
+  Reply, Zap, X, Trash2,
   BarChart3, BookOpen, ListTodo, ArrowRight, Clock, Edit3, Copy,
-  AlertTriangle, Activity, Stethoscope
+  AlertTriangle, Activity, Stethoscope, Loader2
 } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import SequenceTemplates from '@/components/outreach/SequenceTemplates';
@@ -17,6 +17,7 @@ import ProspectManager from '@/components/outreach/ProspectManager';
 import SequenceActivationPage from '@/components/outreach/SequenceActivationPage';
 import SequenceAnalyticsTab from '@/components/outreach/SequenceAnalyticsTab';
 import SequenceDiagnosticsTab from '@/components/outreach/SequenceDiagnosticsTab';
+import CreateSequenceFlow from '@/components/outreach/CreateSequenceFlow';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -147,76 +148,14 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus, onDelete }) {
   );
 }
 
-function CreateSequenceModal({ onClose, onSave, onOpenPersonalize }) {
-  const [name, setName] = useState('');
-  const [aiLoading, setAiLoading] = useState(false);
-  const [aiPrompt, setAiPrompt] = useState('');
 
-  const generateWithAI = async () => {
-    if (!aiPrompt.trim()) return;
-    setAiLoading(true);
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Generate a B2B outreach sequence name and basic info for: "${aiPrompt}". Return JSON with: name (string), channel (email|whatsapp|multi-channel), tags (array of strings, max 3).`,
-      response_json_schema: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
-          channel: { type: 'string' },
-          tags: { type: 'array', items: { type: 'string' } }
-        }
-      }
-    });
-    if (result?.name) setName(result.name);
-    setAiLoading(false);
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-        className="w-full max-w-md bg-white rounded-2xl border border-slate-200 shadow-2xl">
-        <div className="flex items-center justify-between p-5 border-b border-slate-100">
-          <h2 className="text-sm font-bold text-slate-800">New Sequence</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><X className="w-4 h-4" /></button>
-        </div>
-        <div className="p-5 space-y-4">
-          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-100">
-            <div className="flex items-center gap-2 mb-2.5">
-              <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-              <span className="text-xs font-semibold text-emerald-700">Generate name with AI</span>
-            </div>
-            <div className="flex gap-2">
-              <Input value={aiPrompt} onChange={e => setAiPrompt(e.target.value)}
-                placeholder="e.g. Fintech CFOs in Lagos focused on cost reduction"
-                className="text-xs flex-1 h-8" />
-              <Button onClick={generateWithAI} disabled={aiLoading || !aiPrompt.trim()} size="sm"
-                className="bg-emerald-600 text-white hover:bg-emerald-700 text-xs px-3">
-                {aiLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-              </Button>
-            </div>
-          </div>
-          <div>
-            <label className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1.5 block">Sequence Name</label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Fintech CTO — Q3 Outbound" className="text-sm" />
-          </div>
-          <p className="text-[11px] text-slate-400">You'll build the workflow steps in the Sequence Builder after creating.</p>
-        </div>
-        <div className="flex justify-end gap-2 p-5 border-t border-slate-100">
-          <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
-          <Button size="sm" onClick={() => onSave({ name: name || 'New Sequence', steps: [], status: 'draft', channel: 'multi-channel', enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: [] })}
-            disabled={!name.trim()} className="bg-emerald-600 text-white hover:bg-emerald-700">
-            Create Sequence
-          </Button>
-        </div>
-      </motion.div>
-    </div>
-  );
-}
 
 export default function Outreach() {
   const navigate = useNavigate();
   const [sequences, setSequences] = useState([]);
   const [selectedSeq, setSelectedSeq] = useState(initialSequences[0]);
   const [showCreate, setShowCreate] = useState(false);
+  const [createMethod, setCreateMethod] = useState(null);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showTaskQueue, setShowTaskQueue] = useState(false);
   const [showPersonalize, setShowPersonalize] = useState(false);
@@ -244,10 +183,21 @@ export default function Outreach() {
   };
 
   const saveSequence = (data) => {
-    const newSeq = { ...data, id: Date.now() };
+    const newSeq = {
+      id: Date.now(),
+      name: data.name || 'New Sequence',
+      channel: 'multi-channel',
+      status: 'draft',
+      enrolled: 0, replied: 0, meetings: 0, opens: 0,
+      tags: [],
+      steps: [],
+      schedule: data.schedule || 'business',
+    };
     setSequences(prev => [...prev, newSeq]);
     setSelectedSeq(newSeq);
     setShowCreate(false);
+    setCreateMethod(null);
+    navigate(`/sequence-builder?id=${newSeq.id}`);
   };
 
   const deleteSequence = (id) => {
@@ -284,29 +234,40 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
     setAiSuggesting(false);
   };
 
+  const openCreate = (method = null) => {
+    setCreateMethod(method);
+    setShowCreate(true);
+  };
+
   // Activation/onboarding experience for first-time users
   if (sequences.length === 0) {
     return (
       <div className="flex-1 flex flex-col min-h-0" style={{ background: '#f8fafc' }}>
         <TopBar title="Sequences" subtitle="AI-powered multichannel outreach engine" />
         <div className="flex items-center justify-end gap-2 px-6 py-2 border-b border-slate-200 bg-white">
-          <Button size="sm" variant="outline" onClick={() => setShowCreate(true)}
+          <Button size="sm" variant="outline" onClick={() => openCreate()}
             className="gap-1.5 text-[11px] h-7">
             <Plus className="w-3 h-3" /> Create sequence
           </Button>
-          <Button size="sm" onClick={() => setShowCreate(true)}
+          <Button size="sm" onClick={() => openCreate('ai')}
             className="gap-1.5 text-[11px] h-7 bg-emerald-600 text-white hover:bg-emerald-700">
             <Sparkles className="w-3 h-3" /> Create with AI
           </Button>
         </div>
         <SequenceActivationPage
-          onCreateAI={() => setShowCreate(true)}
-          onCreate={() => setShowCreate(true)}
+          onCreateAI={() => openCreate('ai')}
+          onCreate={() => openCreate()}
           alerts={alerts}
           onDismissAlert={(id) => setDismissedAlerts(p => [...p, id])}
         />
         <AnimatePresence>
-          {showCreate && <CreateSequenceModal onClose={() => setShowCreate(false)} onSave={saveSequence} onOpenPersonalize={() => setShowPersonalize(true)} />}
+          {showCreate && (
+            <CreateSequenceFlow
+              onClose={() => { setShowCreate(false); setCreateMethod(null); }}
+              onSave={saveSequence}
+              defaultMethod={createMethod}
+            />
+          )}
         </AnimatePresence>
         {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}
       </div>
@@ -341,7 +302,7 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
           ))}
         </div>
         {activeTab === 'sequences' && (
-          <Button size="sm" onClick={() => setShowCreate(true)}
+          <Button size="sm" onClick={() => openCreate()}
             className="gap-1.5 text-[11px] h-7 bg-emerald-600 text-white hover:bg-emerald-700">
             <Plus className="w-3 h-3" /> Create sequence
           </Button>
@@ -451,7 +412,13 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
       </div>
 
       <AnimatePresence>
-        {showCreate && <CreateSequenceModal onClose={() => setShowCreate(false)} onSave={saveSequence} onOpenPersonalize={() => setShowPersonalize(true)} />}
+        {showCreate && (
+          <CreateSequenceFlow
+            onClose={() => { setShowCreate(false); setCreateMethod(null); }}
+            onSave={saveSequence}
+            defaultMethod={createMethod}
+          />
+        )}
         {showTemplates && <SequenceTemplates onClose={() => setShowTemplates(false)} onUse={useTemplate} />}
       </AnimatePresence>
       {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}
