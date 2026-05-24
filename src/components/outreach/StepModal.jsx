@@ -119,46 +119,131 @@ function VariableDropdown({ onInsert, onClose }) {
 }
 
 // ─── EMAIL FORMATTING TOOLBAR ─────────────────────────────────────────────────
-function EmailToolbar({ onVarInsert }) {
+function EmailToolbar({ onVarInsert, textareaRef, body, onBodyChange }) {
   const [showVars, setShowVars] = useState(false);
+  const fileInputRef  = useRef(null);
+  const imageInputRef = useRef(null);
 
-  const fmtBtns = [
-    { icon: Bold,      title: 'Bold'       },
-    { icon: Italic,    title: 'Italic'     },
-    { icon: Underline, title: 'Underline'  },
-    { icon: Link2,     title: 'Link'       },
-  ];
-  const insertBtns = [
-    { icon: Paperclip, title: 'Attachment' },
-    { icon: Image,     title: 'Image'      },
-    { icon: Video,     title: 'Video'      },
-    { icon: Calendar,  title: 'Calendar'   },
-    { icon: BarChart2, title: 'Tracking'   },
-    { icon: PenLine,   title: 'Signature'  },
-  ];
+  // Wrap selected text with prefix/suffix, or insert at cursor
+  const wrapSelection = (prefix, suffix = prefix) => {
+    const el = textareaRef?.current;
+    if (!el) return;
+    const start = el.selectionStart;
+    const end   = el.selectionEnd;
+    const selected = body.slice(start, end);
+    const newVal = body.slice(0, start) + prefix + selected + suffix + body.slice(end);
+    onBodyChange(newVal);
+    // Restore focus + selection after state update
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
+    });
+  };
+
+  const insertAtCursor = (text) => {
+    const el = textareaRef?.current;
+    if (!el) return;
+    const start = el.selectionStart;
+    const newVal = body.slice(0, start) + text + body.slice(start);
+    onBodyChange(newVal);
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + text.length, start + text.length);
+    });
+  };
+
+  const handleLink = () => {
+    const el = textareaRef?.current;
+    if (!el) return;
+    const selected = body.slice(el.selectionStart, el.selectionEnd);
+    const url = window.prompt('Enter URL:', 'https://');
+    if (url) insertAtCursor(`[${selected || 'link text'}](${url})`);
+  };
+
+  const handleFile = (e, isImage) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    insertAtCursor(isImage ? `[Image: ${file.name}]` : `[Attachment: ${file.name}]`);
+    e.target.value = '';
+  };
+
+  const handleVideo = () => {
+    const url = window.prompt('Enter video URL:', 'https://');
+    if (url) insertAtCursor(`[Video: ${url}]`);
+  };
+
+  const handleCalendar = () => {
+    insertAtCursor('{{calendar_link}}');
+  };
+
+  const handleTracking = () => {
+    insertAtCursor('{{tracking_pixel}}');
+  };
+
+  const handleSignature = () => {
+    insertAtCursor('\n\n--\n{{sender_name}}\n{{sender_title}} at {{sender_company}}');
+  };
 
   return (
     <div className="flex items-center gap-0.5 px-3 py-2 border-t border-slate-100 bg-white flex-wrap">
       {/* Format group */}
-      <div className="flex items-center gap-0.5 mr-1">
-        {fmtBtns.map(({ icon: Ic, title }) => (
-          <button key={title} title={title}
-            className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-            <Ic className="w-[13px] h-[13px]" />
-          </button>
-        ))}
+      <div className="flex items-center gap-0.5">
+        <button title="Bold" onClick={() => wrapSelection('**')}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Bold className="w-[13px] h-[13px]" />
+        </button>
+        <button title="Italic" onClick={() => wrapSelection('_')}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Italic className="w-[13px] h-[13px]" />
+        </button>
+        <button title="Underline" onClick={() => wrapSelection('<u>', '</u>')}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Underline className="w-[13px] h-[13px]" />
+        </button>
+        <button title="Insert Link" onClick={handleLink}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Link2 className="w-[13px] h-[13px]" />
+        </button>
       </div>
+
       <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
+
       {/* Insert group */}
-      <div className="flex items-center gap-0.5 mr-1">
-        {insertBtns.map(({ icon: Ic, title }) => (
-          <button key={title} title={title}
-            className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-            <Ic className="w-[13px] h-[13px]" />
-          </button>
-        ))}
+      <div className="flex items-center gap-0.5">
+        {/* Attachment */}
+        <button title="Attach File" onClick={() => fileInputRef.current?.click()}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Paperclip className="w-[13px] h-[13px]" />
+        </button>
+        <input ref={fileInputRef} type="file" className="hidden" onChange={e => handleFile(e, false)} />
+
+        {/* Image */}
+        <button title="Insert Image" onClick={() => imageInputRef.current?.click()}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Image className="w-[13px] h-[13px]" />
+        </button>
+        <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={e => handleFile(e, true)} />
+
+        <button title="Insert Video" onClick={handleVideo}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Video className="w-[13px] h-[13px]" />
+        </button>
+        <button title="Insert Calendar Link" onClick={handleCalendar}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <Calendar className="w-[13px] h-[13px]" />
+        </button>
+        <button title="Enable Tracking" onClick={handleTracking}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <BarChart2 className="w-[13px] h-[13px]" />
+        </button>
+        <button title="Insert Signature" onClick={handleSignature}
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+          <PenLine className="w-[13px] h-[13px]" />
+        </button>
       </div>
+
       <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
+
       {/* Variables */}
       <div className="relative">
         <button onClick={() => setShowVars(v => !v)}
@@ -175,18 +260,14 @@ function EmailToolbar({ onVarInsert }) {
           <VariableDropdown onInsert={onVarInsert} onClose={() => setShowVars(false)} />
         )}
       </div>
-      {/* AI inline */}
-      <div className="flex items-center gap-0.5 ml-auto">
-        {[
-          { icon: Wand2,    label: 'AI Write',     action: 'write'   },
-          { icon: Sparkles, label: 'Rewrite',      action: 'rewrite' },
-        ].map(({ icon: Ic, label }) => (
-          <button key={label} title={label}
-            className="flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors">
-            <Ic className="w-[13px] h-[13px]" />
-            <span className="hidden xl:inline">{label}</span>
-          </button>
-        ))}
+
+      {/* AI Write — right side */}
+      <div className="flex items-center ml-auto">
+        <button title="AI Write"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors border border-transparent hover:border-emerald-200">
+          <Wand2 className="w-[13px] h-[13px]" />
+          <span className="hidden xl:inline">AI Write</span>
+        </button>
       </div>
     </div>
   );
@@ -194,7 +275,18 @@ function EmailToolbar({ onVarInsert }) {
 
 // ─── EMAIL EDITOR ─────────────────────────────────────────────────────────────
 function EmailEditor({ step, onUpdate }) {
-  const insert = v => onUpdate({ ...step, body: (step.body || '') + v });
+  const textareaRef = useRef(null);
+  const insertVar = v => {
+    const el = textareaRef.current;
+    if (el) {
+      const start = el.selectionStart;
+      const newVal = (step.body || '').slice(0, start) + v + (step.body || '').slice(start);
+      onUpdate({ ...step, body: newVal });
+      requestAnimationFrame(() => { el.focus(); el.setSelectionRange(start + v.length, start + v.length); });
+    } else {
+      onUpdate({ ...step, body: (step.body || '') + v });
+    }
+  };
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -229,12 +321,18 @@ function EmailEditor({ step, onUpdate }) {
       {/* Body — takes all remaining space */}
       <div className="flex-1 flex flex-col min-h-0">
         <Textarea
+          ref={textareaRef}
           value={step.body || ''}
           onChange={e => onUpdate({ ...step, body: e.target.value })}
           placeholder={"Hi {{first_name}},\n\nI came across {{company}} and noticed…\n\nWould love to share a quick idea.\n\nBest,\n{{sender_name}}"}
           className="flex-1 text-[13px] leading-relaxed resize-none border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-6 py-5 text-slate-700 placeholder:text-slate-300 min-h-0 h-full"
         />
-        <EmailToolbar onVarInsert={insert} />
+        <EmailToolbar
+          onVarInsert={insertVar}
+          textareaRef={textareaRef}
+          body={step.body || ''}
+          onBodyChange={val => onUpdate({ ...step, body: val })}
+        />
       </div>
     </div>
   );
@@ -511,12 +609,12 @@ function TaskPreview({ step }) {
 
 // ─── MAIN MODAL ───────────────────────────────────────────────────────────────
 export default function StepModal({ step, index, isNew, onSave, onClose }) {
-  const [draft, setDraft] = useState(() => ({ day: 1, priority: 'normal', ...step }));
+  const [draft, setDraft] = useState(() => ({ day: 1, priority: 'normal', ...step, day: step?.day ?? 1 }));
   const [maximized, setMaximized] = useState(false);
   const [previewCollapsed, setPreviewCollapsed] = useState(false);
 
   useEffect(() => {
-    setDraft({ day: 1, priority: 'normal', ...step });
+    setDraft({ day: 1, priority: 'normal', ...step, day: step?.day ?? 1 });
   }, [step]);
 
   if (!draft) return null;
@@ -588,14 +686,6 @@ export default function StepModal({ step, index, isNew, onSave, onClose }) {
               </select>
             </div>
 
-            {/* AI Write button */}
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 text-[11px] font-semibold text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 hover:border-emerald-300 transition-all">
-              <Sparkles className="w-3.5 h-3.5" />
-              AI Write
-            </button>
-
-            <div className="w-px h-5 bg-slate-200 mx-0.5" />
-
             {/* Maximize */}
             <button onClick={() => setMaximized(m => !m)}
               title={maximized ? 'Restore' : 'Maximize'}
@@ -662,11 +752,11 @@ export default function StepModal({ step, index, isNew, onSave, onClose }) {
               <button
                 onClick={() => setPreviewCollapsed(c => !c)}
                 title={previewCollapsed ? 'Show preview' : 'Hide preview'}
-                className="absolute z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:border-emerald-300 hover:bg-emerald-50 transition-all shadow-sm group"
+                className="absolute z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center hover:bg-emerald-100 hover:border-emerald-400 transition-all shadow-sm group"
               >
                 {previewCollapsed
-                  ? <ChevronRight className="w-2.5 h-2.5 text-slate-400 group-hover:text-emerald-600" />
-                  : <ChevronLeft  className="w-2.5 h-2.5 text-slate-400 group-hover:text-emerald-600" />}
+                  ? <ChevronRight className="w-3 h-3 text-emerald-500 group-hover:text-emerald-700" />
+                  : <ChevronLeft  className="w-3 h-3 text-emerald-500 group-hover:text-emerald-700" />}
               </button>
             </div>
           )}
