@@ -524,10 +524,7 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
 
         <div className="w-px h-4 bg-slate-200 mx-0.5 flex-shrink-0" />
 
-        {/* Quick-access bold / italic / underline / link */}
-        {toolBtn('Bold',      () => exec('bold'),      Bold)}
-        {toolBtn('Italic',    () => exec('italic'),    Italic)}
-        {toolBtn('Underline', () => exec('underline'), Underline)}
+        {/* Link */}
         {toolBtn('Link', handleLink, Link2)}
 
         <div className="w-px h-4 bg-slate-200 mx-0.5 flex-shrink-0" />
