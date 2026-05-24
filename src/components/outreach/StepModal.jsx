@@ -3,9 +3,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Mail, MessageCircle, Phone, Clock, CheckCircle2, X,
   User, Maximize2, Minimize2, Bold, Italic, Underline, Link2,
-  Paperclip, Image, Video, BarChart2, PenLine,
+  Paperclip, Image, Video, PenLine,
   Search, Send, Wand2, ChevronRight, ChevronLeft, Calendar,
-  ChevronDown, Sparkles, Plus, Minus
+  ChevronDown, Sparkles, AlignLeft, AlignCenter, AlignRight,
+  List, ListOrdered, Type, Eraser, Code2, Palette
 } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
@@ -301,9 +302,130 @@ function VariableDropdown({ onInsert, onClose }) {
   );
 }
 
+// ─── ADVANCED FORMAT POPOVER ──────────────────────────────────────────────────
+const FONT_FAMILIES = ['Default', 'Arial', 'Georgia', 'Verdana', 'Trebuchet MS', 'Courier New'];
+const FONT_SIZES    = ['10px', '12px', '13px', '14px', '16px', '18px', '20px', '24px'];
+const TEXT_COLORS   = [
+  '#1e293b', '#475569', '#94a3b8', '#ef4444', '#f97316',
+  '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899',
+];
+
+function FormatPopover({ editorRef, onHtmlChange, onClose }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = e => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [onClose]);
+
+  const exec = (cmd, value = null) => {
+    editorRef?.current?.focus();
+    document.execCommand(cmd, false, value);
+    requestAnimationFrame(() => {
+      if (editorRef?.current) onHtmlChange(editorRef.current.innerHTML);
+    });
+  };
+
+  const fmtBtn = (title, cmd, val, Icon, extraClass = '') => (
+    <button
+      key={title}
+      title={title}
+      onMouseDown={e => { e.preventDefault(); exec(cmd, val); }}
+      className={cn(
+        'w-7 h-7 flex items-center justify-center rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors',
+        extraClass
+      )}
+    >
+      <Icon className="w-[13px] h-[13px]" />
+    </button>
+  );
+
+  return (
+    <div
+      ref={ref}
+      className="absolute bottom-full left-0 mb-1.5 z-[999] bg-white rounded-xl border border-slate-200 shadow-xl"
+      style={{ minWidth: 340 }}
+    >
+      <div className="px-3 py-2.5 flex flex-col gap-2.5">
+
+        {/* Row 1: Font family + size */}
+        <div className="flex items-center gap-2">
+          <select
+            onMouseDown={e => e.stopPropagation()}
+            onChange={e => { if (e.target.value !== 'Default') exec('fontName', e.target.value); }}
+            className="flex-1 text-[11px] bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 outline-none focus:border-emerald-400 transition-colors cursor-pointer"
+          >
+            {FONT_FAMILIES.map(f => <option key={f} value={f}>{f}</option>)}
+          </select>
+          <select
+            onMouseDown={e => e.stopPropagation()}
+            onChange={e => exec('fontSize', { '10px': '1', '12px': '2', '13px': '3', '14px': '3', '16px': '4', '18px': '5', '20px': '6', '24px': '7' }[e.target.value] || '3')}
+            className="w-20 text-[11px] bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 outline-none focus:border-emerald-400 transition-colors cursor-pointer"
+          >
+            {FONT_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+
+        <div className="h-px bg-slate-100" />
+
+        {/* Row 2: B / I / U + alignment + list + code + clear */}
+        <div className="flex items-center gap-0.5 flex-wrap">
+          {fmtBtn('Bold',           'bold',           null, Bold)}
+          {fmtBtn('Italic',         'italic',         null, Italic)}
+          {fmtBtn('Underline',      'underline',      null, Underline)}
+          <div className="w-px h-4 bg-slate-200 mx-1" />
+          {fmtBtn('Align Left',     'justifyLeft',    null, AlignLeft)}
+          {fmtBtn('Align Center',   'justifyCenter',  null, AlignCenter)}
+          {fmtBtn('Align Right',    'justifyRight',   null, AlignRight)}
+          <div className="w-px h-4 bg-slate-200 mx-1" />
+          {fmtBtn('Bullet List',    'insertUnorderedList', null, List)}
+          {fmtBtn('Numbered List',  'insertOrderedList',   null, ListOrdered)}
+          <div className="w-px h-4 bg-slate-200 mx-1" />
+          <button
+            title="Inline Code"
+            onMouseDown={e => {
+              e.preventDefault();
+              editorRef?.current?.focus();
+              const sel = window.getSelection();
+              const txt = sel?.toString();
+              if (txt) document.execCommand('insertHTML', false, `<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:12px">${txt}</code>`);
+              requestAnimationFrame(() => { if (editorRef?.current) onHtmlChange(editorRef.current.innerHTML); });
+            }}
+            className="w-7 h-7 flex items-center justify-center rounded text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
+          >
+            <Code2 className="w-[13px] h-[13px]" />
+          </button>
+          {fmtBtn('Clear Formatting', 'removeFormat', null, Eraser)}
+        </div>
+
+        <div className="h-px bg-slate-100" />
+
+        {/* Row 3: Color palette */}
+        <div className="flex items-center gap-2">
+          <Palette className="w-3 h-3 text-slate-400 flex-shrink-0" />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {TEXT_COLORS.map(color => (
+              <button
+                key={color}
+                title={color}
+                onMouseDown={e => { e.preventDefault(); exec('foreColor', color); }}
+                className="w-5 h-5 rounded-full border-2 border-white shadow-sm hover:scale-110 transition-transform ring-1 ring-slate-200 hover:ring-slate-400"
+                style={{ background: color }}
+              />
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 // ─── EMAIL FORMATTING TOOLBAR ─────────────────────────────────────────────────
 function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
   const [showVars, setShowVars] = useState(false);
+  const [showFormat, setShowFormat] = useState(false);
   const fileInputRef  = useRef(null);
   const imageInputRef = useRef(null);
 
@@ -354,25 +476,55 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
 
   return (
     <div className="flex-shrink-0 border-t border-slate-100 bg-white">
-      {/* Row 1: Formatting + Insert tools */}
-      <div className="flex items-center gap-0.5 px-4 py-2 flex-wrap">
-        {toolBtn('Bold', () => exec('bold'), Bold)}
-        {toolBtn('Italic', () => exec('italic'), Italic)}
+      <div className="flex items-center gap-0.5 px-3 py-1.5 flex-wrap">
+
+        {/* Format Text trigger */}
+        <div className="relative mr-0.5">
+          <button
+            title="Format Text"
+            onMouseDown={e => { e.preventDefault(); setShowFormat(v => !v); setShowVars(false); }}
+            className={cn(
+              'flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-bold transition-colors border',
+              showFormat
+                ? 'bg-slate-800 text-white border-slate-800'
+                : 'text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-800'
+            )}
+          >
+            <Type className="w-[13px] h-[13px]" />
+            <span>A</span>
+          </button>
+          {showFormat && (
+            <FormatPopover
+              editorRef={editorRef}
+              onHtmlChange={onHtmlChange}
+              onClose={() => setShowFormat(false)}
+            />
+          )}
+        </div>
+
+        <div className="w-px h-4 bg-slate-200 mx-0.5 flex-shrink-0" />
+
+        {/* Quick-access bold / italic / underline / link */}
+        {toolBtn('Bold',      () => exec('bold'),      Bold)}
+        {toolBtn('Italic',    () => exec('italic'),    Italic)}
         {toolBtn('Underline', () => exec('underline'), Underline)}
         {toolBtn('Link', handleLink, Link2)}
-        <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
-        {toolBtn('Attach File', () => fileInputRef.current?.click(), Paperclip)}
+
+        <div className="w-px h-4 bg-slate-200 mx-0.5 flex-shrink-0" />
+
+        {toolBtn('Attach File',      () => fileInputRef.current?.click(), Paperclip)}
         <input ref={fileInputRef} type="file" className="hidden" onChange={e => handleFile(e, false)} />
-        {toolBtn('Insert Image', () => imageInputRef.current?.click(), Image)}
+        {toolBtn('Insert Image',     () => imageInputRef.current?.click(), Image)}
         <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={e => handleFile(e, true)} />
-        {toolBtn('Insert Video', handleVideo, Video)}
-        {toolBtn('Calendar Link', handleCalendar, Calendar)}
+        {toolBtn('Insert Video',     handleVideo, Video)}
+        {toolBtn('Calendar Link',    handleCalendar, Calendar)}
         {toolBtn('Insert Signature', handleSignature, PenLine)}
-        <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
+
+        <div className="w-px h-4 bg-slate-200 mx-0.5 flex-shrink-0" />
 
         {/* Variables */}
         <div className="relative">
-          <button onMouseDown={e => { e.preventDefault(); setShowVars(v => !v); }}
+          <button onMouseDown={e => { e.preventDefault(); setShowVars(v => !v); setShowFormat(false); }}
             className={cn(
               'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors',
               showVars
@@ -390,7 +542,7 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
           )}
         </div>
 
-        {/* Send on Day — moved here */}
+        {/* Send on Day */}
         <div className="flex items-center gap-2 ml-auto pl-3 border-l border-slate-100">
           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Day</span>
           <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
@@ -408,8 +560,6 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
           </div>
         </div>
       </div>
-
-
     </div>
   );
 }
@@ -916,7 +1066,7 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
       >
 
         {/* ── MODAL HEADER ── */}
-        <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-100 flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-2.5 border-b border-slate-100 flex-shrink-0">
           <div className="flex items-center gap-3">
             <div className={cn('w-8 h-8 rounded-lg border flex items-center justify-center flex-shrink-0', channelBg[baseType] || 'bg-slate-50 border-slate-200')}>
               <StepIcon className={cn('w-4 h-4', channelColors[baseType])} />
@@ -942,7 +1092,7 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
             {isEmail && (
               <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-[11px] font-semibold text-slate-600 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50 transition-all shadow-sm">
                 <Send className="w-3 h-3" />
-                Send Test
+                Send Test Email
               </button>
             )}
 
@@ -1014,7 +1164,7 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
         </div>
 
         {/* ── MODAL FOOTER ── */}
-        <div className="flex items-center justify-between px-6 py-3.5 border-t border-slate-100 bg-white flex-shrink-0">
+        <div className="flex items-center justify-between px-6 py-2.5 border-t border-slate-100 bg-white flex-shrink-0">
           <button onClick={onClose}
             className="text-[12px] font-medium text-slate-400 hover:text-slate-700 transition-colors px-3 py-1.5 rounded-lg hover:bg-slate-100">
             Cancel
