@@ -392,7 +392,7 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
 
         {/* Send on Day — moved here */}
         <div className="flex items-center gap-2 ml-auto pl-3 border-l border-slate-100">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Day</span>
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Day</span>
           <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
             <button
               onMouseDown={e => { e.preventDefault(); onDraftChange(d => ({ ...d, day: Math.max(1, (d.day ?? 1) - 1) })); }}
@@ -409,22 +409,7 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
         </div>
       </div>
 
-      {/* Row 2: AI Write area */}
-      <div className="flex items-center gap-3 px-4 py-2.5 border-t border-slate-100 bg-gradient-to-r from-emerald-50/40 to-white">
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <div className="w-6 h-6 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center">
-            <Sparkles className="w-3 h-3 text-emerald-600" />
-          </div>
-          <span className="text-[11px] font-bold text-emerald-700">AI Write</span>
-        </div>
-        <div className="flex-1 text-[11px] text-slate-400">
-          Generate a ready-to-send personalized email.
-        </div>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold transition-colors shadow-sm">
-          <Wand2 className="w-3 h-3" />
-          Generate
-        </button>
-      </div>
+
     </div>
   );
 }
@@ -470,7 +455,7 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
       <div className="flex items-center gap-0 border-b border-slate-100 flex-shrink-0">
         {/* Type dropdown */}
         <div className="flex items-center gap-2 px-4 py-3 border-r border-slate-100 flex-shrink-0">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type</span>
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Type</span>
           <TypeDropdown
             value={threadType}
             onChange={val => onDraftChange(d => ({ ...d, threadType: val }))}
@@ -481,7 +466,7 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
 
         {/* Subject */}
         <div className="flex items-center gap-3 flex-1 px-4 py-3">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex-shrink-0">Subject</span>
+          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest flex-shrink-0">Subject</span>
           {isReply ? (
             <span className="flex-1 text-[13px] font-medium text-slate-500 italic truncate">
               {inheritedSubject || <span className="text-slate-300">Inherited from previous step…</span>}
@@ -491,7 +476,7 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
               value={step.subject || ''}
               onChange={e => onUpdate({ ...step, subject: e.target.value })}
               placeholder="e.g. Quick question about {{company}}…"
-              className="flex-1 text-[13px] font-medium text-slate-800 bg-transparent outline-none placeholder:text-slate-300"
+              className="flex-1 text-[13px] font-medium text-slate-800 bg-transparent outline-none placeholder:text-slate-400"
             />
           )}
         </div>
@@ -499,7 +484,7 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
         {/* CC/BCC toggle */}
         <button
           onClick={() => setShowCcBcc(v => !v)}
-          className="flex-shrink-0 px-4 py-3 text-[11px] font-semibold text-slate-400 hover:text-emerald-700 transition-colors border-l border-slate-100 whitespace-nowrap"
+          className="flex-shrink-0 px-4 py-3 text-[11px] font-semibold text-slate-500 hover:text-emerald-700 transition-colors border-l border-slate-100 whitespace-nowrap"
         >
           {showCcBcc ? 'Hide Cc/Bcc' : 'Cc / Bcc'}
         </button>
@@ -521,12 +506,12 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
                 { key: 'bcc', label: 'Bcc', placeholder: 'Enter BCC emails, comma separated…' },
               ].map(({ key, label, placeholder }) => (
                 <div key={key} className="flex items-center gap-3 px-4 py-2 border-b border-slate-100 last:border-b-0">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest w-6 flex-shrink-0">{label}</span>
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest w-6 flex-shrink-0">{label}</span>
                   <input
                     value={step[key] || ''}
                     onChange={e => onUpdate({ ...step, [key]: e.target.value })}
                     placeholder={placeholder}
-                    className="flex-1 text-[12px] text-slate-700 bg-transparent outline-none placeholder:text-slate-300"
+                    className="flex-1 text-[12px] text-slate-700 bg-transparent outline-none placeholder:text-slate-400"
                   />
                 </div>
               ))}
@@ -535,8 +520,23 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
         )}
       </AnimatePresence>
 
+      {/* AI Write strip — sits directly above body */}
+      <div className="flex items-center gap-4 px-5 py-2.5 bg-gradient-to-r from-emerald-50/50 to-white border-b border-slate-100 flex-shrink-0">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="w-6 h-6 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+            <Sparkles className="w-3 h-3 text-emerald-600" />
+          </div>
+          <span className="text-[11px] font-bold text-emerald-700">AI Write</span>
+        </div>
+        <span className="flex-1 text-[11px] text-slate-500">Generate a ready-to-send personalized email.</span>
+        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold transition-colors shadow-sm flex-shrink-0">
+          <Wand2 className="w-3 h-3" />
+          Generate
+        </button>
+      </div>
+
       {/* Body — contentEditable rich text */}
-      <div className="flex-1 flex flex-col min-h-0">
+      <div className="flex-1 flex flex-col min-h-0 border-b border-slate-100">
         <div
           ref={editorRef}
           contentEditable
@@ -1002,7 +1002,7 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
                   style={{ minWidth: 0 }}
                 >
                   <div className="px-5 pt-4 pb-2 flex-shrink-0">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Live Preview</p>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Live Preview</p>
                   </div>
                   <div className="flex-1 overflow-y-auto px-5 pb-5 min-h-0">
                     {renderPreview()}
