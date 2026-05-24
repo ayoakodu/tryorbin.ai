@@ -310,17 +310,30 @@ const TEXT_COLORS   = [
   '#eab308', '#22c55e', '#3b82f6', '#8b5cf6', '#ec4899',
 ];
 
-function FormatPopover({ editorRef, onHtmlChange, onClose }) {
+function FormatPopover({ editorRef, onHtmlChange, onClose, savedRange }) {
   const ref = useRef(null);
 
+  // Delay adding the outside-click handler so it doesn't fire on the same
+  // mousedown event that opened the popover.
   useEffect(() => {
     const handler = e => { if (ref.current && !ref.current.contains(e.target)) onClose(); };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
+    const t = setTimeout(() => document.addEventListener('mousedown', handler), 0);
+    return () => { clearTimeout(t); document.removeEventListener('mousedown', handler); };
   }, [onClose]);
 
+  const restoreSelection = () => {
+    const editor = editorRef?.current;
+    if (!editor) return;
+    editor.focus();
+    if (savedRange) {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+    }
+  };
+
   const exec = (cmd, value = null) => {
-    editorRef?.current?.focus();
+    restoreSelection();
     document.execCommand(cmd, false, value);
     requestAnimationFrame(() => {
       if (editorRef?.current) onHtmlChange(editorRef.current.innerHTML);
@@ -352,14 +365,12 @@ function FormatPopover({ editorRef, onHtmlChange, onClose }) {
         {/* Row 1: Font family + size */}
         <div className="flex items-center gap-2">
           <select
-            onMouseDown={e => e.stopPropagation()}
             onChange={e => { if (e.target.value !== 'Default') exec('fontName', e.target.value); }}
             className="flex-1 text-[11px] bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 outline-none focus:border-emerald-400 transition-colors cursor-pointer"
           >
             {FONT_FAMILIES.map(f => <option key={f} value={f}>{f}</option>)}
           </select>
           <select
-            onMouseDown={e => e.stopPropagation()}
             onChange={e => exec('fontSize', { '10px': '1', '12px': '2', '13px': '3', '14px': '3', '16px': '4', '18px': '5', '20px': '6', '24px': '7' }[e.target.value] || '3')}
             className="w-20 text-[11px] bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-700 outline-none focus:border-emerald-400 transition-colors cursor-pointer"
           >
@@ -386,7 +397,7 @@ function FormatPopover({ editorRef, onHtmlChange, onClose }) {
             title="Inline Code"
             onMouseDown={e => {
               e.preventDefault();
-              editorRef?.current?.focus();
+              restoreSelection();
               const sel = window.getSelection();
               const txt = sel?.toString();
               if (txt) document.execCommand('insertHTML', false, `<code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;font-family:monospace;font-size:12px">${txt}</code>`);
@@ -426,6 +437,7 @@ function FormatPopover({ editorRef, onHtmlChange, onClose }) {
 function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
   const [showVars, setShowVars] = useState(false);
   const [showFormat, setShowFormat] = useState(false);
+  const savedRangeRef = useRef(null);
   const fileInputRef  = useRef(null);
   const imageInputRef = useRef(null);
 
@@ -482,7 +494,14 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
         <div className="relative mr-0.5">
           <button
             title="Format Text"
-            onMouseDown={e => { e.preventDefault(); setShowFormat(v => !v); setShowVars(false); }}
+            onMouseDown={e => {
+              e.preventDefault();
+              // Capture current selection before focus shifts away
+              const sel = window.getSelection();
+              savedRangeRef.current = sel && sel.rangeCount > 0 ? sel.getRangeAt(0).cloneRange() : null;
+              setShowFormat(v => !v);
+              setShowVars(false);
+            }}
             className={cn(
               'flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-bold transition-colors border',
               showFormat
@@ -498,6 +517,7 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
               editorRef={editorRef}
               onHtmlChange={onHtmlChange}
               onClose={() => setShowFormat(false)}
+              savedRange={savedRangeRef.current}
             />
           )}
         </div>
