@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Mail, MessageCircle, Phone, Clock, CheckCircle2, Sparkles, X,
+  Mail, MessageCircle, Phone, Clock, CheckCircle2, X,
   User, Maximize2, Minimize2, Bold, Italic, Underline, Link2,
   Paperclip, Image, Video, BarChart2, PenLine,
-  Search, Send, Wand2, ChevronRight, ChevronLeft, Calendar
+  Search, Send, Wand2, ChevronRight, ChevronLeft, Calendar,
+  ChevronDown, Sparkles, Plus, Minus
 } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
@@ -37,7 +38,6 @@ const PRIORITIES = [
   { value: 'low',    label: 'Low'    },
 ];
 
-const TONES = ['Professional', 'Friendly', 'Direct', 'Casual'];
 const DELAY_UNITS = ['hours', 'days', 'weeks'];
 
 const VAR_TABS = {
@@ -58,6 +58,151 @@ function previewText(text) {
     .replace(/\{\{sender_name\}\}/g, 'You')
     .replace(/\{\{sender_title\}\}/g, 'Account Executive')
     .replace(/\{\{sender_company\}\}/g, 'RVNU');
+}
+
+// ─── TYPE DROPDOWN (New Thread / Reply) ───────────────────────────────────────
+function TypeDropdown({ value, onChange, allSteps, currentIndex }) {
+  const [open, setOpen] = useState(false);
+  const [hovering, setHovering] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const prevEmailSteps = (allSteps || []).slice(0, currentIndex).filter(s =>
+    (STEP_TYPE_MAP[s.subtype] || s.type) === 'email'
+  );
+
+  const displayLabel = value?.type === 'reply'
+    ? value.replyTo === 'previous'
+      ? 'Reply to previous'
+      : `Reply: Step #${value.replyTo}`
+    : 'New Thread';
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className={cn(
+          'flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all',
+          open
+            ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+            : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+        )}
+      >
+        <span>{displayLabel}</span>
+        <ChevronDown className={cn('w-3 h-3 transition-transform', open && 'rotate-180')} />
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -4, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            transition={{ duration: 0.12 }}
+            className="absolute top-full left-0 mt-1.5 z-[9999] bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden"
+            style={{ minWidth: 220 }}
+          >
+            {/* New Thread */}
+            <button
+              onClick={() => { onChange({ type: 'new_thread' }); setOpen(false); }}
+              className={cn(
+                'flex items-center gap-2.5 w-full px-4 py-2.5 text-left transition-colors hover:bg-slate-50',
+                value?.type !== 'reply' && 'bg-emerald-50/60'
+              )}
+            >
+              <div className="w-5 h-5 rounded bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
+                <Mail className="w-2.5 h-2.5 text-blue-500" />
+              </div>
+              <div>
+                <p className="text-[12px] font-semibold text-slate-800">New Thread</p>
+                <p className="text-[10px] text-slate-400">Start a fresh email conversation</p>
+              </div>
+              {value?.type !== 'reply' && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+            </button>
+
+            {/* Divider */}
+            <div className="h-px bg-slate-100 mx-3" />
+
+            {/* Reply option with submenu */}
+            <div
+              className="relative"
+              onMouseEnter={() => setHovering(true)}
+              onMouseLeave={() => setHovering(false)}
+            >
+              <div className={cn(
+                'flex items-center gap-2.5 w-full px-4 py-2.5 text-left transition-colors cursor-pointer',
+                hovering ? 'bg-slate-50' : '',
+                value?.type === 'reply' && 'bg-emerald-50/60'
+              )}>
+                <div className="w-5 h-5 rounded bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0">
+                  <ChevronRight className="w-2.5 h-2.5 text-emerald-500" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-[12px] font-semibold text-slate-800">Reply</p>
+                  <p className="text-[10px] text-slate-400">Thread onto an existing email</p>
+                </div>
+                <ChevronRight className="w-3 h-3 text-slate-400" />
+                {value?.type === 'reply' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+              </div>
+
+              {/* Submenu */}
+              <AnimatePresence>
+                {hovering && (
+                  <motion.div
+                    initial={{ opacity: 0, x: -4 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -4 }}
+                    transition={{ duration: 0.1 }}
+                    className="absolute left-full top-0 ml-1 bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden z-[9999]"
+                    style={{ minWidth: 220 }}
+                  >
+                    <div className="px-3 pt-2.5 pb-1">
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Reply to…</p>
+                    </div>
+
+                    <button
+                      onClick={() => { onChange({ type: 'reply', replyTo: 'previous' }); setOpen(false); setHovering(false); }}
+                      className="flex items-center gap-2.5 w-full px-3 py-2 text-left hover:bg-emerald-50 transition-colors"
+                    >
+                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                      <span className="text-[12px] font-medium text-slate-700">Reply to previous step</span>
+                    </button>
+
+                    {prevEmailSteps.length > 0 && (
+                      <>
+                        <div className="h-px bg-slate-100 mx-3 my-0.5" />
+                        {prevEmailSteps.map((s, i) => (
+                          <button
+                            key={i}
+                            onClick={() => { onChange({ type: 'reply', replyTo: i + 1, replySubject: s.subject }); setOpen(false); setHovering(false); }}
+                            className="flex items-center gap-2.5 w-full px-3 py-2 text-left hover:bg-emerald-50 transition-colors"
+                          >
+                            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0" />
+                            <span className="text-[12px] font-medium text-slate-700">
+                              Step #{i + 1}: {s.subject || 'No subject'}
+                            </span>
+                          </button>
+                        ))}
+                      </>
+                    )}
+
+                    {prevEmailSteps.length === 0 && (
+                      <p className="text-[11px] text-slate-400 italic px-3 pb-2.5">No previous email steps</p>
+                    )}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }
 
 // ─── VARIABLE DROPDOWN ────────────────────────────────────────────────────────
@@ -81,7 +226,6 @@ function VariableDropdown({ onInsert, onClose }) {
     <div ref={ref}
       className="absolute bottom-full left-0 mb-2 z-[999] bg-white rounded-xl border border-slate-200 shadow-2xl"
       style={{ width: 280 }}>
-      {/* Tabs */}
       <div className="flex border-b border-slate-100 px-2 pt-2 gap-0.5">
         {Object.keys(VAR_TABS).map(t => (
           <button key={t} onClick={() => { setActiveTab(t); setSearch(''); }}
@@ -93,7 +237,6 @@ function VariableDropdown({ onInsert, onClose }) {
             )}>{t}</button>
         ))}
       </div>
-      {/* Search */}
       <div className="px-3 pt-2.5 pb-1">
         <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-2.5 py-1.5 focus-within:border-emerald-300 transition-colors">
           <Search className="w-3 h-3 text-slate-300 flex-shrink-0" />
@@ -102,7 +245,6 @@ function VariableDropdown({ onInsert, onClose }) {
             className="flex-1 text-[11px] text-slate-700 bg-transparent outline-none placeholder:text-slate-300" />
         </div>
       </div>
-      {/* List */}
       <div className="px-2 pb-2.5 max-h-44 overflow-y-auto">
         {filtered.map(v => (
           <button key={v} onClick={() => { onInsert(v); onClose(); }}
@@ -119,7 +261,7 @@ function VariableDropdown({ onInsert, onClose }) {
 }
 
 // ─── EMAIL FORMATTING TOOLBAR ─────────────────────────────────────────────────
-function EmailToolbar({ onVarInsert, editorRef, onHtmlChange }) {
+function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
   const [showVars, setShowVars] = useState(false);
   const fileInputRef  = useRef(null);
   const imageInputRef = useRef(null);
@@ -127,7 +269,6 @@ function EmailToolbar({ onVarInsert, editorRef, onHtmlChange }) {
   const exec = (cmd, value = null) => {
     editorRef?.current?.focus();
     document.execCommand(cmd, false, value);
-    // Sync HTML back to state after execCommand
     requestAnimationFrame(() => {
       if (editorRef?.current) onHtmlChange(editorRef.current.innerHTML);
     });
@@ -161,90 +302,86 @@ function EmailToolbar({ onVarInsert, editorRef, onHtmlChange }) {
   };
 
   const handleCalendar = () => insertHtmlAtCursor('<span style="color:#16a34a">{{calendar_link}}</span>');
-  const handleTracking = () => insertHtmlAtCursor('<span style="color:#16a34a">{{tracking_pixel}}</span>');
   const handleSignature = () => insertHtmlAtCursor('<br><br>--<br>{{sender_name}}<br>{{sender_title}} at {{sender_company}}');
 
+  const toolBtn = (title, onMD, Icon) => (
+    <button title={title} onMouseDown={e => { e.preventDefault(); onMD(); }}
+      className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
+      <Icon className="w-[13px] h-[13px]" />
+    </button>
+  );
+
   return (
-    <div className="flex items-center gap-0.5 px-3 py-2 border-t border-slate-100 bg-white flex-wrap">
-      {/* Format group */}
-      <div className="flex items-center gap-0.5">
-        <button title="Bold" onMouseDown={e => { e.preventDefault(); exec('bold'); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Bold className="w-[13px] h-[13px]" />
-        </button>
-        <button title="Italic" onMouseDown={e => { e.preventDefault(); exec('italic'); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Italic className="w-[13px] h-[13px]" />
-        </button>
-        <button title="Underline" onMouseDown={e => { e.preventDefault(); exec('underline'); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Underline className="w-[13px] h-[13px]" />
-        </button>
-        <button title="Insert Link" onMouseDown={e => { e.preventDefault(); handleLink(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Link2 className="w-[13px] h-[13px]" />
-        </button>
-      </div>
-
-      <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
-
-      {/* Insert group */}
-      <div className="flex items-center gap-0.5">
-        <button title="Attach File" onMouseDown={e => { e.preventDefault(); fileInputRef.current?.click(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Paperclip className="w-[13px] h-[13px]" />
-        </button>
+    <div className="flex-shrink-0 border-t border-slate-100 bg-white">
+      {/* Row 1: Formatting + Insert tools */}
+      <div className="flex items-center gap-0.5 px-4 py-2 flex-wrap">
+        {toolBtn('Bold', () => exec('bold'), Bold)}
+        {toolBtn('Italic', () => exec('italic'), Italic)}
+        {toolBtn('Underline', () => exec('underline'), Underline)}
+        {toolBtn('Link', handleLink, Link2)}
+        <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
+        {toolBtn('Attach File', () => fileInputRef.current?.click(), Paperclip)}
         <input ref={fileInputRef} type="file" className="hidden" onChange={e => handleFile(e, false)} />
-
-        <button title="Insert Image" onMouseDown={e => { e.preventDefault(); imageInputRef.current?.click(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Image className="w-[13px] h-[13px]" />
-        </button>
+        {toolBtn('Insert Image', () => imageInputRef.current?.click(), Image)}
         <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={e => handleFile(e, true)} />
+        {toolBtn('Insert Video', handleVideo, Video)}
+        {toolBtn('Calendar Link', handleCalendar, Calendar)}
+        {toolBtn('Insert Signature', handleSignature, PenLine)}
+        <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
 
-        <button title="Insert Video" onMouseDown={e => { e.preventDefault(); handleVideo(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Video className="w-[13px] h-[13px]" />
-        </button>
-        <button title="Insert Calendar Link" onMouseDown={e => { e.preventDefault(); handleCalendar(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <Calendar className="w-[13px] h-[13px]" />
-        </button>
-        <button title="Enable Tracking" onMouseDown={e => { e.preventDefault(); handleTracking(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <BarChart2 className="w-[13px] h-[13px]" />
-        </button>
-        <button title="Insert Signature" onMouseDown={e => { e.preventDefault(); handleSignature(); }}
-          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
-          <PenLine className="w-[13px] h-[13px]" />
-        </button>
+        {/* Variables */}
+        <div className="relative">
+          <button onMouseDown={e => { e.preventDefault(); setShowVars(v => !v); }}
+            className={cn(
+              'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors',
+              showVars
+                ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
+                : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 border border-transparent'
+            )}>
+            <span className="font-mono text-[12px] leading-none">{'{ }'}</span>
+            Variables
+          </button>
+          {showVars && (
+            <VariableDropdown
+              onInsert={v => insertHtmlAtCursor(`<span style="color:#16a34a">${v}</span>`)}
+              onClose={() => setShowVars(false)}
+            />
+          )}
+        </div>
+
+        {/* Send on Day — moved here */}
+        <div className="flex items-center gap-2 ml-auto pl-3 border-l border-slate-100">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest whitespace-nowrap">Day</span>
+          <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+            <button
+              onMouseDown={e => { e.preventDefault(); onDraftChange(d => ({ ...d, day: Math.max(1, (d.day ?? 1) - 1) })); }}
+              className="px-2 py-1 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors text-sm font-bold leading-none">−</button>
+            <input
+              type="number" min={1}
+              value={draft.day ?? 1}
+              onChange={e => onDraftChange(d => ({ ...d, day: Math.max(1, parseInt(e.target.value) || 1) }))}
+              className="w-9 text-[12px] text-center font-semibold text-slate-700 bg-transparent outline-none border-x border-slate-200 py-1 tabular-nums" />
+            <button
+              onMouseDown={e => { e.preventDefault(); onDraftChange(d => ({ ...d, day: (d.day ?? 1) + 1 })); }}
+              className="px-2 py-1 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors text-sm font-bold leading-none">+</button>
+          </div>
+        </div>
       </div>
 
-      <div className="w-px h-4 bg-slate-200 mx-1 flex-shrink-0" />
-
-      {/* Variables */}
-      <div className="relative">
-        <button onMouseDown={e => { e.preventDefault(); setShowVars(v => !v); }}
-          className={cn(
-            'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors',
-            showVars
-              ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
-              : 'text-slate-500 hover:bg-slate-100 hover:text-slate-700 border border-transparent'
-          )}>
-          <span className="font-mono text-[12px] leading-none">{'{ }'}</span>
-          Variables
-        </button>
-        {showVars && (
-          <VariableDropdown onInsert={v => { insertHtmlAtCursor(`<span style="color:#16a34a">${v}</span>`); onVarInsert(v); }} onClose={() => setShowVars(false)} />
-        )}
-      </div>
-
-      {/* AI Write — right side */}
-      <div className="flex items-center ml-auto">
-        <button title="AI Write"
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold text-slate-400 hover:text-emerald-700 hover:bg-emerald-50 transition-colors border border-transparent hover:border-emerald-200">
-          <Wand2 className="w-[13px] h-[13px]" />
-          <span className="hidden xl:inline">AI Write</span>
+      {/* Row 2: AI Write area */}
+      <div className="flex items-center gap-3 px-4 py-2.5 border-t border-slate-100 bg-gradient-to-r from-emerald-50/40 to-white">
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="w-6 h-6 rounded-lg bg-emerald-100 border border-emerald-200 flex items-center justify-center">
+            <Sparkles className="w-3 h-3 text-emerald-600" />
+          </div>
+          <span className="text-[11px] font-bold text-emerald-700">AI Write</span>
+        </div>
+        <div className="flex-1 text-[11px] text-slate-400">
+          Generate a ready-to-send personalized email.
+        </div>
+        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold transition-colors shadow-sm">
+          <Wand2 className="w-3 h-3" />
+          Generate
         </button>
       </div>
     </div>
@@ -252,12 +389,28 @@ function EmailToolbar({ onVarInsert, editorRef, onHtmlChange }) {
 }
 
 // ─── EMAIL EDITOR ─────────────────────────────────────────────────────────────
-function EmailEditor({ step, onUpdate }) {
+function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex }) {
   const editorRef = useRef(null);
-  // Track whether we've initialized the editor DOM with existing content
   const initializedRef = useRef(false);
+  const [showCcBcc, setShowCcBcc] = useState(!!(step.cc || step.bcc));
 
-  // Only set innerHTML on first mount or when step id changes (not on every keystroke)
+  // Determine inherited subject for Reply mode
+  const threadType = draft.threadType || { type: 'new_thread' };
+  const isReply = threadType.type === 'reply';
+  let inheritedSubject = '';
+  if (isReply) {
+    if (threadType.replyTo === 'previous') {
+      const prevEmails = (allSteps || []).slice(0, stepIndex).filter(s =>
+        (STEP_TYPE_MAP[s.subtype] || s.type) === 'email'
+      );
+      const prev = prevEmails[prevEmails.length - 1];
+      inheritedSubject = prev?.subject ? `RE: ${prev.subject}` : '';
+    } else if (threadType.replySubject) {
+      inheritedSubject = `RE: ${threadType.replySubject}`;
+    }
+  }
+  const displaySubject = isReply ? inheritedSubject : (step.subject || '');
+
   useEffect(() => {
     if (editorRef.current && !initializedRef.current) {
       editorRef.current.innerHTML = step.body || '';
@@ -266,42 +419,82 @@ function EmailEditor({ step, onUpdate }) {
   }, []);
 
   const handleInput = () => {
-    if (editorRef.current) {
-      onUpdate({ ...step, body: editorRef.current.innerHTML });
-    }
+    if (editorRef.current) onUpdate({ ...step, body: editorRef.current.innerHTML });
   };
 
   return (
     <div className="flex flex-col h-full min-h-0">
 
-      {/* Subject row */}
-      <div className="flex items-center gap-4 px-6 py-3.5 border-b border-slate-100">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest w-14 flex-shrink-0">Subject</span>
-        <input
-          value={step.subject || ''}
-          onChange={e => onUpdate({ ...step, subject: e.target.value })}
-          placeholder="e.g. Quick question about {{company}}…"
-          className="flex-1 text-[13px] font-medium text-slate-800 bg-transparent outline-none placeholder:text-slate-300"
-        />
-      </div>
-
-      {/* Tone row */}
-      <div className="flex items-center gap-4 px-6 py-2.5 border-b border-slate-100 bg-slate-50/30">
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest w-14 flex-shrink-0">Tone</span>
-        <div className="flex items-center gap-1.5">
-          {TONES.map(t => (
-            <button key={t} onClick={() => onUpdate({ ...step, tone: step.tone === t ? undefined : t })}
-              className={cn(
-                'text-[11px] px-2.5 py-1 rounded-full border transition-all font-medium',
-                step.tone === t
-                  ? 'border-emerald-400 bg-emerald-50 text-emerald-700 shadow-sm'
-                  : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-600 bg-white'
-              )}>{t}</button>
-          ))}
+      {/* Type + Subject row */}
+      <div className="flex items-center gap-0 border-b border-slate-100 flex-shrink-0">
+        {/* Type dropdown */}
+        <div className="flex items-center gap-2 px-4 py-3 border-r border-slate-100 flex-shrink-0">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Type</span>
+          <TypeDropdown
+            value={threadType}
+            onChange={val => onDraftChange(d => ({ ...d, threadType: val }))}
+            allSteps={allSteps}
+            currentIndex={stepIndex}
+          />
         </div>
+
+        {/* Subject */}
+        <div className="flex items-center gap-3 flex-1 px-4 py-3">
+          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex-shrink-0">Subject</span>
+          {isReply ? (
+            <span className="flex-1 text-[13px] font-medium text-slate-500 italic truncate">
+              {inheritedSubject || <span className="text-slate-300">Inherited from previous step…</span>}
+            </span>
+          ) : (
+            <input
+              value={step.subject || ''}
+              onChange={e => onUpdate({ ...step, subject: e.target.value })}
+              placeholder="e.g. Quick question about {{company}}…"
+              className="flex-1 text-[13px] font-medium text-slate-800 bg-transparent outline-none placeholder:text-slate-300"
+            />
+          )}
+        </div>
+
+        {/* CC/BCC toggle */}
+        <button
+          onClick={() => setShowCcBcc(v => !v)}
+          className="flex-shrink-0 px-4 py-3 text-[11px] font-semibold text-slate-400 hover:text-emerald-700 transition-colors border-l border-slate-100 whitespace-nowrap"
+        >
+          {showCcBcc ? 'Hide Cc/Bcc' : 'Cc / Bcc'}
+        </button>
       </div>
 
-      {/* Body — contentEditable rich text area */}
+      {/* CC/BCC fields */}
+      <AnimatePresence initial={false}>
+        {showCcBcc && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            className="overflow-hidden flex-shrink-0 border-b border-slate-100"
+          >
+            <div className="flex flex-col bg-slate-50/40">
+              {[
+                { key: 'cc',  label: 'Cc',  placeholder: 'Enter CC emails, comma separated…' },
+                { key: 'bcc', label: 'Bcc', placeholder: 'Enter BCC emails, comma separated…' },
+              ].map(({ key, label, placeholder }) => (
+                <div key={key} className="flex items-center gap-3 px-4 py-2 border-b border-slate-100 last:border-b-0">
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest w-6 flex-shrink-0">{label}</span>
+                  <input
+                    value={step[key] || ''}
+                    onChange={e => onUpdate({ ...step, [key]: e.target.value })}
+                    placeholder={placeholder}
+                    className="flex-1 text-[12px] text-slate-700 bg-transparent outline-none placeholder:text-slate-300"
+                  />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Body — contentEditable rich text */}
       <div className="flex-1 flex flex-col min-h-0">
         <div
           ref={editorRef}
@@ -314,8 +507,9 @@ function EmailEditor({ step, onUpdate }) {
         />
         <EmailToolbar
           editorRef={editorRef}
-          onVarInsert={() => {}}
           onHtmlChange={html => onUpdate({ ...step, body: html })}
+          draft={draft}
+          onDraftChange={onDraftChange}
         />
       </div>
     </div>
@@ -425,7 +619,17 @@ function TaskEditor({ step, onUpdate }) {
 }
 
 // ─── PREVIEWS ─────────────────────────────────────────────────────────────────
-function EmailPreview({ step }) {
+function EmailPreview({ step, draft }) {
+  const threadType = draft?.threadType || { type: 'new_thread' };
+  const isReply = threadType.type === 'reply';
+
+  let subjectDisplay = step.subject;
+  if (isReply) {
+    subjectDisplay = threadType.replySubject
+      ? `RE: ${threadType.replySubject}`
+      : 'RE: (previous step subject)';
+  }
+
   return (
     <div className="flex flex-col h-full min-h-0 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       {/* Browser chrome */}
@@ -436,6 +640,9 @@ function EmailPreview({ step }) {
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-300" />
         </div>
         <span className="text-[10px] text-slate-400 ml-1 font-medium">Email Preview</span>
+        {isReply && (
+          <span className="ml-auto text-[9px] font-semibold bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full">Reply</span>
+        )}
       </div>
 
       {/* Email header fields */}
@@ -449,10 +656,22 @@ function EmailPreview({ step }) {
             <span className="text-[11px] text-slate-600">{value}</span>
           </div>
         ))}
+        {step.cc && (
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] text-slate-400 font-semibold w-7 flex-shrink-0">Cc</span>
+            <span className="text-[11px] text-slate-500">{step.cc}</span>
+          </div>
+        )}
+        {step.bcc && (
+          <div className="flex items-center gap-3">
+            <span className="text-[10px] text-slate-400 font-semibold w-7 flex-shrink-0">Bcc</span>
+            <span className="text-[11px] text-slate-500">{step.bcc}</span>
+          </div>
+        )}
         <div className="flex items-start gap-3">
           <span className="text-[10px] text-slate-400 font-semibold w-7 flex-shrink-0 mt-0.5">Sub</span>
-          {step.subject
-            ? <span className="text-[12px] font-semibold text-slate-800 leading-tight">{previewText(step.subject)}</span>
+          {subjectDisplay
+            ? <span className="text-[12px] font-semibold text-slate-800 leading-tight">{previewText(subjectDisplay)}</span>
             : <span className="text-[11px] text-slate-300 italic">No subject yet…</span>}
         </div>
       </div>
@@ -464,14 +683,6 @@ function EmailPreview({ step }) {
               dangerouslySetInnerHTML={{ __html: previewText(step.body) }} />
           : <p className="text-[12px] text-slate-300 italic">Start typing to see your email preview…</p>}
       </div>
-
-      {/* Tone badge */}
-      {step.tone && (
-        <div className="px-5 py-2 border-t border-slate-100 flex items-center gap-2 flex-shrink-0">
-          <span className="text-[9px] uppercase font-bold text-slate-400 tracking-widest">Tone</span>
-          <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded-full font-semibold">{step.tone}</span>
-        </div>
-      )}
     </div>
   );
 }
@@ -593,32 +804,51 @@ function TaskPreview({ step }) {
 }
 
 // ─── MAIN MODAL ───────────────────────────────────────────────────────────────
-export default function StepModal({ step, index, isNew, onSave, onClose }) {
-  const [draft, setDraft] = useState(() => ({ priority: 'normal', ...step, day: isNew ? 1 : (step?.day ?? 1) }));
+export default function StepModal({ step, index, isNew, onSave, onClose, allSteps }) {
+  const [draft, setDraft] = useState(() => ({
+    priority: 'normal',
+    threadType: { type: 'new_thread' },
+    ...step,
+    day: isNew ? 1 : (step?.day ?? 1),
+  }));
   const [maximized, setMaximized] = useState(false);
   const [previewCollapsed, setPreviewCollapsed] = useState(false);
 
   useEffect(() => {
-    setDraft({ priority: 'normal', ...step, day: isNew ? 1 : (step?.day ?? 1) });
+    setDraft({
+      priority: 'normal',
+      threadType: { type: 'new_thread' },
+      ...step,
+      day: isNew ? 1 : (step?.day ?? 1),
+    });
   }, [step]);
 
   if (!draft) return null;
 
-  const baseType    = STEP_TYPE_MAP[draft.subtype] || draft.type;
-  const StepIcon    = channelIcons[baseType] || Mail;
+  const baseType     = STEP_TYPE_MAP[draft.subtype] || draft.type;
+  const StepIcon     = channelIcons[baseType] || Mail;
   const subtypeLabel = STEP_SUBTYPE_LABELS[draft.subtype] || draft.subtype || baseType;
-  const isEmail     = baseType === 'email';
-  const hasSplit    = isEmail || baseType === 'linkedin' || baseType === 'whatsapp';
+  const isEmail      = baseType === 'email';
+  const hasSplit     = isEmail || baseType === 'linkedin' || baseType === 'whatsapp';
 
-  const renderEditor  = () => {
-    if (isEmail)            return <EmailEditor step={draft} onUpdate={setDraft} />;
+  const renderEditor = () => {
+    if (isEmail) return (
+      <EmailEditor
+        step={draft}
+        onUpdate={setDraft}
+        draft={draft}
+        onDraftChange={setDraft}
+        allSteps={allSteps || []}
+        stepIndex={index}
+      />
+    );
     if (baseType === 'linkedin') return <LinkedInEditor step={draft} onUpdate={setDraft} />;
     if (baseType === 'whatsapp') return <WhatsAppEditor step={draft} onUpdate={setDraft} />;
     return <TaskEditor step={draft} onUpdate={setDraft} />;
   };
 
   const renderPreview = () => {
-    if (isEmail)            return <EmailPreview step={draft} />;
+    if (isEmail)            return <EmailPreview step={draft} draft={draft} />;
     if (baseType === 'whatsapp') return <WhatsAppPreview step={draft} />;
     if (baseType === 'linkedin') return <LinkedInPreview step={draft} />;
     return <TaskPreview step={draft} />;
@@ -634,11 +864,11 @@ export default function StepModal({ step, index, isNew, onSave, onClose }) {
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.96, y: 8 }}
         transition={{ duration: 0.18, ease: [0.4, 0, 0.2, 1] }}
-        className="bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden w-full"
+        className="bg-white rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden"
         style={{
-          width:     maximized ? '96vw'  : '90vw',
-          maxWidth:  maximized ? '100vw' : '1500px',
-          height:    maximized ? '96vh'  : '88vh',
+          width:     maximized ? '96vw'  : '92vw',
+          maxWidth:  maximized ? '100vw' : '1600px',
+          height:    maximized ? '96vh'  : '90vh',
           maxHeight: '95vh',
           transition: 'width 0.2s ease, height 0.2s ease',
         }}
@@ -646,7 +876,6 @@ export default function StepModal({ step, index, isNew, onSave, onClose }) {
 
         {/* ── MODAL HEADER ── */}
         <div className="flex items-center justify-between px-6 py-3.5 border-b border-slate-100 flex-shrink-0">
-          {/* Left: Step identity */}
           <div className="flex items-center gap-3">
             <div className={cn('w-8 h-8 rounded-lg border flex items-center justify-center flex-shrink-0', channelBg[baseType] || 'bg-slate-50 border-slate-200')}>
               <StepIcon className={cn('w-4 h-4', channelColors[baseType])} />
@@ -657,9 +886,7 @@ export default function StepModal({ step, index, isNew, onSave, onClose }) {
             </div>
           </div>
 
-          {/* Right: Controls */}
           <div className="flex items-center gap-2">
-
             {/* Priority */}
             <div className="flex items-center gap-1.5 border border-slate-200 rounded-lg px-3 py-1.5 bg-white hover:border-slate-300 transition-colors">
               <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest">Priority</span>
@@ -671,14 +898,19 @@ export default function StepModal({ step, index, isNew, onSave, onClose }) {
               </select>
             </div>
 
-            {/* Maximize */}
+            {isEmail && (
+              <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-[11px] font-semibold text-slate-600 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50 transition-all shadow-sm">
+                <Send className="w-3 h-3" />
+                Send Test
+              </button>
+            )}
+
             <button onClick={() => setMaximized(m => !m)}
               title={maximized ? 'Restore' : 'Maximize'}
               className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
               {maximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
             </button>
 
-            {/* Close */}
             <button onClick={onClose}
               className="p-2 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
               <X className="w-4 h-4" />
@@ -686,51 +918,20 @@ export default function StepModal({ step, index, isNew, onSave, onClose }) {
           </div>
         </div>
 
-        {/* ── SUB-HEADER: Day + Send Test ── */}
-        <div className="flex items-center justify-between px-6 py-2.5 border-b border-slate-100 bg-slate-50/50 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Send on Day</span>
-            <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
-              <button
-                onClick={() => setDraft(d => ({ ...d, day: Math.max(1, (d.day ?? 1) - 1) }))}
-                className="px-2.5 py-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors text-sm font-bold leading-none">−</button>
-              <input
-                type="number" min={1}
-                value={draft.day ?? 1}
-                onChange={e => setDraft(d => ({ ...d, day: Math.max(1, parseInt(e.target.value) || 1) }))}
-                className="w-10 text-[12px] text-center font-semibold text-slate-700 bg-transparent outline-none border-x border-slate-200 py-1.5 tabular-nums" />
-              <button
-                onClick={() => setDraft(d => ({ ...d, day: (d.day ?? 1) + 1 }))}
-                className="px-2.5 py-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors text-sm font-bold leading-none">+</button>
-            </div>
-          </div>
-
-          {isEmail && (
-            <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-[11px] font-semibold text-slate-600 hover:border-emerald-300 hover:text-emerald-700 hover:bg-emerald-50 transition-all shadow-sm">
-              <Send className="w-3 h-3" />
-              Send Test Email
-            </button>
-          )}
-        </div>
-
         {/* ── MODAL BODY ── */}
         <div className="flex flex-1 overflow-hidden min-h-0">
 
           {/* LEFT — Editor */}
-          <div
-            className={cn(
-              'flex flex-col min-h-0 transition-all duration-200',
-              hasSplit
-                ? previewCollapsed ? 'flex-1' : 'w-[62%]'
-                : 'flex-1'
-            )}
-          >
+          <div className={cn(
+            'flex flex-col min-h-0 transition-all duration-200',
+            hasSplit ? previewCollapsed ? 'flex-1' : 'w-[62%]' : 'flex-1'
+          )}>
             <div className="flex-1 flex flex-col min-h-0 overflow-y-auto">
               {renderEditor()}
             </div>
           </div>
 
-          {/* DIVIDER + TOGGLE (split views only) */}
+          {/* DIVIDER + TOGGLE */}
           {hasSplit && (
             <div className="relative flex items-center flex-shrink-0"
               style={{ width: 1, background: '#e2e8f0' }}>

@@ -317,6 +317,7 @@ export default function SequenceBuilder() {
           isNew={modalState.isNew}
           onSave={handleModalSave}
           onClose={() => setModalState(null)}
+          allSteps={seq.steps}
         />
       )}
 
