@@ -570,7 +570,8 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
               type="number" min={1}
               value={draft.day ?? 1}
               onChange={e => onDraftChange(d => ({ ...d, day: Math.max(1, parseInt(e.target.value) || 1) }))}
-              className="w-9 text-[12px] text-center font-semibold text-slate-700 bg-transparent outline-none border-x border-slate-200 py-1 tabular-nums" />
+              className="w-10 text-[12px] text-center font-semibold text-slate-700 bg-transparent outline-none border-x border-slate-200 py-1 tabular-nums"
+              style={{ MozAppearance: 'textfield' }} />
             <button
               onMouseDown={e => { e.preventDefault(); onDraftChange(d => ({ ...d, day: (d.day ?? 1) + 1 })); }}
               className="px-2 py-1 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors text-sm font-bold leading-none">+</button>
