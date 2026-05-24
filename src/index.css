@@ -57,6 +57,20 @@
   }
 }
 
+/* ── Rich text email editor ── */
+.email-editor-body:empty:before {
+  content: attr(data-placeholder);
+  color: #cbd5e1;
+  pointer-events: none;
+  white-space: pre-wrap;
+}
+
+.email-preview-body b, .email-preview-body strong { font-weight: 700; }
+.email-preview-body i, .email-preview-body em { font-style: italic; }
+.email-preview-body u { text-decoration: underline; }
+.email-preview-body a { color: #2563eb; text-decoration: underline; }
+.email-preview-body br { display: block; margin: 0; }
+
 @layer utilities {
   .font-jakarta {
     font-family: 'Plus Jakarta Sans', sans-serif;

@@ -119,88 +119,68 @@ function VariableDropdown({ onInsert, onClose }) {
 }
 
 // ─── EMAIL FORMATTING TOOLBAR ─────────────────────────────────────────────────
-function EmailToolbar({ onVarInsert, textareaRef, body, onBodyChange }) {
+function EmailToolbar({ onVarInsert, editorRef, onHtmlChange }) {
   const [showVars, setShowVars] = useState(false);
   const fileInputRef  = useRef(null);
   const imageInputRef = useRef(null);
 
-  // Wrap selected text with prefix/suffix, or insert at cursor
-  const wrapSelection = (prefix, suffix = prefix) => {
-    const el = textareaRef?.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const end   = el.selectionEnd;
-    const selected = body.slice(start, end);
-    const newVal = body.slice(0, start) + prefix + selected + suffix + body.slice(end);
-    onBodyChange(newVal);
-    // Restore focus + selection after state update
+  const exec = (cmd, value = null) => {
+    editorRef?.current?.focus();
+    document.execCommand(cmd, false, value);
+    // Sync HTML back to state after execCommand
     requestAnimationFrame(() => {
-      el.focus();
-      el.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
-    });
-  };
-
-  const insertAtCursor = (text) => {
-    const el = textareaRef?.current;
-    if (!el) return;
-    const start = el.selectionStart;
-    const newVal = body.slice(0, start) + text + body.slice(start);
-    onBodyChange(newVal);
-    requestAnimationFrame(() => {
-      el.focus();
-      el.setSelectionRange(start + text.length, start + text.length);
+      if (editorRef?.current) onHtmlChange(editorRef.current.innerHTML);
     });
   };
 
   const handleLink = () => {
-    const el = textareaRef?.current;
-    if (!el) return;
-    const selected = body.slice(el.selectionStart, el.selectionEnd);
     const url = window.prompt('Enter URL:', 'https://');
-    if (url) insertAtCursor(`[${selected || 'link text'}](${url})`);
+    if (url) exec('createLink', url);
+  };
+
+  const insertHtmlAtCursor = (html) => {
+    editorRef?.current?.focus();
+    document.execCommand('insertHTML', false, html);
+    requestAnimationFrame(() => {
+      if (editorRef?.current) onHtmlChange(editorRef.current.innerHTML);
+    });
   };
 
   const handleFile = (e, isImage) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    insertAtCursor(isImage ? `[Image: ${file.name}]` : `[Attachment: ${file.name}]`);
+    insertHtmlAtCursor(isImage
+      ? `<span style="color:#16a34a">[Image: ${file.name}]</span>`
+      : `<span style="color:#16a34a">[Attachment: ${file.name}]</span>`);
     e.target.value = '';
   };
 
   const handleVideo = () => {
     const url = window.prompt('Enter video URL:', 'https://');
-    if (url) insertAtCursor(`[Video: ${url}]`);
+    if (url) insertHtmlAtCursor(`<a href="${url}" style="color:#2563eb">[Video]</a>`);
   };
 
-  const handleCalendar = () => {
-    insertAtCursor('{{calendar_link}}');
-  };
-
-  const handleTracking = () => {
-    insertAtCursor('{{tracking_pixel}}');
-  };
-
-  const handleSignature = () => {
-    insertAtCursor('\n\n--\n{{sender_name}}\n{{sender_title}} at {{sender_company}}');
-  };
+  const handleCalendar = () => insertHtmlAtCursor('<span style="color:#16a34a">{{calendar_link}}</span>');
+  const handleTracking = () => insertHtmlAtCursor('<span style="color:#16a34a">{{tracking_pixel}}</span>');
+  const handleSignature = () => insertHtmlAtCursor('<br><br>--<br>{{sender_name}}<br>{{sender_title}} at {{sender_company}}');
 
   return (
     <div className="flex items-center gap-0.5 px-3 py-2 border-t border-slate-100 bg-white flex-wrap">
       {/* Format group */}
       <div className="flex items-center gap-0.5">
-        <button title="Bold" onClick={() => wrapSelection('**')}
+        <button title="Bold" onMouseDown={e => { e.preventDefault(); exec('bold'); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Bold className="w-[13px] h-[13px]" />
         </button>
-        <button title="Italic" onClick={() => wrapSelection('_')}
+        <button title="Italic" onMouseDown={e => { e.preventDefault(); exec('italic'); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Italic className="w-[13px] h-[13px]" />
         </button>
-        <button title="Underline" onClick={() => wrapSelection('<u>', '</u>')}
+        <button title="Underline" onMouseDown={e => { e.preventDefault(); exec('underline'); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Underline className="w-[13px] h-[13px]" />
         </button>
-        <button title="Insert Link" onClick={handleLink}
+        <button title="Insert Link" onMouseDown={e => { e.preventDefault(); handleLink(); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Link2 className="w-[13px] h-[13px]" />
         </button>
@@ -210,33 +190,31 @@ function EmailToolbar({ onVarInsert, textareaRef, body, onBodyChange }) {
 
       {/* Insert group */}
       <div className="flex items-center gap-0.5">
-        {/* Attachment */}
-        <button title="Attach File" onClick={() => fileInputRef.current?.click()}
+        <button title="Attach File" onMouseDown={e => { e.preventDefault(); fileInputRef.current?.click(); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Paperclip className="w-[13px] h-[13px]" />
         </button>
         <input ref={fileInputRef} type="file" className="hidden" onChange={e => handleFile(e, false)} />
 
-        {/* Image */}
-        <button title="Insert Image" onClick={() => imageInputRef.current?.click()}
+        <button title="Insert Image" onMouseDown={e => { e.preventDefault(); imageInputRef.current?.click(); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Image className="w-[13px] h-[13px]" />
         </button>
         <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={e => handleFile(e, true)} />
 
-        <button title="Insert Video" onClick={handleVideo}
+        <button title="Insert Video" onMouseDown={e => { e.preventDefault(); handleVideo(); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Video className="w-[13px] h-[13px]" />
         </button>
-        <button title="Insert Calendar Link" onClick={handleCalendar}
+        <button title="Insert Calendar Link" onMouseDown={e => { e.preventDefault(); handleCalendar(); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <Calendar className="w-[13px] h-[13px]" />
         </button>
-        <button title="Enable Tracking" onClick={handleTracking}
+        <button title="Enable Tracking" onMouseDown={e => { e.preventDefault(); handleTracking(); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <BarChart2 className="w-[13px] h-[13px]" />
         </button>
-        <button title="Insert Signature" onClick={handleSignature}
+        <button title="Insert Signature" onMouseDown={e => { e.preventDefault(); handleSignature(); }}
           className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors">
           <PenLine className="w-[13px] h-[13px]" />
         </button>
@@ -246,7 +224,7 @@ function EmailToolbar({ onVarInsert, textareaRef, body, onBodyChange }) {
 
       {/* Variables */}
       <div className="relative">
-        <button onClick={() => setShowVars(v => !v)}
+        <button onMouseDown={e => { e.preventDefault(); setShowVars(v => !v); }}
           className={cn(
             'flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold transition-colors',
             showVars
@@ -257,7 +235,7 @@ function EmailToolbar({ onVarInsert, textareaRef, body, onBodyChange }) {
           Variables
         </button>
         {showVars && (
-          <VariableDropdown onInsert={onVarInsert} onClose={() => setShowVars(false)} />
+          <VariableDropdown onInsert={v => { insertHtmlAtCursor(`<span style="color:#16a34a">${v}</span>`); onVarInsert(v); }} onClose={() => setShowVars(false)} />
         )}
       </div>
 
@@ -275,16 +253,21 @@ function EmailToolbar({ onVarInsert, textareaRef, body, onBodyChange }) {
 
 // ─── EMAIL EDITOR ─────────────────────────────────────────────────────────────
 function EmailEditor({ step, onUpdate }) {
-  const textareaRef = useRef(null);
-  const insertVar = v => {
-    const el = textareaRef.current;
-    if (el) {
-      const start = el.selectionStart;
-      const newVal = (step.body || '').slice(0, start) + v + (step.body || '').slice(start);
-      onUpdate({ ...step, body: newVal });
-      requestAnimationFrame(() => { el.focus(); el.setSelectionRange(start + v.length, start + v.length); });
-    } else {
-      onUpdate({ ...step, body: (step.body || '') + v });
+  const editorRef = useRef(null);
+  // Track whether we've initialized the editor DOM with existing content
+  const initializedRef = useRef(false);
+
+  // Only set innerHTML on first mount or when step id changes (not on every keystroke)
+  useEffect(() => {
+    if (editorRef.current && !initializedRef.current) {
+      editorRef.current.innerHTML = step.body || '';
+      initializedRef.current = true;
+    }
+  }, []);
+
+  const handleInput = () => {
+    if (editorRef.current) {
+      onUpdate({ ...step, body: editorRef.current.innerHTML });
     }
   };
 
@@ -318,20 +301,21 @@ function EmailEditor({ step, onUpdate }) {
         </div>
       </div>
 
-      {/* Body — takes all remaining space */}
+      {/* Body — contentEditable rich text area */}
       <div className="flex-1 flex flex-col min-h-0">
-        <Textarea
-          ref={textareaRef}
-          value={step.body || ''}
-          onChange={e => onUpdate({ ...step, body: e.target.value })}
-          placeholder={"Hi {{first_name}},\n\nI came across {{company}} and noticed…\n\nWould love to share a quick idea.\n\nBest,\n{{sender_name}}"}
-          className="flex-1 text-[13px] leading-relaxed resize-none border-0 rounded-none focus-visible:ring-0 focus-visible:ring-offset-0 px-6 py-5 text-slate-700 placeholder:text-slate-300 min-h-0 h-full"
+        <div
+          ref={editorRef}
+          contentEditable
+          suppressContentEditableWarning
+          onInput={handleInput}
+          data-placeholder="Hi {{first_name}},&#10;&#10;I came across {{company}} and noticed…&#10;&#10;Would love to share a quick idea.&#10;&#10;Best,&#10;{{sender_name}}"
+          className="flex-1 text-[13px] leading-relaxed px-6 py-5 text-slate-700 outline-none overflow-y-auto min-h-0 email-editor-body"
+          style={{ minHeight: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}
         />
         <EmailToolbar
-          onVarInsert={insertVar}
-          textareaRef={textareaRef}
-          body={step.body || ''}
-          onBodyChange={val => onUpdate({ ...step, body: val })}
+          editorRef={editorRef}
+          onVarInsert={() => {}}
+          onHtmlChange={html => onUpdate({ ...step, body: html })}
         />
       </div>
     </div>
@@ -476,7 +460,8 @@ function EmailPreview({ step }) {
       {/* Email body */}
       <div className="flex-1 overflow-y-auto px-5 py-4">
         {step.body
-          ? <p className="text-[12px] text-slate-700 whitespace-pre-wrap leading-[1.75]">{previewText(step.body)}</p>
+          ? <div className="text-[12px] text-slate-700 leading-[1.75] email-preview-body"
+              dangerouslySetInnerHTML={{ __html: previewText(step.body) }} />
           : <p className="text-[12px] text-slate-300 italic">Start typing to see your email preview…</p>}
       </div>
 
@@ -609,12 +594,12 @@ function TaskPreview({ step }) {
 
 // ─── MAIN MODAL ───────────────────────────────────────────────────────────────
 export default function StepModal({ step, index, isNew, onSave, onClose }) {
-  const [draft, setDraft] = useState(() => ({ day: 1, priority: 'normal', ...step, day: step?.day ?? 1 }));
+  const [draft, setDraft] = useState(() => ({ priority: 'normal', ...step, day: isNew ? 1 : (step?.day ?? 1) }));
   const [maximized, setMaximized] = useState(false);
   const [previewCollapsed, setPreviewCollapsed] = useState(false);
 
   useEffect(() => {
-    setDraft({ day: 1, priority: 'normal', ...step, day: step?.day ?? 1 });
+    setDraft({ priority: 'normal', ...step, day: isNew ? 1 : (step?.day ?? 1) });
   }, [step]);
 
   if (!draft) return null;
