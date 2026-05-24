@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { initialSequences } from './Outreach';
 import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
-import AddStepMenu, { STEP_TYPE_MAP, STEP_SUBTYPE_LABELS } from '@/components/outreach/AddStepMenu';
+import AddStepMenu, { STEP_TYPE_MAP } from '@/components/outreach/AddStepMenu';
 import StepModal from '@/components/outreach/StepModal';
 import WorkflowCanvas from '@/components/outreach/WorkflowCanvas';
 
@@ -188,6 +188,25 @@ export default function SequenceBuilder() {
     });
   }, []);
 
+  const moveStep = useCallback((from, to) => {
+    setSeq(s => {
+      if (to < 0 || to >= s.steps.length) return s;
+      const newSteps = [...s.steps];
+      const [moved] = newSteps.splice(from, 1);
+      newSteps.splice(to, 0, moved);
+      return { ...s, steps: newSteps };
+    });
+  }, []);
+
+  const changeStepType = useCallback((i, subtype) => {
+    setSeq(s => {
+      const newSteps = [...s.steps];
+      const baseType = STEP_TYPE_MAP[subtype] || subtype;
+      newSteps[i] = { ...newSteps[i], subtype, type: baseType };
+      return { ...s, steps: newSteps };
+    });
+  }, []);
+
   const toggleStatus = useCallback(() => {
     setSeq(s => ({ ...s, status: s.status === 'active' ? 'paused' : 'active' }));
   }, []);
@@ -281,6 +300,8 @@ export default function SequenceBuilder() {
                   onRemoveStep={removeStep}
                   onDuplicateStep={duplicateStep}
                   onInsertAfterStep={(idx) => setPendingInsert(idx)}
+                  onMoveStep={moveStep}
+                  onChangeStepType={changeStepType}
                 />
               </div>
             )}
