@@ -63,14 +63,23 @@ function previewText(text) {
 // ─── TYPE DROPDOWN (New Thread / Reply) ───────────────────────────────────────
 function TypeDropdown({ value, onChange, allSteps, currentIndex }) {
   const [open, setOpen] = useState(false);
-  const [hovering, setHovering] = useState(false);
+  const [showReplyMenu, setShowReplyMenu] = useState(false);
   const ref = useRef(null);
+  const replyTimeout = useRef(null);
 
   useEffect(() => {
-    const handler = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    const handler = e => {
+      if (ref.current && !ref.current.contains(e.target)) {
+        setOpen(false);
+        setShowReplyMenu(false);
+      }
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
+
+  // Cleanup timeout on unmount
+  useEffect(() => () => clearTimeout(replyTimeout.current), []);
 
   const prevEmailSteps = (allSteps || []).slice(0, currentIndex).filter(s =>
     (STEP_TYPE_MAP[s.subtype] || s.type) === 'email'
@@ -82,10 +91,33 @@ function TypeDropdown({ value, onChange, allSteps, currentIndex }) {
       : `Reply: Step #${value.replyTo}`
     : 'New Thread';
 
+  const handleReplyEnter = () => {
+    clearTimeout(replyTimeout.current);
+    setShowReplyMenu(true);
+  };
+
+  const handleReplyLeave = () => {
+    replyTimeout.current = setTimeout(() => setShowReplyMenu(false), 120);
+  };
+
+  const handleSubmenuEnter = () => {
+    clearTimeout(replyTimeout.current);
+  };
+
+  const handleSubmenuLeave = () => {
+    replyTimeout.current = setTimeout(() => setShowReplyMenu(false), 120);
+  };
+
+  const selectReply = (replyTo, replySubject) => {
+    onChange({ type: 'reply', replyTo, replySubject });
+    setOpen(false);
+    setShowReplyMenu(false);
+  };
+
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => { setOpen(o => !o); setShowReplyMenu(false); }}
         className={cn(
           'flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[11px] font-semibold transition-all',
           open
@@ -104,41 +136,40 @@ function TypeDropdown({ value, onChange, allSteps, currentIndex }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.12 }}
-            className="absolute top-full left-0 mt-1.5 z-[9999] bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden"
-            style={{ minWidth: 220 }}
+            className="absolute top-full left-0 mt-1.5 z-[9999] bg-white rounded-xl border border-slate-200 shadow-xl"
+            style={{ minWidth: 230 }}
           >
             {/* New Thread */}
             <button
-              onClick={() => { onChange({ type: 'new_thread' }); setOpen(false); }}
+              onClick={() => { onChange({ type: 'new_thread' }); setOpen(false); setShowReplyMenu(false); }}
               className={cn(
-                'flex items-center gap-2.5 w-full px-4 py-2.5 text-left transition-colors hover:bg-slate-50',
+                'flex items-center gap-2.5 w-full px-4 py-2.5 text-left transition-colors hover:bg-slate-50 rounded-t-xl',
                 value?.type !== 'reply' && 'bg-emerald-50/60'
               )}
             >
               <div className="w-5 h-5 rounded bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
                 <Mail className="w-2.5 h-2.5 text-blue-500" />
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-[12px] font-semibold text-slate-800">New Thread</p>
                 <p className="text-[10px] text-slate-400">Start a fresh email conversation</p>
               </div>
-              {value?.type !== 'reply' && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+              {value?.type !== 'reply' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />}
             </button>
 
-            {/* Divider */}
             <div className="h-px bg-slate-100 mx-3" />
 
-            {/* Reply option with submenu */}
-            <div
-              className="relative"
-              onMouseEnter={() => setHovering(true)}
-              onMouseLeave={() => setHovering(false)}
-            >
-              <div className={cn(
-                'flex items-center gap-2.5 w-full px-4 py-2.5 text-left transition-colors cursor-pointer',
-                hovering ? 'bg-slate-50' : '',
-                value?.type === 'reply' && 'bg-emerald-50/60'
-              )}>
+            {/* Reply row — hover triggers submenu */}
+            <div className="relative rounded-b-xl overflow-visible">
+              <div
+                onMouseEnter={handleReplyEnter}
+                onMouseLeave={handleReplyLeave}
+                className={cn(
+                  'flex items-center gap-2.5 w-full px-4 py-2.5 text-left transition-colors cursor-pointer rounded-b-xl',
+                  showReplyMenu ? 'bg-slate-50' : 'hover:bg-slate-50',
+                  value?.type === 'reply' && 'bg-emerald-50/60'
+                )}
+              >
                 <div className="w-5 h-5 rounded bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0">
                   <ChevronRight className="w-2.5 h-2.5 text-emerald-500" />
                 </div>
@@ -146,45 +177,54 @@ function TypeDropdown({ value, onChange, allSteps, currentIndex }) {
                   <p className="text-[12px] font-semibold text-slate-800">Reply</p>
                   <p className="text-[10px] text-slate-400">Thread onto an existing email</p>
                 </div>
-                <ChevronRight className="w-3 h-3 text-slate-400" />
-                {value?.type === 'reply' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />}
+                <ChevronRight className="w-3 h-3 text-slate-400 flex-shrink-0" />
+                {value?.type === 'reply' && <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0" />}
               </div>
 
-              {/* Submenu */}
+              {/* Submenu — rendered inline to the right */}
               <AnimatePresence>
-                {hovering && (
+                {showReplyMenu && (
                   <motion.div
-                    initial={{ opacity: 0, x: -4 }}
+                    initial={{ opacity: 0, x: -6 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -4 }}
-                    transition={{ duration: 0.1 }}
-                    className="absolute left-full top-0 ml-1 bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden z-[9999]"
-                    style={{ minWidth: 220 }}
+                    exit={{ opacity: 0, x: -6 }}
+                    transition={{ duration: 0.12 }}
+                    onMouseEnter={handleSubmenuEnter}
+                    onMouseLeave={handleSubmenuLeave}
+                    className="absolute top-0 left-full ml-1.5 bg-white rounded-xl border border-slate-200 shadow-xl z-[9999]"
+                    style={{ minWidth: 230 }}
                   >
-                    <div className="px-3 pt-2.5 pb-1">
+                    <div className="px-4 pt-3 pb-1.5">
                       <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Reply to…</p>
                     </div>
 
                     <button
-                      onClick={() => { onChange({ type: 'reply', replyTo: 'previous' }); setOpen(false); setHovering(false); }}
-                      className="flex items-center gap-2.5 w-full px-3 py-2 text-left hover:bg-emerald-50 transition-colors"
+                      onClick={() => selectReply('previous', null)}
+                      className="flex items-center gap-2.5 w-full px-4 py-2.5 text-left hover:bg-emerald-50 transition-colors"
                     >
-                      <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                      <div className="w-5 h-5 rounded bg-emerald-50 border border-emerald-100 flex items-center justify-center flex-shrink-0">
+                        <ChevronRight className="w-2.5 h-2.5 text-emerald-500" />
+                      </div>
                       <span className="text-[12px] font-medium text-slate-700">Reply to previous step</span>
                     </button>
 
                     {prevEmailSteps.length > 0 && (
                       <>
                         <div className="h-px bg-slate-100 mx-3 my-0.5" />
+                        <div className="px-4 py-1">
+                          <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Specific step</p>
+                        </div>
                         {prevEmailSteps.map((s, i) => (
                           <button
                             key={i}
-                            onClick={() => { onChange({ type: 'reply', replyTo: i + 1, replySubject: s.subject }); setOpen(false); setHovering(false); }}
-                            className="flex items-center gap-2.5 w-full px-3 py-2 text-left hover:bg-emerald-50 transition-colors"
+                            onClick={() => selectReply(i + 1, s.subject)}
+                            className="flex items-center gap-2.5 w-full px-4 py-2 text-left hover:bg-emerald-50 transition-colors"
                           >
-                            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0" />
-                            <span className="text-[12px] font-medium text-slate-700">
-                              Step #{i + 1}: {s.subject || 'No subject'}
+                            <div className="w-5 h-5 rounded bg-slate-50 border border-slate-200 flex items-center justify-center flex-shrink-0 text-[9px] font-bold text-slate-500">
+                              {i + 1}
+                            </div>
+                            <span className="text-[12px] font-medium text-slate-700 truncate">
+                              {s.subject || 'No subject'}
                             </span>
                           </button>
                         ))}
@@ -192,8 +232,9 @@ function TypeDropdown({ value, onChange, allSteps, currentIndex }) {
                     )}
 
                     {prevEmailSteps.length === 0 && (
-                      <p className="text-[11px] text-slate-400 italic px-3 pb-2.5">No previous email steps</p>
+                      <p className="text-[11px] text-slate-400 italic px-4 pb-3">No previous email steps yet</p>
                     )}
+                    <div className="h-2" />
                   </motion.div>
                 )}
               </AnimatePresence>
