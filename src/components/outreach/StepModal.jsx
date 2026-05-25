@@ -1193,7 +1193,7 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
             onClick={() => {
               const isNewThread = (draft.threadType?.type || 'new_thread') === 'new_thread';
               if (isEmail && isNewThread && !draft.subject?.trim()) {
-                toast({ title: 'Subject required', description: 'Please enter a subject line before adding this step.', variant: 'destructive' });
+                toast({ title: 'Subject required — please enter a subject line.', variant: 'destructive', duration: 5000 });
                 return;
               }
               onSave(draft);
