@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'sonner';
 import {
   Mail, MessageCircle, Phone, Clock, CheckCircle2, X,
   User, Maximize2, Minimize2, Bold, Italic, Underline, Link2,
@@ -1188,7 +1189,14 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
             Cancel
           </button>
           <Button
-            onClick={() => onSave(draft)}
+            onClick={() => {
+              const isNewThread = (draft.threadType?.type || 'new_thread') === 'new_thread';
+              if (isEmail && isNewThread && !draft.subject?.trim()) {
+                toast.error('A subject line is required for new thread email steps.');
+                return;
+              }
+              onSave(draft);
+            }}
             className="bg-emerald-600 hover:bg-emerald-700 text-white h-9 px-6 text-[12px] font-semibold gap-2 rounded-lg shadow-sm">
             {isNew ? 'Add Step' : 'Save Changes'}
           </Button>
