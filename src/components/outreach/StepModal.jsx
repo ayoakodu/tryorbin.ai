@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'sonner';
+import { useToast } from '@/components/ui/use-toast';
 import {
   Mail, MessageCircle, Phone, Clock, CheckCircle2, X,
   User, Maximize2, Minimize2, Bold, Italic, Underline, Link2,
@@ -1015,6 +1015,7 @@ function TaskPreview({ step }) {
 
 // ─── MAIN MODAL ───────────────────────────────────────────────────────────────
 export default function StepModal({ step, index, isNew, onSave, onClose, allSteps }) {
+  const { toast } = useToast();
   const [draft, setDraft] = useState(() => ({
     priority: 'normal',
     threadType: { type: 'new_thread' },
@@ -1192,7 +1193,7 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
             onClick={() => {
               const isNewThread = (draft.threadType?.type || 'new_thread') === 'new_thread';
               if (isEmail && isNewThread && !draft.subject?.trim()) {
-                toast.error('A subject line is required for new thread email steps.');
+                toast({ title: 'Subject required', description: 'Please enter a subject line before adding this step.', variant: 'destructive' });
                 return;
               }
               onSave(draft);
