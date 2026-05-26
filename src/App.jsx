@@ -21,7 +21,7 @@ import Integrations from './pages/Integrations';
 import Automations from './pages/Automations';
 import Collaboration from './pages/Collaboration';
 import Lists from './pages/Lists';
-import Emails from './pages/Emails';
+import Emails from './pages/Emails.jsx';
 import Calls from './pages/Calls';
 import Broadcasts from './pages/Broadcasts';
 import Tasks from './pages/Tasks';
@@ -29,6 +29,7 @@ import Settings from './pages/Settings';
 import Deliverability from './pages/Deliverability';
 import OnboardingHub from './pages/OnboardingHub';
 import SequenceBuilder from './pages/SequenceBuilder';
+import EmailOps from './pages/EmailOps';
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
@@ -85,6 +86,7 @@ const AuthenticatedApp = () => {
         <Route path="/deliverability" element={<Deliverability />} />
         <Route path="/onboarding-hub" element={<OnboardingHub />} />
         <Route path="/sequence-builder" element={<SequenceBuilder />} />
+        <Route path="/email-ops" element={<EmailOps />} />
       </Route>
 
       <Route path="*" element={<PageNotFound />} />

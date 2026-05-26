@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Mail, Globe, Shield, Palette, Users, Plug, ChevronRight, Check, Plus } from 'lucide-react';
+import { User, Bell, Mail, Globe, Shield, Palette, Users, Plug, ChevronRight, Check, Plus, Server } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import BrowserCompanionSettings from '@/components/settings/BrowserCompanionSettings';
+import MailboxConnectionCard from '@/components/email/MailboxConnectionCard';
+import ConnectMailboxModal from '@/components/email/ConnectMailboxModal';
+import SMTPConfigPanel from '@/components/email/SMTPConfigPanel';
+import { AnimatePresence } from 'framer-motion';
 
 const SECTIONS = [
   { id: 'profile', label: 'Profile', icon: User },
@@ -14,6 +18,7 @@ const SECTIONS = [
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'team', label: 'Team & Access', icon: Users },
   { id: 'integrations', label: 'Integrations', icon: Plug },
+  { id: 'smtp', label: 'SMTP & Sending', icon: Server },
   { id: 'linkedin', label: 'Browser Companion', icon: Linkedin },
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'appearance', label: 'Appearance', icon: Palette },
@@ -51,6 +56,12 @@ export default function Settings() {
   const [notifs, setNotifs] = useState({ emailDigest: true, taskReminders: true, dealAlerts: true, teamActivity: false, aiInsights: true, campaignReports: true });
   const [appearance, setAppearance] = useState({ theme: 'light', density: 'comfortable' });
   const [emailConnected] = useState(true);
+  const [showConnectModal, setShowConnectModal] = useState(false);
+  const [mailboxes, setMailboxes] = useState([
+    { email: 'john@rvnu.io',      provider: 'gmail',   label: 'Primary',   state: 'connected',   lastSync: '2 min ago', stats: { Sent: 54, Received: 12, Tracked: 41 } },
+    { email: 'outreach@rvnu.io',  provider: 'gmail',   label: 'Outreach',  state: 'connected',   lastSync: '5 min ago', stats: { Sent: 180, Received: 3, Tracked: 154 } },
+    { email: 'sales@rvnu.io',     provider: 'outlook', label: 'Sales',     state: 'expired',     lastSync: '2d ago',    stats: null, errorMessage: 'Session token expired — reconnect to resume sync' },
+  ]);
 
   const handleSave = () => {
     setSaved(true);
@@ -139,24 +150,25 @@ export default function Settings() {
           )}
 
           {active === 'email' && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-              <Section title="Email Connection">
-                <div className="flex items-center gap-4 p-4 rounded-xl mb-5" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
-                  <div className="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center">
-                    <Mail className="w-5 h-5 text-cyan-600" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-800">john@rvnu.io</p>
-                    <p className="text-xs text-slate-500">Google Workspace · john@rvnu.io</p>
-                  </div>
-                  {emailConnected ? (
-                    <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500" /> Connected
-                    </div>
-                  ) : (
-                    <Button size="sm" className="bg-primary text-white text-xs">Connect</Button>
-                  )}
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
+              <Section title="Connected Mailboxes">
+                <div className="space-y-3 mb-4">
+                  {mailboxes.map((mb) => (
+                    <MailboxConnectionCard
+                      key={mb.email}
+                      mailbox={mb}
+                      onReconnect={() => setMailboxes(prev => prev.map(m => m.email === mb.email ? { ...m, state: 'reconnecting' } : m))}
+                      onDisconnect={() => setMailboxes(prev => prev.map(m => m.email === mb.email ? { ...m, state: 'disconnected', stats: null } : m))}
+                      onConnect={() => setShowConnectModal(true)}
+                    />
+                  ))}
                 </div>
+                <Button size="sm" variant="outline" className="text-xs gap-1" onClick={() => setShowConnectModal(true)}>
+                  <Plus className="w-3.5 h-3.5" /> Add Mailbox
+                </Button>
+              </Section>
+
+              <Section title="Sync Settings">
                 <Field label="Sync Sent Emails" hint="Automatically log sent emails to contact timelines">
                   <Toggle value={true} onChange={() => {}} />
                 </Field>
@@ -167,6 +179,12 @@ export default function Settings() {
                   <Toggle value={false} onChange={() => {}} />
                 </Field>
               </Section>
+
+              <AnimatePresence>
+                {showConnectModal && <ConnectMailboxModal onClose={() => setShowConnectModal(false)} onConnect={(provider) => {
+                  setShowConnectModal(false);
+                }} />}
+              </AnimatePresence>
             </motion.div>
           )}
 
@@ -250,6 +268,14 @@ export default function Settings() {
 
               <Section title="Browser Companion">
                 <BrowserCompanionSettings />
+              </Section>
+            </motion.div>
+          )}
+
+          {active === 'smtp' && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+              <Section title="SMTP & Sending Configuration">
+                <SMTPConfigPanel />
               </Section>
             </motion.div>
           )}
