@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { STEP_TYPE_MAP, STEP_SUBTYPE_LABELS } from './AddStepMenu';
+import AdvancedScheduling from './AdvancedScheduling';
 
 const channelColors = {
   email: 'text-blue-500', linkedin: 'text-blue-600',
@@ -560,24 +561,6 @@ function EmailToolbar({ editorRef, onHtmlChange, draft, onDraftChange }) {
           )}
         </div>
 
-        {/* Send on Day */}
-        <div className="flex items-center gap-2 ml-auto pl-3 border-l border-slate-100">
-          <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest whitespace-nowrap">Day</span>
-          <div className="flex items-center border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
-            <button
-              onMouseDown={e => { e.preventDefault(); onDraftChange(d => ({ ...d, day: Math.max(1, (d.day ?? 1) - 1) })); }}
-              className="px-2 py-1 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors text-sm font-bold leading-none">−</button>
-            <input
-              type="number" min={1}
-              value={draft.day ?? 1}
-              onChange={e => onDraftChange(d => ({ ...d, day: Math.max(1, parseInt(e.target.value) || 1) }))}
-              className="w-10 text-[12px] text-center font-semibold text-slate-700 bg-transparent outline-none border-x border-slate-200 py-1 tabular-nums"
-              style={{ MozAppearance: 'textfield' }} />
-            <button
-              onMouseDown={e => { e.preventDefault(); onDraftChange(d => ({ ...d, day: (d.day ?? 1) + 1 })); }}
-              className="px-2 py-1 text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-colors text-sm font-bold leading-none">+</button>
-          </div>
-        </div>
       </div>
     </div>
   );
@@ -721,13 +704,18 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
           draft={draft}
           onDraftChange={onDraftChange}
         />
+        <AdvancedScheduling
+          day={draft.day ?? 1}
+          draft={draft}
+          onDraftChange={onDraftChange}
+        />
       </div>
     </div>
   );
 }
 
 // ─── NON-EMAIL EDITORS ────────────────────────────────────────────────────────
-function LinkedInEditor({ step, onUpdate }) {
+function LinkedInEditor({ step, onUpdate, draft, onDraftChange }) {
   const subtype = step.subtype;
   return (
     <div className="p-6 space-y-5">
@@ -759,11 +747,12 @@ function LinkedInEditor({ step, onUpdate }) {
         <Input value={step.cta || ''} onChange={e => onUpdate({ ...step, cta: e.target.value })}
           placeholder="e.g. Book a 15-min call" className="text-[12px]" />
       </div>
+      <AdvancedScheduling day={draft?.day ?? 1} draft={draft || {}} onDraftChange={onDraftChange} />
     </div>
   );
 }
 
-function WhatsAppEditor({ step, onUpdate }) {
+function WhatsAppEditor({ step, onUpdate, draft, onDraftChange }) {
   return (
     <div className="p-6 space-y-5">
       <div>
@@ -776,11 +765,12 @@ function WhatsAppEditor({ step, onUpdate }) {
         <Input value={step.cta || ''} onChange={e => onUpdate({ ...step, cta: e.target.value })}
           placeholder="e.g. Reply YES to learn more" className="text-[12px]" />
       </div>
+      <AdvancedScheduling day={draft?.day ?? 1} draft={draft || {}} onDraftChange={onDraftChange} />
     </div>
   );
 }
 
-function TaskEditor({ step, onUpdate }) {
+function TaskEditor({ step, onUpdate, draft, onDraftChange }) {
   const isDelay = STEP_TYPE_MAP[step.subtype] === 'delay' || step.type === 'delay';
   const isCall  = step.type === 'call' || step.subtype === 'call';
 
@@ -805,6 +795,7 @@ function TaskEditor({ step, onUpdate }) {
           <Input value={step.notes || ''} onChange={e => onUpdate({ ...step, notes: e.target.value })}
             placeholder="e.g. Wait for prospect to see LinkedIn view" className="text-[12px]" />
         </div>
+        <AdvancedScheduling day={draft?.day ?? 1} draft={draft || {}} onDraftChange={onDraftChange} />
       </div>
     );
   }
@@ -824,6 +815,7 @@ function TaskEditor({ step, onUpdate }) {
         <Input value={step.notes || ''} onChange={e => onUpdate({ ...step, notes: e.target.value })}
           placeholder="Prep notes or context" className="text-[12px]" />
       </div>
+      <AdvancedScheduling day={draft?.day ?? 1} draft={draft || {}} onDraftChange={onDraftChange} />
     </div>
   );
 }
@@ -1053,9 +1045,9 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
         stepIndex={index}
       />
     );
-    if (baseType === 'linkedin') return <LinkedInEditor step={draft} onUpdate={setDraft} />;
-    if (baseType === 'whatsapp') return <WhatsAppEditor step={draft} onUpdate={setDraft} />;
-    return <TaskEditor step={draft} onUpdate={setDraft} />;
+    if (baseType === 'linkedin') return <LinkedInEditor step={draft} onUpdate={setDraft} draft={draft} onDraftChange={setDraft} />;
+    if (baseType === 'whatsapp') return <WhatsAppEditor step={draft} onUpdate={setDraft} draft={draft} onDraftChange={setDraft} />;
+    return <TaskEditor step={draft} onUpdate={setDraft} draft={draft} onDraftChange={setDraft} />;
   };
 
   const renderPreview = () => {
