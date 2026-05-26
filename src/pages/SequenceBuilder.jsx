@@ -15,6 +15,9 @@ import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
 import AddStepMenu, { STEP_TYPE_MAP } from '@/components/outreach/AddStepMenu';
 import StepModal from '@/components/outreach/StepModal';
 import WorkflowCanvas from '@/components/outreach/WorkflowCanvas';
+import LinkedInActivityTracker from '@/components/linkedin/LinkedInActivityTracker';
+import LinkedInSequenceIntelligence from '@/components/linkedin/LinkedInSequenceIntelligence';
+import { CompanionStatusBar } from '@/components/browser-companion/LinkedInCompanionWidget';
 
 const statusBadge = {
   active: 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -23,12 +26,13 @@ const statusBadge = {
 };
 
 const TABS = [
-  { id: 'steps', label: 'Steps' },
-  { id: 'prospects', label: 'Prospects' },
-  { id: 'emails', label: 'Emails' },
-  { id: 'calls', label: 'Calls' },
-  { id: 'stats', label: 'Stats' },
-  { id: 'settings', label: 'Settings' },
+  { id: 'steps',    label: 'Steps'           },
+  { id: 'linkedin', label: 'LinkedIn Steps'  },
+  { id: 'prospects',label: 'Prospects'       },
+  { id: 'emails',   label: 'Emails'          },
+  { id: 'calls',    label: 'Calls'           },
+  { id: 'stats',    label: 'Stats'           },
+  { id: 'settings', label: 'Settings'        },
 ];
 
 // Multichannel illustration for empty state
@@ -272,7 +276,21 @@ export default function SequenceBuilder() {
 
       {/* Main Content */}
       <div className="flex-1 overflow-y-auto">
-        {activeTab !== 'steps' && (
+        {activeTab === 'linkedin' && (
+          <div className="p-6 space-y-5">
+            <CompanionStatusBar connected={false} onConnect={() => {}} />
+            <LinkedInSequenceIntelligence
+              rules={seq.linkedInRules || []}
+              onChange={rules => setSeq(s => ({ ...s, linkedInRules: rules }))}
+            />
+            <div className="bg-white rounded-xl border border-slate-200 p-5">
+              <h3 className="text-[12px] font-bold text-slate-800 mb-4">LinkedIn Step Activity</h3>
+              <LinkedInActivityTracker sequenceId={seq.id?.toString()} />
+            </div>
+          </div>
+        )}
+
+        {activeTab !== 'steps' && activeTab !== 'linkedin' && (
           <div className="flex items-center justify-center h-full min-h-[200px]">
             <div className="text-center">
               <p className="text-xs font-medium text-slate-600 capitalize">{activeTab}</p>

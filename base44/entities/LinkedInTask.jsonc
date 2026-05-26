@@ -1,0 +1,111 @@
+{
+  "name": "LinkedInTask",
+  "type": "object",
+  "properties": {
+    "task_type": {
+      "type": "string",
+      "enum": [
+        "send_connection_request",
+        "send_linkedin_message",
+        "view_profile",
+        "engage_with_post",
+        "follow_up_message",
+        "reply_reminder",
+        "visit_company_page"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "completed",
+        "overdue",
+        "skipped",
+        "snoozed"
+      ],
+      "default": "pending"
+    },
+    "priority": {
+      "type": "string",
+      "enum": [
+        "low",
+        "normal",
+        "high"
+      ],
+      "default": "normal"
+    },
+    "assigned_user_id": {
+      "type": "string"
+    },
+    "task_result": {
+      "type": "string",
+      "enum": [
+        "accepted",
+        "no_response",
+        "declined",
+        "completed",
+        "replied"
+      ]
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "completion_date": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "snoozed_until": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "notes": {
+      "type": "string"
+    },
+    "ai_generated_message": {
+      "type": "string"
+    },
+    "ai_recommendations": {
+      "type": "string"
+    },
+    "sequence_id": {
+      "type": "string"
+    },
+    "step_id": {
+      "type": "string"
+    },
+    "contact_id": {
+      "type": "string"
+    },
+    "contact_name": {
+      "type": "string"
+    },
+    "contact_title": {
+      "type": "string"
+    },
+    "contact_company": {
+      "type": "string"
+    },
+    "company_id": {
+      "type": "string"
+    },
+    "linkedin_profile_url": {
+      "type": "string"
+    },
+    "linkedin_post_url": {
+      "type": "string"
+    },
+    "linkedin_company_page_url": {
+      "type": "string"
+    },
+    "last_activity_date": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "task_type",
+    "status",
+    "priority"
+  ]
+}

@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { STEP_TYPE_MAP, STEP_SUBTYPE_LABELS } from './AddStepMenu';
 import AdvancedScheduling from './AdvancedScheduling';
+import LinkedInStepEditor from '@/components/linkedin/LinkedInStepEditor';
 
 const channelColors = {
   email: 'text-blue-500', linkedin: 'text-blue-600',
@@ -1045,7 +1046,14 @@ export default function StepModal({ step, index, isNew, onSave, onClose, allStep
         stepIndex={index}
       />
     );
-    if (baseType === 'linkedin') return <LinkedInEditor step={draft} onUpdate={setDraft} draft={draft} onDraftChange={setDraft} />;
+    if (baseType === 'linkedin') return (
+      <LinkedInStepEditor
+        step={draft}
+        onUpdate={setDraft}
+        draft={draft}
+        onDraftChange={setDraft}
+      />
+    );
     if (baseType === 'whatsapp') return <WhatsAppEditor step={draft} onUpdate={setDraft} draft={draft} onDraftChange={setDraft} />;
     return <TaskEditor step={draft} onUpdate={setDraft} draft={draft} onDraftChange={setDraft} />;
   };
