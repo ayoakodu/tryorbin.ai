@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { base44 } from '@/api/base44Client';
 import { TASK_TYPE_LABELS, TASK_TYPE_DESCRIPTIONS, openLinkedInProfile } from '@/utils/linkedinUtils';
 import AdvancedScheduling from '@/components/outreach/AdvancedScheduling';
+import LinkedInIntelligencePanel from '@/components/linkedin/LinkedInIntelligencePanel';
 
 const TASK_ICONS = {
   send_connection_request: UserPlus,
@@ -288,6 +289,12 @@ export default function LinkedInStepEditor({ step, onUpdate, draft, onDraftChang
             className="text-[12px]"
           />
         </div>
+
+        {/* Sequence Intelligence — inline rules */}
+        <LinkedInIntelligencePanel
+          rules={draft?.linkedInRules || {}}
+          onChange={rules => onDraftChange(d => ({ ...d, linkedInRules: rules }))}
+        />
 
         {/* Advanced scheduling */}
         <AdvancedScheduling

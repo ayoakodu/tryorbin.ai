@@ -12,6 +12,7 @@ import {
   Sparkles, Loader2, AlertTriangle, CheckCircle2, Users,
   BarChart3, Reply, Calendar, MousePointerClick, Send
 } from 'lucide-react';
+import LinkedInAnalyticsCard from '@/components/linkedin/LinkedInAnalyticsCard';
 
 // Channel performance comparison
 const channelPerformanceData = [
@@ -308,6 +309,11 @@ Return exactly 4 insights. Each must reference a specific metric. JSON: insights
 
         {activeTab === 'sequences' && (
           <div className="space-y-4">
+            {/* LinkedIn Activity */}
+            <div className="glass rounded-xl p-5">
+              <LinkedInAnalyticsCard />
+            </div>
+
             {/* Step Performance Bar Chart */}
             <div className="glass rounded-xl p-5">
               <h3 className="font-bold text-sm mb-1 text-foreground">Step-by-Step Performance</h3>

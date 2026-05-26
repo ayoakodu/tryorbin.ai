@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { User, Bell, Mail, Globe, Shield, Palette, Users, Plug, ChevronRight, Check, Plus } from 'lucide-react';
+import { Linkedin } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import BrowserCompanionSettings from '@/components/settings/BrowserCompanionSettings';
 
 const SECTIONS = [
   { id: 'profile', label: 'Profile', icon: User },
@@ -12,6 +14,7 @@ const SECTIONS = [
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'team', label: 'Team & Access', icon: Users },
   { id: 'integrations', label: 'Integrations', icon: Plug },
+  { id: 'linkedin', label: 'Browser Companion', icon: Linkedin },
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'appearance', label: 'Appearance', icon: Palette },
 ];
@@ -217,7 +220,7 @@ export default function Settings() {
           )}
 
           {active === 'integrations' && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-5">
               <Section title="Connected Integrations">
                 <div className="space-y-3">
                   {[
@@ -243,6 +246,18 @@ export default function Settings() {
                     </div>
                   ))}
                 </div>
+              </Section>
+
+              <Section title="Browser Companion">
+                <BrowserCompanionSettings />
+              </Section>
+            </motion.div>
+          )}
+
+          {active === 'linkedin' && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+              <Section title="Browser Companion">
+                <BrowserCompanionSettings />
               </Section>
             </motion.div>
           )}
