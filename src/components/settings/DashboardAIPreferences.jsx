@@ -9,17 +9,47 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-// ── GTM ROLES ─────────────────────────────────────────────────────────────────
-const GTM_ROLES = [
-  { id: 'sdr',       label: 'SDR',              sub: 'Outbound prospecting & first contact',   icon: Zap,         color: 'text-cyan-500',    bg: 'bg-cyan-50'    },
-  { id: 'sdr_mgr',   label: 'SDR Manager',       sub: 'Team coaching & sequence performance',   icon: Users,       color: 'text-blue-500',    bg: 'bg-blue-50'    },
-  { id: 'ae',        label: 'Account Executive', sub: 'Deal progression & closing',             icon: DollarSign,  color: 'text-violet-500',  bg: 'bg-violet-50'  },
-  { id: 'sales_ldr', label: 'Sales Leader',       sub: 'Pipeline visibility & team performance', icon: TrendingUp,  color: 'text-emerald-600', bg: 'bg-emerald-50' },
-  { id: 'founder',   label: 'Founder / CEO',      sub: 'Revenue overview & growth',             icon: Star,        color: 'text-amber-500',   bg: 'bg-amber-50'   },
-  { id: 'revops',    label: 'RevOps',             sub: 'Process health & funnel optimization',  icon: Activity,    color: 'text-orange-500',  bg: 'bg-orange-50'  },
-  { id: 'mktg',      label: 'Marketing Leader',   sub: 'Campaign performance & demand gen',     icon: BarChart3,   color: 'text-pink-500',    bg: 'bg-pink-50'    },
-  { id: 'cs',        label: 'Customer Success',   sub: 'Retention, expansion & health',         icon: Shield,      color: 'text-teal-500',    bg: 'bg-teal-50'    },
+// ── GTM ROLE CATEGORIES ───────────────────────────────────────────────────────
+const ROLE_CATEGORIES = [
+  {
+    id: 'sales',
+    label: 'Sales',
+    roles: [
+      { id: 'sdr',       label: 'SDR',              sub: 'Outbound prospecting & first contact',    icon: Zap,         color: 'text-cyan-500',    bg: 'bg-cyan-50'    },
+      { id: 'sdr_mgr',   label: 'SDR Manager',       sub: 'Team coaching & sequence performance',    icon: Users,       color: 'text-blue-500',    bg: 'bg-blue-50'    },
+      { id: 'ae',        label: 'Account Executive', sub: 'Deal progression & closing',              icon: DollarSign,  color: 'text-violet-500',  bg: 'bg-violet-50'  },
+      { id: 'sales_ldr', label: 'Sales Leader',       sub: 'Pipeline visibility & team performance', icon: TrendingUp,  color: 'text-emerald-600', bg: 'bg-emerald-50' },
+    ],
+  },
+  {
+    id: 'marketing',
+    label: 'Marketing',
+    roles: [
+      { id: 'mktg',      label: 'Marketing Leader',  sub: 'Campaign strategy & marketing oversight', icon: BarChart3,   color: 'text-pink-500',    bg: 'bg-pink-50'    },
+      { id: 'demand_gen',label: 'Demand Generation', sub: 'Pipeline generation & campaign execution', icon: Target,     color: 'text-rose-500',    bg: 'bg-rose-50'    },
+      { id: 'growth',    label: 'Growth Marketer',   sub: 'Acquisition, engagement & growth experiments', icon: TrendingUp, color: 'text-fuchsia-500', bg: 'bg-fuchsia-50' },
+      { id: 'mktg_ops',  label: 'Marketing Ops',     sub: 'Automation, attribution & funnel operations', icon: Activity,  color: 'text-purple-500',  bg: 'bg-purple-50'  },
+    ],
+  },
+  {
+    id: 'revops',
+    label: 'Revenue Operations',
+    roles: [
+      { id: 'revops',    label: 'RevOps',            sub: 'Process health & funnel optimization',   icon: Sparkles,    color: 'text-orange-500',  bg: 'bg-orange-50'  },
+      { id: 'founder',   label: 'Founder / CEO',      sub: 'Revenue overview & growth',             icon: Star,        color: 'text-amber-500',   bg: 'bg-amber-50'   },
+    ],
+  },
+  {
+    id: 'cs',
+    label: 'Customer Success',
+    roles: [
+      { id: 'cs',        label: 'Customer Success',  sub: 'Retention, expansion & health',          icon: Shield,      color: 'text-teal-500',    bg: 'bg-teal-50'    },
+    ],
+  },
 ];
+
+// Flat list for lookups (header role label, etc.)
+const GTM_ROLES = ROLE_CATEGORIES.flatMap(c => c.roles);
 
 // ── DASHBOARD WIDGETS ─────────────────────────────────────────────────────────
 const WIDGETS = [
@@ -100,38 +130,95 @@ const Toggle = ({ value, onChange }) => (
 
 // ── ROLE PICKER ───────────────────────────────────────────────────────────────
 function RolePicker({ value, onChange }) {
+  // Determine which category contains the selected role
+  const activeCategory = ROLE_CATEGORIES.find(c => c.roles.some(r => r.id === value))?.id ?? 'sales';
+  const [openCategories, setOpenCategories] = useState([activeCategory]);
+
+  const toggleCategory = (catId) => {
+    setOpenCategories(prev =>
+      prev.includes(catId) ? prev.filter(id => id !== catId) : [...prev, catId]
+    );
+  };
+
   return (
     <Card>
       <CardTitle sub="AI recommendations, widget defaults & dashboard priorities adapt to your role.">
         GTM Role & Persona
       </CardTitle>
-      <div className="grid grid-cols-2 gap-2">
-        {GTM_ROLES.map(role => {
-          const Icon = role.icon;
-          const active = value === role.id;
+
+      <div className="space-y-2">
+        {ROLE_CATEGORIES.map(cat => {
+          const isOpen = openCategories.includes(cat.id);
+          const hasSelected = cat.roles.some(r => r.id === value);
+
           return (
-            <button key={role.id} onClick={() => onChange(role.id)}
+            <div key={cat.id}
               className={cn(
-                'flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all',
-                active
-                  ? 'border-emerald-300 bg-emerald-50/60 shadow-sm'
-                  : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                'rounded-xl border overflow-hidden transition-colors',
+                hasSelected ? 'border-emerald-200' : 'border-slate-200'
               )}
             >
-              <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5', role.bg)}>
-                <Icon className={cn('w-3.5 h-3.5', role.color)} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <p className={cn('text-[12px] font-semibold', active ? 'text-emerald-800' : 'text-slate-800')}>{role.label}</p>
-                  {active && <Check className="w-3 h-3 text-emerald-600 flex-shrink-0" />}
+              {/* Category header */}
+              <button
+                onClick={() => toggleCategory(cat.id)}
+                className={cn(
+                  'w-full flex items-center justify-between px-4 py-2.5 text-left transition-colors',
+                  hasSelected ? 'bg-emerald-50/60' : isOpen ? 'bg-slate-50' : 'bg-white hover:bg-slate-50'
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <span className={cn('text-[12px] font-bold', hasSelected ? 'text-emerald-800' : 'text-slate-700')}>
+                    {cat.label}
+                  </span>
+                  {hasSelected && (
+                    <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-100 border border-emerald-200 px-1.5 py-0.5 rounded-full">
+                      {cat.roles.find(r => r.id === value)?.label}
+                    </span>
+                  )}
                 </div>
-                <p className="text-[10px] text-slate-400 mt-0.5 leading-tight">{role.sub}</p>
-              </div>
-            </button>
+                <ChevronRight className={cn(
+                  'w-3.5 h-3.5 text-slate-400 transition-transform',
+                  isOpen && 'rotate-90'
+                )} />
+              </button>
+
+              {/* Roles grid */}
+              {isOpen && (
+                <div className="px-3 pb-3 pt-2 grid grid-cols-2 gap-2 bg-white border-t border-slate-100">
+                  {cat.roles.map(role => {
+                    const Icon = role.icon;
+                    const active = value === role.id;
+                    return (
+                      <button key={role.id} onClick={() => onChange(role.id)}
+                        className={cn(
+                          'flex items-start gap-3 p-3.5 rounded-xl border text-left transition-all',
+                          active
+                            ? 'border-emerald-300 bg-emerald-50/60 shadow-sm'
+                            : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        )}
+                      >
+                        <div className={cn('w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5', role.bg)}>
+                          <Icon className={cn('w-3.5 h-3.5', role.color)} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5">
+                            <p className={cn('text-[12px] font-semibold', active ? 'text-emerald-800' : 'text-slate-800')}>
+                              {role.label}
+                            </p>
+                            {active && <Check className="w-3 h-3 text-emerald-600 flex-shrink-0" />}
+                          </div>
+                          <p className="text-[10px] text-slate-400 mt-0.5 leading-tight">{role.sub}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
+
       <div className="mt-3 pt-3 border-t border-slate-100">
         <p className="text-[11px] text-slate-400">
           Role affects AI prioritization, default widgets, and recommended actions.
