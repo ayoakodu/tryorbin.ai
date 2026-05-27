@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Bell, Mail, Globe, Shield, Palette, Users, Plug, ChevronRight, Check, Plus, Server } from 'lucide-react';
+import { User, Bell, Mail, Globe, Shield, Palette, Users, Plug, ChevronRight, Check, Plus, Server, Brain } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
@@ -9,11 +9,13 @@ import BrowserCompanionSettings from '@/components/settings/BrowserCompanionSett
 import MailboxConnectionCard from '@/components/email/MailboxConnectionCard';
 import ConnectMailboxModal from '@/components/email/ConnectMailboxModal';
 import SMTPConfigPanel from '@/components/email/SMTPConfigPanel';
+import DashboardAIPreferences from '@/components/settings/DashboardAIPreferences';
 import { AnimatePresence } from 'framer-motion';
 
 const SECTIONS = [
   { id: 'profile', label: 'Profile', icon: User },
   { id: 'workspace', label: 'Workspace', icon: Globe },
+  { id: 'dashboard_ai', label: 'Dashboard & AI', icon: Brain },
   { id: 'email', label: 'Email Connection', icon: Mail },
   { id: 'notifications', label: 'Notifications', icon: Bell },
   { id: 'team', label: 'Team & Access', icon: Users },
@@ -88,7 +90,7 @@ export default function Settings() {
         </div>
 
         {/* Content */}
-        <div className="flex-1 max-w-2xl space-y-5">
+        <div className="flex-1 max-w-3xl space-y-5">
 
           {active === 'profile' && (
             <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
@@ -117,6 +119,12 @@ export default function Settings() {
                   ))}
                 </div>
               </Section>
+            </motion.div>
+          )}
+
+          {active === 'dashboard_ai' && (
+            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+              <DashboardAIPreferences onSave={handleSave} saved={saved} />
             </motion.div>
           )}
 
