@@ -56,7 +56,7 @@ const navData = {
           { icon: CalendarCheck, title: 'Meeting Generation', desc: 'Book more qualified meetings with less effort.' },
           { icon: TrendingUp, title: 'Pipeline Acceleration', desc: 'Move deals faster with AI-driven engagement.' },
           { icon: Inbox, title: 'Lead Follow-Up', desc: 'Never let a warm lead go cold again.' },
-          { icon: ArrowRight, title: 'See all use cases', desc: 'Explore every workflow RVNU supports.', highlight: true, seeAll: true },
+          { icon: ArrowRight, title: 'See all use cases', desc: 'Explore every workflow Orbin supports.', highlight: true, seeAll: true },
         ],
       },
       {
@@ -66,7 +66,7 @@ const navData = {
           { icon: Wallet, title: 'FinTech & Payments', desc: 'Reach financial decision-makers at the right time.' },
           { icon: Truck, title: 'Logistics & Supply Chain', desc: 'Engage logistics operators and procurement teams.' },
           { icon: Briefcase, title: 'Agencies & Consulting', desc: 'Win new retainers and scale client pipelines.' },
-          { icon: ArrowRight, title: 'See all 12 industries', desc: 'Explore every vertical RVNU supports.', highlight: true, seeAll: true },
+          { icon: ArrowRight, title: 'See all 12 industries', desc: 'Explore every vertical Orbin supports.', highlight: true, seeAll: true },
         ],
       },
       {
@@ -116,9 +116,9 @@ const navData = {
         label: 'CONTENT',
         cols: 2,
         items: [
-          { icon: BookOpen, title: 'Blog', desc: 'Insights, trends, and GTM strategies from the RVNU team.' },
-          { icon: Newspaper, title: 'Product Updates', desc: 'See the latest features and improvements to RVNU.' },
-          { icon: Eye, title: 'Customer Stories', desc: 'How revenue teams use RVNU to grow faster.' },
+          { icon: BookOpen, title: 'Blog', desc: 'Insights, trends, and GTM strategies from the Orbin team.' },
+          { icon: Newspaper, title: 'Product Updates', desc: 'See the latest features and improvements to Orbin.' },
+          { icon: Eye, title: 'Customer Stories', desc: 'How revenue teams use Orbin to grow faster.' },
         ],
       },
       {
@@ -132,7 +132,7 @@ const navData = {
           { icon: Map, title: 'GTM Playbooks' },
           { icon: FileText, title: 'Revenue Templates' },
           { icon: Video, title: 'Workflow Tutorials' },
-          { icon: GraduationCap, title: 'RVNU Academy' },
+          { icon: GraduationCap, title: 'Orbin Academy' },
         ],
       },
       {
@@ -140,8 +140,8 @@ const navData = {
         cols: 2,
         items: [
           { icon: Monitor, title: 'Webinars', desc: 'Live and on-demand sessions with GTM experts.' },
-          { icon: Bell, title: 'Events', desc: 'Conferences, meetups, and RVNU-hosted events.' },
-          { icon: MessageSquare, title: 'Join the Community', desc: 'Connect with revenue operators using RVNU.' },
+          { icon: Bell, title: 'Events', desc: 'Conferences, meetups, and Orbin-hosted events.' },
+          { icon: MessageSquare, title: 'Join the Community', desc: 'Connect with revenue operators using Orbin.' },
         ],
       },
       {
@@ -149,8 +149,8 @@ const navData = {
         cols: 2,
         items: [
           { icon: Building, title: 'About Us', desc: "It's time we stop working for our software." },
-          { icon: UserPlus, title: 'Careers', desc: 'Join the RVNU team.' },
-          { icon: Puzzle, title: 'Partners', desc: 'Introducing the RVNU Agency Network.' },
+          { icon: UserPlus, title: 'Careers', desc: 'Join the Orbin team.' },
+          { icon: Puzzle, title: 'Partners', desc: 'Introducing the Orbin Agency Network.' },
           { icon: ContactRound, title: 'Contact', desc: 'Get in touch with our team.' },
         ],
       },
@@ -236,7 +236,7 @@ export default function NavBar() {
         {/* Logo */}
         <div className="flex items-center gap-2.5 flex-shrink-0">
           <RVNULogo size={32} className="rounded-lg" />
-          <span className="text-xl font-bold gradient-text">RVNU</span>
+          <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png" alt="Orbin" className="h-7 object-contain" />
         </div>
 
         {/* Centre nav items */}

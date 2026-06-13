@@ -11,6 +11,8 @@ import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
 import RVNUWorkflowModal from '@/components/landing/RVNUWorkflowModal';
 import RVNULogo from '@/components/ui/RVNULogo.jsx';
+
+const ORBIN_WORDMARK = 'https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png';
 import HeroDashboardPreview from '@/components/landing/HeroDashboardPreview';
 
 const africanCountries = [
@@ -27,7 +29,7 @@ const steps = [
     number: '01',
     icon: Search,
     title: 'AI Discovers & Enriches Your Ideal Prospects',
-    description: 'RVNU is being designed to automatically surface high-fit leads from across African and emerging markets — enriching each contact with firmographic data, intent signals, and buying stage indicators, so your team starts every conversation informed.',
+    description: 'Orbin is being designed to automatically surface high-fit leads from across African and emerging markets — enriching each contact with firmographic data, intent signals, and buying stage indicators, so your team starts every conversation informed.',
     tags: ['Smart ICP Matching', 'Intent Signals', 'Contact Enrichment'],
   },
   {
@@ -41,7 +43,7 @@ const steps = [
     number: '03',
     icon: TrendingUp,
     title: 'Unified Pipeline & GTM Workspace',
-    description: 'RVNU centralizes pipeline management, team collaboration, deal visibility, and GTM execution into one connected workspace — helping revenue teams stay aligned and focused on the right opportunities.',
+    description: 'Orbin centralizes pipeline management, team collaboration, deal visibility, and GTM execution into one connected workspace — helping revenue teams stay aligned and focused on the right opportunities.',
     tags: ['Pipeline Visibility', 'Team Collaboration', 'Deal Tracking', 'GTM Workspace'],
   },
   {
@@ -68,11 +70,11 @@ const steps = [
 ];
 
 const faqs = [
-  { q: 'Who is RVNU built for?', a: 'RVNU is being designed specifically for revenue and GTM teams operating in Africa and emerging markets — including sales, marketing, and growth functions at startups, scale-ups, and enterprise organisations.' },
-  { q: 'How is RVNU different from HubSpot or Apollo?', a: 'RVNU is designed as an AI-native platform purpose-built for emerging markets. Rather than adapting tools built for Western markets, we\'re building from scratch with local context — regional channels like WhatsApp, local currencies, and market-aware AI.' },
-  { q: 'What does "AI-native" mean for RVNU?', a: 'AI is not a bolt-on feature — it\'s intended to be embedded throughout every workflow: from prospect discovery and outreach personalisation to deal scoring and campaign optimisation.' },
-  { q: 'What channels will RVNU support?', a: 'Our roadmap includes email, LinkedIn, WhatsApp, SMS, and phone tasks — all unified in one multichannel workspace, reflecting how GTM teams in Africa actually communicate.' },
-  { q: 'When will RVNU launch, and how do I get early access?', a: 'We\'re currently in development and building towards our early access launch. Join the waitlist to be among the first to experience RVNU and help shape the platform.' },
+  { q: 'Who is Orbin built for?', a: 'Orbin is being designed specifically for revenue and GTM teams operating in Africa and emerging markets — including sales, marketing, and growth functions at startups, scale-ups, and enterprise organisations.' },
+  { q: 'How is Orbin different from HubSpot or Apollo?', a: 'Orbin is designed as an AI-native platform purpose-built for emerging markets. Rather than adapting tools built for Western markets, we\'re building from scratch with local context — regional channels like WhatsApp, local currencies, and market-aware AI.' },
+  { q: 'What does "AI-native" mean for Orbin?', a: 'AI is not a bolt-on feature — it\'s intended to be embedded throughout every workflow: from prospect discovery and outreach personalisation to deal scoring and campaign optimisation.' },
+  { q: 'What channels will Orbin support?', a: 'Our roadmap includes email, LinkedIn, WhatsApp, SMS, and phone tasks — all unified in one multichannel workspace, reflecting how GTM teams in Africa actually communicate.' },
+  { q: 'When will Orbin launch, and how do I get early access?', a: 'We\'re currently in development and building towards our early access launch. Join the waitlist to be among the first to experience Orbin and help shape the platform.' },
 ];
 
 const earlyAccessBenefits = [
@@ -113,7 +115,7 @@ export default function Landing() {
               <span className="gradient-text">The AI-Native GTM Execution Platform.</span>
             </h1>
             <p className="text-base md:text-lg text-slate-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-              RVNU automates the full GTM execution cycle — from multichannel outreach and pipeline management to AI-driven follow-ups and revenue forecasting — built for revenue teams across Africa and emerging markets.
+              Orbin automates the full GTM execution cycle — from multichannel outreach and pipeline management to AI-driven follow-ups and revenue forecasting — built for revenue teams across Africa and emerging markets.
             </p>
           </motion.div>
 
@@ -161,7 +163,7 @@ export default function Landing() {
                 <Play className="w-3 h-3 text-slate-400 group-hover:text-primary transition-colors duration-200 ml-0.5" />
               </span>
               <span className="border-b border-dashed border-slate-600 group-hover:border-primary/50 transition-colors duration-200">
-                See How RVNU Works
+                See How Orbin Works
               </span>
             </button>
           </motion.div>
@@ -194,9 +196,9 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-green-200 bg-green-50 text-xs text-green-700 mb-4">
-              <Zap className="w-3 h-3 text-green-600" /> The RVNU Execution Engine
+              <Zap className="w-3 h-3 text-green-600" /> The Orbin Execution Engine
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">How RVNU Powers Your GTM Execution</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">How Orbin Powers Your GTM Execution</h2>
             <p className="text-base text-gray-500 max-w-2xl mx-auto">
               A step-by-step look at the AI-driven execution workflows we're building — from first touchpoint to closed deal and beyond.
             </p>
@@ -272,7 +274,7 @@ export default function Landing() {
                 </div>
                 <h2 className="text-xl md:text-2xl font-bold mb-4">AI assistance embedded across your GTM workflows</h2>
                 <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                  RVNU uses embedded AI assistance to help revenue teams draft outreach, generate ideas, summarize account insights, and support day-to-day GTM execution workflows directly inside the platform.
+                  Orbin uses embedded AI assistance to help revenue teams draft outreach, generate ideas, summarize account insights, and support day-to-day GTM execution workflows directly inside the platform.
                 </p>
                 <div className="space-y-3">
                   {[
@@ -295,7 +297,7 @@ export default function Landing() {
                   <div className="w-6 h-6 rounded-lg gradient-brand flex items-center justify-center">
                     <Sparkles className="w-3 h-3 text-black" />
                   </div>
-                  <span className="text-xs font-semibold text-primary">RVNU AI Copilot</span>
+                  <span className="text-xs font-semibold text-primary">Orbin AI Copilot</span>
                   <div className="ml-auto flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse-glow" />
                     <span className="text-[10px] text-muted-foreground">In development</span>
@@ -327,12 +329,12 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold mb-3 gradient-text">Track smarter. Execute faster.</h2>
-            <p className="text-slate-400 max-w-xl mx-auto">Most GTM tools focus on visibility. RVNU helps revenue teams execute outreach, manage follow-ups, coordinate workflows, and move pipeline faster — with AI assistance embedded throughout.</p>
+            <p className="text-slate-400 max-w-xl mx-auto">Most GTM tools focus on visibility. Orbin helps revenue teams execute outreach, manage follow-ups, coordinate workflows, and move pipeline faster — with AI assistance embedded throughout.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
-              { icon: MessageSquare, title: 'WhatsApp-Native Execution', desc: 'WhatsApp is a core GTM channel across emerging markets. RVNU treats it as a first-class execution channel for outreach, follow-ups, engagement tracking, and workflow coordination.' },
-              { icon: GitBranch, title: 'Workflow Automation, Not Dashboards', desc: 'RVNU helps revenue teams coordinate outreach, manage follow-ups, and streamline GTM workflows from one unified execution workspace.' },
+              { icon: MessageSquare, title: 'WhatsApp-Native Execution', desc: 'WhatsApp is a core GTM channel across emerging markets. Orbin treats it as a first-class execution channel for outreach, follow-ups, engagement tracking, and workflow coordination.' },
+              { icon: GitBranch, title: 'Workflow Automation, Not Dashboards', desc: 'Orbin helps revenue teams coordinate outreach, manage follow-ups, and streamline GTM workflows from one unified execution workspace.' },
               { icon: TrendingUp, title: 'Revenue Outcomes Over Features', desc: 'Every workflow is designed around execution outcomes — helping teams move pipeline, engage accounts, and coordinate GTM activity from one centralized workspace.' },
             ].map((item, i) => (
               <motion.div key={item.title}
@@ -380,16 +382,16 @@ export default function Landing() {
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
               <div className="flex items-center justify-center mx-auto mb-6">
-                <RVNULogo size={56} className="rounded-2xl" />
+                <img src={ORBIN_WORDMARK} alt="Orbin" className="h-10 object-contain" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with RVNU</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with Orbin</h2>
               <p className="text-muted-foreground mb-1 max-w-2xl mx-auto whitespace-nowrap">
                 The AI-native GTM execution platform for Africa's revenue teams.
               </p>
               <p className="text-muted-foreground mb-3 max-w-md mx-auto leading-relaxed">
                 Coordinate outreach, manage pipeline workflows, and streamline follow-ups from one unified workspace.
               </p>
-              <p className="text-xs text-slate-400 mb-8">RVNU is currently in development. Early waitlist members will receive priority access and product updates.</p>
+              <p className="text-xs text-slate-400 mb-8">Orbin is currently in development. Early waitlist members will receive priority access and product updates.</p>
 
               {!joined ? (
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">

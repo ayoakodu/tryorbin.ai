@@ -32,7 +32,7 @@ const footerLinks = {
     { label: 'GTM Playbooks' },
     { label: 'Revenue Templates' },
     { label: 'Workflow Tutorials' },
-    { label: 'RVNU Academy' },
+    { label: 'Orbin Academy' },
     { label: 'Webinars' },
     { label: 'Events' },
     { label: 'Join the Community' },
@@ -97,7 +97,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <RVNULogo size={28} className="rounded-md" />
-              <span className="text-sm font-bold gradient-text">RVNU</span>
+              <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png" alt="Orbin" className="h-5 object-contain" />
             </div>
             <div className="flex items-center gap-2">
               {socialLinks.map((s) => (
@@ -133,7 +133,7 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/10 pt-5 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[11px] text-slate-400">© 2026 RVNU. Built for Africa's revenue operators.</p>
+          <p className="text-[11px] text-slate-400">© 2026 Orbin. Built for Africa's revenue operators.</p>
           <div className="flex flex-wrap items-center justify-center gap-5 text-[11px] text-slate-400">
             <a href="#" className="hover:text-white transition-colors">Privacy</a>
             <a href="#" className="hover:text-white transition-colors">Terms</a>

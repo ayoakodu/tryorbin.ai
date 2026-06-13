@@ -61,7 +61,7 @@ export default function HeroDashboardPreview() {
             {/* Logo */}
             <div className="flex items-center gap-1.5 px-2 pb-3 mb-2 border-b border-gray-100">
               <RVNULogo size={18} className="rounded" />
-              <span className="text-[11px] font-bold text-gray-800">RVNU</span>
+              <span className="text-[11px] font-bold text-gray-800">Orbin</span>
               <span className="ml-auto text-[7px] px-1 py-0.5 rounded bg-gray-100 text-gray-500 font-semibold border border-gray-200">BETA</span>
             </div>
 
@@ -300,7 +300,7 @@ export default function HeroDashboardPreview() {
           </div>
         </div>
       </div>
-      <p className="text-center text-xs text-slate-500/50 mt-3">Illustrative preview — RVNU is currently in active development.</p>
+      <p className="text-center text-xs text-slate-500/50 mt-3">Illustrative preview — Orbin is currently in active development.</p>
     </div>
   );
 }

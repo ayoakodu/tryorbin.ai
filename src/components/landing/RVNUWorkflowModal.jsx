@@ -82,7 +82,7 @@ function Step1() {
           <div className="flex-1 flex flex-col items-center justify-center gap-3">
             <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
               <Loader2 className="w-4 h-4 text-emerald-600 animate-spin" />
-              <span className="text-sm text-emerald-700 font-medium">RVNU AI is discovering accounts…</span>
+              <span className="text-sm text-emerald-700 font-medium">Orbin AI is discovering accounts…</span>
             </div>
             <div className="w-full max-w-sm space-y-1.5">
               {['Parsing ICP criteria', 'Scanning African markets', 'Enriching signals', 'Ranking by fit score'].map((s, i) => (
@@ -159,7 +159,7 @@ function Step2() {
             <Sparkles className="w-3 h-3" /> R2 · Orchestration
           </div>
           <h2 className="text-base font-bold text-emerald-600 leading-snug mb-1">AI Qualification & Prioritization</h2>
-          <p className="text-[11px] text-slate-500 leading-relaxed">RVNU automatically enriches, segments, qualifies, and prioritizes accounts so your team focuses on the highest-value opportunities.</p>
+          <p className="text-[11px] text-slate-500 leading-relaxed">Orbin automatically enriches, segments, qualifies, and prioritizes accounts so your team focuses on the highest-value opportunities.</p>
         </div>
         <div>
           <p className="text-[10px] font-semibold tracking-widest text-slate-400 uppercase mb-1.5">Workflow Stages</p>
@@ -349,9 +349,9 @@ function Step4({ onClose }) {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 py-4 text-center max-w-lg mx-auto">
-      <RVNULogo size={48} className="rounded-xl mb-4 shadow-lg" />
+      <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png" alt="Orbin" className="h-10 object-contain mb-4" />
       <h2 className="text-lg font-bold text-emerald-600 mb-2 leading-snug">The Future of GTM Execution for African Revenue Teams</h2>
-      <p className="text-sm text-slate-500 mb-4 leading-relaxed">Join the waitlist and get early access to RVNU — the AI-native GTM execution platform built for your market.</p>
+      <p className="text-sm text-slate-500 mb-4 leading-relaxed">Join the waitlist and get early access to Orbin — the AI-native GTM execution platform built for your market.</p>
 
       <div className="flex flex-wrap justify-center gap-x-5 gap-y-1.5 mb-5">
         {bullets.map(b => (
