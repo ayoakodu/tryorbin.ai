@@ -1,9 +1,9 @@
-const LOGO_URL = 'https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/6e7cc42e3_OrbinAIIcon.png';
+const ICON_SVG_URL = 'https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/d29f57226_Untitleddesign.svg';
 
 export default function RVNULogo({ size = 28, className = '' }) {
   return (
     <img
-      src={LOGO_URL}
+      src={ICON_SVG_URL}
       alt="Orbin"
       width={size}
       height={size}
