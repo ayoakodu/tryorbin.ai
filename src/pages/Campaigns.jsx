@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
+import { invokeLLMJson } from '@/lib/anthropic';
 import {
   Plus, Sparkles, Play, Pause, BarChart3, Users,
   MoreHorizontal, Loader2, X, Mail, MessageCircle,
@@ -269,17 +269,9 @@ export default function Campaigns() {
   const handleAIGenerate = async (form, setForm) => {
     if (!aiPrompt.trim()) return;
     setAiGenerating(true);
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Generate a B2B GTM campaign brief for: "${aiPrompt}"
+    const result = await invokeLLMJson(`Generate a B2B GTM campaign brief for: "${aiPrompt}"
 Return JSON with: name (string), type (one of: outbound/broadcast/newsletter/nurture/webinar/multi-channel/lifecycle/whatsapp), goal (string), target (string), tags (array of strings).
-Keep it specific and actionable for African/emerging markets.`,
-      response_json_schema: {
-        type: 'object', properties: {
-          name: { type: 'string' }, type: { type: 'string' }, goal: { type: 'string' },
-          target: { type: 'string' }, tags: { type: 'array', items: { type: 'string' } }
-        }
-      }
-    });
+Keep it specific and actionable for African/emerging markets.`);
     if (result?.name) {
       setForm(prev => ({ ...prev, name: result.name, type: result.type || prev.type, goal: result.goal || prev.goal, target: result.target || prev.target, tags: (result.tags || []).join(', ') }));
     }
