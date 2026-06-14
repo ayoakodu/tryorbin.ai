@@ -45,6 +45,7 @@ export default function Tasks() {
   const [search, setSearch] = useState('');
   const [filterPriority, setFilterPriority] = useState('All');
   const [filterAssignee, setFilterAssignee] = useState('All');
+  const [filterStat, setFilterStat] = useState(null); // 'today' | 'overdue' | 'completed' | null
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: '', type: 'Follow-up', priority: 'medium', due: 'Today', assignee: 'JD' });
 
@@ -68,7 +69,13 @@ export default function Tasks() {
     const matchSearch = t.title.toLowerCase().includes(search.toLowerCase());
     const matchPriority = filterPriority === 'All' || t.priority === filterPriority;
     const matchAssignee = filterAssignee === 'All' || t.assignee === filterAssignee;
-    return matchSearch && matchPriority && matchAssignee;
+    const matchStat =
+      !filterStat ||
+      (filterStat === 'today' && !t.done && t.due === 'Today') ||
+      (filterStat === 'overdue' && !t.done && t.due === 'Yesterday') ||
+      (filterStat === 'completed' && t.done) ||
+      (filterStat === 'total');
+    return matchSearch && matchPriority && matchAssignee && matchStat;
   });
 
   const total = tasks.length;
@@ -84,19 +91,21 @@ export default function Tasks() {
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: 'Total Tasks', value: total, icon: CheckSquare, color: 'text-emerald-500' },
-            { label: 'Due Today', value: today, icon: Clock, color: 'text-cyan-500' },
-            { label: 'Overdue', value: overdue, icon: AlertCircle, color: 'text-red-500' },
-            { label: 'Completed', value: done, icon: CheckSquare, color: 'text-slate-400' },
+            { label: 'Total Tasks', value: total, icon: CheckSquare, color: 'text-emerald-500', key: 'total' },
+            { label: 'Due Today', value: today, icon: Clock, color: 'text-cyan-500', key: 'today' },
+            { label: 'Overdue', value: overdue, icon: AlertCircle, color: 'text-red-500', key: 'overdue' },
+            { label: 'Completed', value: done, icon: CheckSquare, color: 'text-slate-400', key: 'completed' },
           ].map((s, i) => (
-            <motion.div key={s.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
-              className="rounded-xl p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
+            <motion.button key={s.label} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
+              onClick={() => setFilterStat(prev => prev === s.key ? null : s.key)}
+              className={`rounded-xl p-5 text-left transition-all hover:shadow-md ${filterStat === s.key ? 'ring-2 ring-primary/40 bg-primary/5' : 'bg-white hover:bg-slate-50'}`}
+              style={{ border: filterStat === s.key ? '1px solid rgb(var(--primary) / 0.3)' : '1px solid #e2e8f0' }}>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-[10px] text-slate-500 uppercase tracking-wider font-medium">{s.label}</span>
                 <s.icon className={`w-4 h-4 ${s.color}`} />
               </div>
               <p className="text-2xl font-bold text-slate-800">{s.value}</p>
-            </motion.div>
+            </motion.button>
           ))}
         </div>
 
