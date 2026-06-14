@@ -142,7 +142,8 @@ export default function Automations() {
 
   const refreshSuggestions = async () => {
     setLoadingSuggestions(true);
-    const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM automation strategist. Based on these engagement signals, suggest 3 high-impact automation workflows:
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM automation strategist. Based on these engagement signals, suggest 3 high-impact automation workflows:
 
 Signals:
 - WhatsApp reply rate: 28% (highest channel), Email reply rate: 22%
@@ -152,18 +153,25 @@ Signals:
 - Meeting booked but outreach still running for 12 contacts
 - Deal stage: 5 deals stuck in Qualification for 14+ days
 
-Return 3 workflow suggestions. Each: name (short), trigger (one of: reply_received/deal_stage_change/no_reply_after/contact_created/meeting_booked/whatsapp_reply/email_opened_multiple/sequence_completed/deal_stale), action (one of: send_email/send_whatsapp/slack_notify/add_to_sequence/remove_from_sequence/update_deal_stage/create_task/mark_high_intent/stop_all_outreach), reason (1-2 sentences with specific data reference).`});
-    if (result?.suggestions?.length) setSuggestions(result.suggestions);
+Return 3 workflow suggestions. Each: name (short), trigger (one of: reply_received/deal_stage_change/no_reply_after/contact_created/meeting_booked/whatsapp_reply/email_opened_multiple/sequence_completed/deal_stale), action (one of: send_email/send_whatsapp/slack_notify/add_to_sequence/remove_from_sequence/update_deal_stage/create_task/mark_high_intent/stop_all_outreach), reason (1-2 sentences with specific data reference).`, response_json_schema: { type: 'object', properties: {}, required: [] } });
+      if (result?.suggestions?.length) setSuggestions(result.suggestions);
+    } catch {
+      // keep existing suggestions if AI refresh fails
+    }
     setLoadingSuggestions(false);
   };
 
   const generateWithAI = async () => {
     if (!aiPrompt.trim()) return;
     setAiLoading(true);
-    const result = await base44.integrations.Core.InvokeLLM({ prompt: `Create a sales automation workflow based on: "${aiPrompt}"
-Return JSON with: name (string), trigger (one of: reply_received/deal_stage_change/no_reply_after/contact_created/meeting_booked/whatsapp_reply), action (one of: send_email/send_whatsapp/slack_notify/add_to_sequence/update_deal_stage/create_task), description (1-2 sentences explaining what it does).`});
-    if (result?.name) {
-      setForm({ name: result.name, trigger: result.trigger || '', action: result.action || '', description: result.description || '' });
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `Create a sales automation workflow based on: "${aiPrompt}"
+Return JSON with: name (string), trigger (one of: reply_received/deal_stage_change/no_reply_after/contact_created/meeting_booked/whatsapp_reply), action (one of: send_email/send_whatsapp/slack_notify/add_to_sequence/update_deal_stage/create_task), description (1-2 sentences explaining what it does).`, response_json_schema: { type: 'object', properties: {}, required: [] } });
+      if (result?.name) {
+        setForm({ name: result.name, trigger: result.trigger || '', action: result.action || '', description: result.description || '' });
+      }
+    } catch {
+      // keep form unchanged if AI generation fails
     }
     setAiLoading(false);
   };

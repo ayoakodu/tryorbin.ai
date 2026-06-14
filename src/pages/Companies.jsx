@@ -47,7 +47,8 @@ function CompanyDetailPanel({ company, onClose }) {
   const handleAIInsight = async () => {
     setAiLoading(true);
     setAiInsight(null);
-    const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a B2B GTM advisor. Generate a concise account intelligence brief for:
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a B2B GTM advisor. Generate a concise account intelligence brief for:
 Company: ${company.name}
 Industry: ${company.industry}
 Country: ${company.country}
@@ -62,8 +63,11 @@ Provide:
 3. Likely objections and how to handle them
 4. Recommended next action
 
-Keep each point to 1-2 sentences. Be specific to their industry and market.`});
-    setAiInsight(result);
+Keep each point to 1-2 sentences. Be specific to their industry and market.` });
+      setAiInsight(result);
+    } catch {
+      // keep insight null on error
+    }
     setAiLoading(false);
   };
 
@@ -245,7 +249,8 @@ export default function Companies() {
     setAiLoading(true);
     setAiSuggestions(null);
     const existing = companies.map(c => c.name).join(', ');
-    const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a B2B GTM advisor for African markets. Based on this existing account list: ${existing}
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a B2B GTM advisor for African markets. Based on this existing account list: ${existing}
 
 Suggest 4 new high-fit accounts to add. These should be real African tech/fintech companies NOT already in the list above.
 
@@ -256,7 +261,10 @@ For each, provide:
 - Estimated size
 
 Format as a numbered list. Be specific and realistic.`});
-    setAiSuggestions(result);
+      setAiSuggestions(result);
+    } catch {
+      // keep suggestions null on error
+    }
     setAiLoading(false);
   };
 
