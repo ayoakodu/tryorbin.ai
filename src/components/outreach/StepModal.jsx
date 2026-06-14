@@ -579,8 +579,7 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
   const generateEmail = async () => {
     setGenerating(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an expert B2B sales copywriter for African and emerging markets.
+      const prompt = `You are an expert B2B sales copywriter for African and emerging markets.
 
 Write a personalized outbound sales email with these details:
 - Subject: ${step.subject || '(no subject set yet)'}
@@ -595,10 +594,17 @@ Requirements:
 - One clear CTA at the end
 - Use {{first_name}}, {{company}}, {{sender_name}} variables where natural
 - Format as clean HTML paragraphs only (use <p> tags, no divs or complex markup)
-- African business context — be warm, direct, and professional`,
+- African business context — be warm, direct, and professional
+- Return ONLY the HTML email body, no preamble or explanation`;
+
+      const res = await fetch('/api/generate-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt }),
       });
-      if (result && editorRef.current) {
-        const html = typeof result === 'string' ? result : result.content || '';
+      const data = await res.json();
+      const html = data.content || '';
+      if (html && editorRef.current) {
         const safe = DOMPurify.sanitize(html, {
           ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li'],
           ALLOWED_ATTR: ['href'],
