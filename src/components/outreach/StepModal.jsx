@@ -634,7 +634,9 @@ Return a JSON object with:
       }
       onUpdate(updates);
     } catch (err) {
-      setGenerateError(err?.message || 'Generation failed — check your API key and try again.');
+      const msg = err?.message || String(err) || 'Generation failed';
+      console.error('[AI Write]', err);
+      setGenerateError(msg);
     } finally {
       setGenerating(false);
     }
