@@ -82,7 +82,7 @@ const WORKFLOWS = [
 
 export default function WorkflowOrchestration() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
       {WORKFLOWS.map((w, i) => {
         const Icon = w.icon;
         return (
@@ -91,19 +91,17 @@ export default function WorkflowOrchestration() {
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            className="rounded-xl border border-slate-200 bg-white px-3.5 py-3 hover:border-slate-300 hover:shadow-sm transition-all cursor-default group"
+            className="rounded-xl border border-slate-200 bg-white px-3 py-3 hover:border-slate-300 hover:shadow-sm transition-all cursor-default"
           >
             <div className="flex items-center justify-between mb-2">
-              <div className={cn('w-6 h-6 rounded-lg flex items-center justify-center', w.bg)}>
+              <div className={cn('w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0', w.bg)}>
                 <Icon className={cn('w-3.5 h-3.5', w.color)} />
               </div>
-              <div className="flex items-center gap-1">
-                <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', w.dot, w.pulse && 'animate-pulse')} />
-              </div>
+              <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', w.dot, w.pulse && 'animate-pulse')} />
             </div>
-            <p className="text-[17px] font-bold text-slate-800 leading-none mb-0.5">{w.value}</p>
+            <p className="text-base font-bold text-slate-800 leading-none mb-0.5">{w.value}</p>
             <p className="text-[10px] font-semibold text-slate-600 leading-tight">{w.label}</p>
-            <p className="text-[10px] text-slate-400 leading-tight mt-0.5">{w.sub}</p>
+            <p className="text-[10px] text-slate-400 leading-tight mt-0.5 hidden sm:block">{w.sub}</p>
           </motion.div>
         );
       })}

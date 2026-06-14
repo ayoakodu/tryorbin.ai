@@ -56,7 +56,7 @@ export default function Dashboard() {
         }
       />
 
-      <div className="p-5 space-y-6 max-w-[1600px]">
+      <div className="p-3 sm:p-5 space-y-4 sm:space-y-6 max-w-[1600px]">
 
         {/* ── LAYER 0: WORKFLOW STATUS BAR ── */}
         {/* Always visible — heartbeat of live operations */}

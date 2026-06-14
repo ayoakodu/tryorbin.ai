@@ -60,7 +60,7 @@ export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, i
     <div className="space-y-3">
       {/* KPI Strip — compact */}
       {!hiddenWidgets.includes('kpis') && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {KPI_CARDS.map((stat, i) => (
             <motion.div key={stat.id}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -84,7 +84,7 @@ export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, i
       )}
 
       {/* Charts — reduced height, side by side */}
-      <div className="grid lg:grid-cols-3 gap-3">
+      <div className="grid md:grid-cols-3 gap-3">
         {/* Pipeline chart */}
         {!hiddenWidgets.includes('pipeline_chart') && (
           <div className="lg:col-span-2 rounded-xl p-4 bg-white border border-slate-200 hover:shadow-sm transition-shadow">
@@ -150,12 +150,12 @@ export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, i
       {/* Activity Chart — compact */}
       {!hiddenWidgets.includes('activity_chart') && (
         <div className="rounded-xl p-4 bg-white border border-slate-200 hover:shadow-sm transition-shadow">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-start justify-between mb-3 gap-2 flex-wrap">
             <div>
               <h3 className="text-[12px] font-bold text-slate-700">Team Activity</h3>
               <p className="text-[10px] text-slate-400">Emails · Calls · Meetings · This week</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {[{ label: 'Emails', color: 'bg-emerald-400' }, { label: 'Calls', color: 'bg-cyan-400' }, { label: 'Meetings', color: 'bg-violet-400' }].map(l => (
                 <div key={l.label} className="flex items-center gap-1">
                   <div className={cn('w-1.5 h-1.5 rounded-full', l.color)} />

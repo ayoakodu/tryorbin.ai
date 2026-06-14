@@ -115,14 +115,14 @@ export default function ActivityFeed() {
       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <h3 className="text-[13px] font-bold text-slate-800">GTM Execution Stream</h3>
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+      <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-slate-100 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <h3 className="text-xs sm:text-[13px] font-bold text-slate-800 whitespace-nowrap">GTM Execution Stream</h3>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-shrink-0">
           <button onClick={() => setCollapsed(v => !v)}
-            className="text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">
+            className="text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors hidden sm:block">
             {collapsed ? 'Expand' : 'Collapse'}
           </button>
           <button onClick={() => navigate('/outreach')} className="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-1">
@@ -170,7 +170,7 @@ export default function ActivityFeed() {
                       exit={{ opacity: 0 }}
                       transition={{ delay: i * 0.03 }}
                       className={cn(
-                        'flex items-start gap-3 px-5 py-3.5 hover:bg-slate-50/60 transition-colors group',
+                        'flex items-start gap-3 px-4 sm:px-5 py-3 hover:bg-slate-50/60 transition-colors group',
                         urgencyBorder[a.urgency]
                       )}
                     >
@@ -180,18 +180,18 @@ export default function ActivityFeed() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-2 mb-0.5">
                           <p className="text-[11px] font-bold text-slate-700 leading-tight">{a.headline}</p>
-                          <span className={cn('text-[9px] font-bold px-1.5 py-0.5 rounded-md border flex-shrink-0', a.badgeColor)}>
+                          <span className={cn('text-[9px] font-bold px-1.5 py-0.5 rounded-md border flex-shrink-0 hidden sm:inline', a.badgeColor)}>
                             {a.badge}
                           </span>
                         </div>
-                        <p className="text-[12px] text-slate-600 leading-snug mb-1">{a.text}</p>
-                        <div className="flex items-center gap-3">
-                          <p className="text-[11px] text-slate-400 truncate flex-1">{a.meta}</p>
+                        <p className="text-xs text-slate-600 leading-snug mb-1 line-clamp-2 sm:line-clamp-none">{a.text}</p>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <p className="text-[11px] text-slate-400 truncate flex-1 min-w-0 hidden sm:block">{a.meta}</p>
                           <span className="text-[10px] text-slate-300 flex-shrink-0">{a.time}</span>
                           {a.action && (
                             <button
                               onClick={() => navigate(ACTIVITY_ROUTES[a.action] || '/dashboard')}
-                              className="text-[11px] font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:text-emerald-700 flex-shrink-0">
+                              className="text-[11px] font-semibold text-emerald-600 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:text-emerald-700 flex-shrink-0">
                               {a.action} <ArrowUpRight className="w-3 h-3" />
                             </button>
                           )}

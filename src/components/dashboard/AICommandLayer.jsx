@@ -141,24 +141,24 @@ Give me ONE sharp, specific GTM insight or recommendation I should act on RIGHT 
       style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.05), 0 0 20px rgba(22,163,74,0.04)' }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100"
+      <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-slate-100 gap-3"
         style={{ background: 'linear-gradient(to right, #fff 50%, rgba(240,253,244,0.5))' }}>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-sm">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center shadow-sm flex-shrink-0">
             <Brain className="w-4 h-4 text-white" />
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-[13px] font-bold text-slate-900">AI Intelligence</h2>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-semibold text-slate-400">monitoring continuously</span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-xs sm:text-[13px] font-bold text-slate-900 whitespace-nowrap">AI Intelligence</h2>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse flex-shrink-0" />
+              <span className="text-[10px] font-semibold text-slate-400 hidden sm:inline">monitoring continuously</span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-tight">Revenue risks · Opportunities · Sequence health · Channel signals</p>
+            <p className="text-[11px] text-slate-400 leading-tight hidden sm:block">Revenue risks · Opportunities · Sequence health · Channel signals</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {criticalCount > 0 && (
-            <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 border border-red-100 text-[11px] font-semibold text-red-600">
+            <span className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-red-50 border border-red-100 text-[11px] font-semibold text-red-600">
               <AlertTriangle className="w-3 h-3" />
               {criticalCount} require action
             </span>
@@ -166,9 +166,9 @@ Give me ONE sharp, specific GTM insight or recommendation I should act on RIGHT 
           <button
             onClick={refreshAI}
             disabled={aiLoading}
-            className={cn('flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-emerald-200 text-emerald-600 hover:bg-emerald-50 transition-colors', aiLoading && 'opacity-60 cursor-not-allowed')}>
+            className={cn('flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold border border-emerald-200 text-emerald-600 hover:bg-emerald-50 transition-colors whitespace-nowrap', aiLoading && 'opacity-60 cursor-not-allowed')}>
             {aiLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-            {aiLoading ? 'Analyzing...' : 'Ask Orbin AI'}
+            <span className="hidden sm:inline">{aiLoading ? 'Analyzing...' : 'Ask Orbin AI'}</span>
           </button>
         </div>
       </div>
@@ -201,7 +201,7 @@ Give me ONE sharp, specific GTM insight or recommendation I should act on RIGHT 
       </AnimatePresence>
 
       {/* Insights */}
-      <div className="p-4 grid grid-cols-1 lg:grid-cols-2 gap-2.5">
+      <div className="p-3 sm:p-4 grid grid-cols-1 md:grid-cols-2 gap-2.5">
         <AnimatePresence>
           {displayed.map((insight, i) => {
             const Icon = insight.icon;

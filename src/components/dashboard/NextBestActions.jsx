@@ -131,10 +131,10 @@ export default function NextBestActions() {
       style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100"
+      <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-slate-100"
         style={{ background: 'linear-gradient(to right, #fff 60%, rgba(245,243,255,0.4))' }}>
-        <div className="flex items-center gap-3">
-          <div className="relative">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="relative flex-shrink-0">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center shadow-sm">
               <Zap className="w-4 h-4 text-white" />
             </div>
@@ -142,20 +142,20 @@ export default function NextBestActions() {
               <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-white" />
             )}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-[13px] font-bold text-slate-900">Next Best Actions</h2>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-600 border border-violet-200">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-xs sm:text-[13px] font-bold text-slate-900 whitespace-nowrap">Next Best Actions</h2>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-600 border border-violet-200 whitespace-nowrap">
                 {active.length} queued
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-tight">AI-prioritized execution queue · Sorted by impact</p>
+            <p className="text-[11px] text-slate-400 leading-tight hidden sm:block">AI-prioritized execution queue · Sorted by impact</p>
           </div>
         </div>
         <button
           onClick={() => setCompleted([])}
-          className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">
-          <RefreshCw className="w-3 h-3" /> Reset
+          className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0 ml-2">
+          <RefreshCw className="w-3 h-3" /> <span className="hidden sm:inline">Reset</span>
         </button>
       </div>
 
@@ -172,39 +172,39 @@ export default function NextBestActions() {
                 exit={{ opacity: 0, x: 6, height: 0 }}
                 transition={{ delay: i * 0.04, duration: 0.18 }}
                 className={cn(
-                  'flex items-center gap-4 px-5 py-4 group hover:bg-slate-50/70 transition-colors',
+                  'flex items-start sm:items-center gap-3 px-4 sm:px-5 py-3.5 group hover:bg-slate-50/70 transition-colors',
                   action.urgency === 'critical' && 'border-l-2 border-l-red-400'
                 )}
               >
-                <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0', action.iconBg)}>
+                <div className={cn('w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-0', action.iconBg)}>
                   <Icon className={cn('w-4 h-4', action.iconColor)} />
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                  <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                     <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-md border', action.urgencyColor)}>
                       {action.urgencyLabel}
                     </span>
                     <span className="text-[10px] font-semibold text-slate-400">{action.estimatedImpact}</span>
                   </div>
-                  <p className="text-[12px] font-semibold text-slate-800 leading-snug">{action.title}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">{action.context}</p>
+                  <p className="text-xs font-semibold text-slate-800 leading-snug">{action.title}</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-snug line-clamp-1">{action.context}</p>
                 </div>
 
-                <div className="flex items-center gap-2 flex-shrink-0">
+                <div className="flex items-center gap-1.5 flex-shrink-0">
                   <button
                     onClick={() => navigate(action.secondaryRoute)}
-                    className="text-[11px] text-slate-400 font-medium hover:text-slate-600 transition-colors whitespace-nowrap hidden group-hover:block">
+                    className="text-[11px] text-slate-400 font-medium hover:text-slate-600 transition-colors whitespace-nowrap hidden md:group-hover:block">
                     {action.secondaryCta}
                   </button>
                   <button
                     onClick={() => navigate(action.route)}
                     className={cn(
-                      'flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm whitespace-nowrap',
+                      'flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition-all shadow-sm whitespace-nowrap',
                       action.ctaStyle
                     )}
                   >
-                    {action.cta}
+                    <span className="hidden xs:inline">{action.cta}</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                   <button
