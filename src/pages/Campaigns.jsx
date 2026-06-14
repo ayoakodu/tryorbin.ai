@@ -300,9 +300,9 @@ export default function Campaigns() {
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Campaigns" subtitle="Launch outbound, broadcasts, newsletters, webinars, and lifecycle campaigns" />
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 md:p-6 space-y-5">
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           {[
             { label: 'Active Campaigns', value: activeCampaigns, color: 'text-primary' },
             { label: 'Total Reach', value: totalReach.toLocaleString(), color: 'text-cyan-400' },
@@ -333,7 +333,7 @@ export default function Campaigns() {
         </div>
 
         {/* AI Create Banner */}
-        <div className="glass rounded-xl p-5 border border-primary/20 flex flex-col md:flex-row items-center gap-4">
+        <div className="glass rounded-xl p-4 md:p-5 border border-primary/20 flex flex-col md:flex-row items-center gap-4">
           <div className="w-10 h-10 rounded-xl gradient-brand flex items-center justify-center flex-shrink-0">
             <Sparkles className="w-5 h-5 text-black" />
           </div>
@@ -342,28 +342,31 @@ export default function Campaigns() {
             <p className="text-xs text-muted-foreground">Describe your goal and Orbin AI generates the entire campaign — audience, messaging, channels, and schedule. Ready in minutes.</p>
           </div>
           <Button onClick={() => { setEditingCampaign(null); setModalPrefill(null); setShowModal(true); }}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 whitespace-nowrap">
+            className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 whitespace-nowrap w-full md:w-auto">
             <Sparkles className="w-4 h-4" /> Create with AI
           </Button>
         </div>
 
-        {/* Filter tabs + header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 w-fit overflow-x-auto flex-shrink-0">
+        {/* Filter tabs + New Campaign button */}
+        <div className="flex flex-col gap-3">
+          {/* Scrollable filter bar */}
+          <div className="flex items-center gap-1 bg-white border border-slate-200 rounded-xl p-1 overflow-x-auto scrollbar-hide">
             {filterTabs.map(t => (
               <button key={t} onClick={() => setFilterType(t)}
-                className={`px-3 py-1 rounded-lg text-[10px] font-semibold capitalize whitespace-nowrap transition-all ${filterType === t ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                className={`px-3 py-1 rounded-lg text-[10px] font-semibold capitalize whitespace-nowrap flex-shrink-0 transition-all ${filterType === t ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
                 {t === 'all' ? 'All' : typeConfig[t]?.label || t}
               </button>
             ))}
           </div>
-          <Button onClick={() => { setEditingCampaign(null); setModalPrefill(null); setShowModal(true); }}
-            className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 flex-shrink-0">
-            <Plus className="w-4 h-4" /> New Campaign
-          </Button>
+          <div className="flex justify-end">
+            <Button onClick={() => { setEditingCampaign(null); setModalPrefill(null); setShowModal(true); }}
+              className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90 w-full sm:w-auto">
+              <Plus className="w-4 h-4" /> New Campaign
+            </Button>
+          </div>
         </div>
 
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           <AnimatePresence>
             {filteredCampaigns.map(campaign => (
               <CampaignCard key={campaign.id} campaign={campaign}
