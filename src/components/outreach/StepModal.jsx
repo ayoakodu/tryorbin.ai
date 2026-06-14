@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
+import Anthropic from '@anthropic-ai/sdk';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
@@ -19,6 +20,11 @@ import { cn } from '@/lib/utils';
 import { STEP_TYPE_MAP, STEP_SUBTYPE_LABELS } from './AddStepMenu';
 import AdvancedScheduling from './AdvancedScheduling';
 import LinkedInStepEditor from '@/components/linkedin/LinkedInStepEditor';
+
+const anthropic = new Anthropic({
+  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
 
 const channelColors = {
   email: 'text-blue-500', linkedin: 'text-blue-600',
@@ -597,13 +603,12 @@ Requirements:
 - African business context — be warm, direct, and professional
 - Return ONLY the HTML email body, no preamble or explanation`;
 
-      const res = await fetch('/api/generate-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt }),
+      const message = await anthropic.messages.create({
+        model: 'claude-opus-4-8',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }],
       });
-      const data = await res.json();
-      const html = data.content || '';
+      const html = message.content.find(b => b.type === 'text')?.text ?? '';
       if (html && editorRef.current) {
         const safe = DOMPurify.sanitize(html, {
           ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li'],
