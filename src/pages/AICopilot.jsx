@@ -111,12 +111,9 @@ export default function AICopilot() {
       ));
     } catch (err) {
       const errMsg = err?.message || 'Unknown error';
-      const isNoKey = !import.meta.env.VITE_ANTHROPIC_API_KEY;
       setMessages(prev => prev.map(m =>
         m.id === loadingId
-          ? { role: 'assistant', content: isNoKey
-              ? 'No API key set — add VITE_ANTHROPIC_API_KEY to your environment variables.'
-              : `Error: ${errMsg}`, loading: false }
+          ? { role: 'assistant', content: `Error: ${errMsg}`, loading: false }
           : m
       ));
     }
