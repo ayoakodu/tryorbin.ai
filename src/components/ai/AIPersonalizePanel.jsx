@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Sparkles, Globe, Loader2, Copy, ChevronDown, ChevronUp, X, Check, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function AIPersonalizePanel({ onInsert, onClose }) {
+  const navigate = useNavigate();
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [rewritingOpener, setRewritingOpener] = useState(false);
@@ -83,6 +85,13 @@ Write a new 1-2 sentence opening line that naturally weaves in the angle. Be spe
     if (onInsert) onInsert(text);
   };
 
+  const copyAndCompose = (text) => {
+    navigator.clipboard.writeText(text).catch(() => {});
+    sessionStorage.setItem('compose_prefill', JSON.stringify({ body: text }));
+    onClose();
+    navigate('/emails');
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm p-4">
       <div className="w-full max-w-lg bg-card border border-border/60 rounded-2xl shadow-2xl overflow-hidden">
@@ -150,10 +159,10 @@ Write a new 1-2 sentence opening line that naturally weaves in the angle. Be spe
                   )}
                 </div>
                 <button
-                  onClick={() => copyText(result.suggested_opener, 'opener')}
+                  onClick={() => copyAndCompose(result.suggested_opener)}
                   disabled={rewritingOpener}
                   className="text-[10px] px-2 py-0.5 rounded bg-primary text-primary-foreground font-semibold flex items-center gap-1 disabled:opacity-50">
-                  {copied === 'opener' ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy &amp; Use</>}
+                  <Copy className="w-3 h-3" /> Copy &amp; Compose
                 </button>
               </div>
               {rewritingOpener ? (
