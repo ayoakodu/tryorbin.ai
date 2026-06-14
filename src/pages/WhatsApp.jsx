@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
+import { invokeLLM } from '@/lib/anthropic';
 import {
   MessageCircle, Send, Sparkles, Search, Plus,
   Phone, MoreHorizontal, Check, CheckCheck, Loader2,
@@ -101,18 +101,16 @@ export default function WhatsApp() {
     if (!selected) return;
     setAiLoading(true);
     const lastReceived = [...selected.messages].reverse().find(m => m.role === 'received');
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are writing a WhatsApp reply for a B2B sales rep in Africa.
+    const result = await invokeLLM(`You are writing a WhatsApp reply for a B2B sales rep in Africa.
 
 Contact: ${selected.name} from ${selected.company}
 Their last message: "${lastReceived?.content || 'No message yet'}"
 Conversation context: GTM/sales outreach
 
-Write a SHORT, friendly, and professional WhatsApp reply (2-3 sentences max). 
-Use conversational tone appropriate for WhatsApp. Be warm but direct. 
+Write a SHORT, friendly, and professional WhatsApp reply (2-3 sentences max).
+Use conversational tone appropriate for WhatsApp. Be warm but direct.
 Do not use formal email language. Use emojis sparingly if appropriate.
-Just write the message text, nothing else.`,
-    });
+Just write the message text, nothing else.`);
     setMessage(result || '');
     setAiLoading(false);
   };

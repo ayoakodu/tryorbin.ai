@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
+import Anthropic from '@anthropic-ai/sdk';
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
 import {
   Mail, MessageCircle, Phone, Clock, CheckCircle2, X,
   User, Maximize2, Minimize2, Bold, Italic, Underline, Link2,
-  Paperclip, Image, Video, PenLine,
+  Paperclip, Image, Video, PenLine, Loader2,
   Search, Send, Wand2, ChevronRight, ChevronLeft, Calendar,
   ChevronDown, Sparkles, AlignLeft, AlignCenter, AlignRight,
   List, ListOrdered, Type, Eraser, Code2, Palette
@@ -17,6 +20,11 @@ import { cn } from '@/lib/utils';
 import { STEP_TYPE_MAP, STEP_SUBTYPE_LABELS } from './AddStepMenu';
 import AdvancedScheduling from './AdvancedScheduling';
 import LinkedInStepEditor from '@/components/linkedin/LinkedInStepEditor';
+
+const anthropic = new Anthropic({
+  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
 
 const channelColors = {
   email: 'text-blue-500', linkedin: 'text-blue-600',
@@ -572,6 +580,49 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
   const editorRef = useRef(null);
   const initializedRef = useRef(false);
   const [showCcBcc, setShowCcBcc] = useState(!!(step.cc || step.bcc));
+  const [generating, setGenerating] = useState(false);
+
+  const generateEmail = async () => {
+    setGenerating(true);
+    try {
+      const prompt = `You are an expert B2B sales copywriter for African and emerging markets.
+
+Write a personalized outbound sales email with these details:
+- Subject: ${step.subject || '(no subject set yet)'}
+- Recipient: {{first_name}} {{last_name}}, {{title}} at {{company}} ({{industry}})
+- Sender: {{sender_name}}, {{sender_title}} at {{sender_company}}
+- Sequence step: ${stepIndex + 1} of ${(allSteps || []).length || 1}
+${step.body ? `- Existing draft to improve:\n${step.body.replace(/<[^>]+>/g, ' ').substring(0, 300)}` : ''}
+
+Requirements:
+- Use a compelling, specific opening line (not generic)
+- Keep it under 150 words
+- One clear CTA at the end
+- Use {{first_name}}, {{company}}, {{sender_name}} variables where natural
+- Format as clean HTML paragraphs only (use <p> tags, no divs or complex markup)
+- African business context — be warm, direct, and professional
+- Return ONLY the HTML email body, no preamble or explanation`;
+
+      const message = await anthropic.messages.create({
+        model: 'claude-opus-4-8',
+        max_tokens: 1024,
+        messages: [{ role: 'user', content: prompt }],
+      });
+      const html = message.content.find(b => b.type === 'text')?.text ?? '';
+      if (html && editorRef.current) {
+        const safe = DOMPurify.sanitize(html, {
+          ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li'],
+          ALLOWED_ATTR: ['href'],
+        });
+        editorRef.current.innerHTML = safe;
+        onUpdate({ ...step, body: safe });
+      }
+    } catch {
+      // Silently fail — user can try again
+    } finally {
+      setGenerating(false);
+    }
+  };
 
   // Determine inherited subject for Reply mode
   const threadType = draft.threadType || { type: 'new_thread' };
@@ -682,9 +733,12 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
           <span className="text-[11px] font-bold text-emerald-700">AI Write</span>
         </div>
         <span className="flex-1 text-[11px] text-slate-500">Generate a ready-to-send personalized email.</span>
-        <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold transition-colors shadow-sm flex-shrink-0">
-          <Wand2 className="w-3 h-3" />
-          Generate
+        <button
+          onClick={generateEmail}
+          disabled={generating}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white text-[11px] font-semibold transition-colors shadow-sm flex-shrink-0">
+          {generating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+          {generating ? 'Writing...' : 'Generate'}
         </button>
       </div>
 
@@ -883,7 +937,10 @@ function EmailPreview({ step, draft }) {
       <div className="flex-1 overflow-y-auto px-5 py-4">
         {step.body
           ? <div className="text-[12px] text-slate-700 leading-[1.75] email-preview-body"
-              dangerouslySetInnerHTML={{ __html: previewText(step.body) }} />
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(previewText(step.body), {
+                ALLOWED_TAGS: ['p','br','strong','em','u','a','ul','ol','li','h1','h2','h3','span','code','blockquote'],
+                ALLOWED_ATTR: ['href','style','class'],
+              }) }} />
           : <p className="text-[12px] text-slate-300 italic">Start typing to see your email preview…</p>}
       </div>
     </div>

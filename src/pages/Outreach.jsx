@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { invokeLLM } from '@/lib/anthropic';
 import {
   Plus, Play, Pause, Mail, MessageCircle,
   Phone, Sparkles, Users, TrendingUp,
@@ -221,15 +221,13 @@ export default function Outreach() {
     if (!selectedSeq) return;
     setAiSuggesting(true);
     setAiSuggestion(null);
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analyze this outreach sequence and suggest ONE specific improvement:
+    const result = await invokeLLM(`Analyze this outreach sequence and suggest ONE specific improvement:
 Sequence: "${selectedSeq.name}"
 Steps: ${selectedSeq.steps.length} steps
 Reply rate: ${selectedSeq.enrolled > 0 ? ((selectedSeq.replied / selectedSeq.enrolled) * 100).toFixed(1) : 0}%
 Meeting rate: ${selectedSeq.enrolled > 0 ? ((selectedSeq.meetings / selectedSeq.enrolled) * 100).toFixed(1) : 0}%
 
-Give a concise, actionable suggestion (1-2 sentences) to improve performance.`,
-    });
+Give a concise, actionable suggestion (1-2 sentences) to improve performance.`);
     setAiSuggestion(result);
     setAiSuggesting(false);
   };
