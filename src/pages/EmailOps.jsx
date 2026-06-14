@@ -30,16 +30,16 @@ export default function EmailOps() {
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
       <TopBar title="Email Operations" subtitle="Analytics, bounces, queue, attachments, and system health" />
-      <div className="p-6">
-        {/* Tab nav */}
-        <div className="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1 w-fit flex-wrap">
+      <div className="p-4 md:p-6">
+        {/* Tab nav — scrollable on mobile */}
+        <div className="flex gap-1 mb-6 bg-white border border-slate-200 rounded-xl p-1 overflow-x-auto scrollbar-hide">
           {TABS.map((t) => {
             const TIcon = t.icon;
             return (
               <button key={t.id} onClick={() => setTab(t.id)}
-                className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all ${tab === t.id ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                className={`flex items-center gap-1.5 px-3 md:px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${tab === t.id ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
                 <TIcon className="w-3.5 h-3.5" />
-                {t.label}
+                <span className="hidden sm:inline">{t.label}</span>
               </button>
             );
           })}
