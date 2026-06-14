@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Mail, Inbox, Send, Star, Archive, Trash2, Search, Plus, RefreshCw, AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,6 +30,18 @@ export default function Emails() {
   const [emails, setEmails] = useState(SAMPLE_EMAILS);
   const [showCompose, setShowCompose] = useState(false);
   const [compose, setCompose] = useState(BLANK_COMPOSE);
+
+  useEffect(() => {
+    const prefill = sessionStorage.getItem('compose_prefill');
+    if (prefill) {
+      try {
+        const data = JSON.parse(prefill);
+        setCompose(prev => ({ ...BLANK_COMPOSE, ...data }));
+        setShowCompose(true);
+        sessionStorage.removeItem('compose_prefill');
+      } catch {}
+    }
+  }, []);
 
   const isShowingSampleData = true;
 
