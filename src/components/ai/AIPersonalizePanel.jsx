@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Sparkles, Globe, Loader2, Copy, ChevronDown, ChevronUp, X } from 'lucide-react';
+import { Sparkles, Globe, Loader2, Copy, ChevronDown, ChevronUp, X, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -9,6 +9,7 @@ export default function AIPersonalizePanel({ onInsert, onClose }) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [expanded, setExpanded] = useState(null);
+  const [copied, setCopied] = useState(null);
 
   const analyze = async () => {
     if (!url.trim()) return;
@@ -41,7 +42,12 @@ Return a JSON with:
     setLoading(false);
   };
 
-  const copy = (text) => navigator.clipboard.writeText(text);
+  const copyAndUse = (text, key) => {
+    navigator.clipboard.writeText(text).catch(() => {});
+    setCopied(key);
+    setTimeout(() => setCopied(null), 2000);
+    if (onInsert) onInsert(text);
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm p-4">
@@ -102,17 +108,11 @@ Return a JSON with:
             <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-semibold text-primary">Suggested Opening Line</p>
-                <div className="flex gap-1.5">
-                  <button onClick={() => copy(result.suggested_opener)} className="p-1 rounded hover:bg-primary/20 text-primary transition-colors">
-                    <Copy className="w-3 h-3" />
-                  </button>
-                  {onInsert && (
-                    <button onClick={() => onInsert(result.suggested_opener)}
-                      className="text-[10px] px-2 py-0.5 rounded bg-primary text-primary-foreground font-semibold">
-                      Insert
-                    </button>
-                  )}
-                </div>
+                <button
+                  onClick={() => copyAndUse(result.suggested_opener, 'opener')}
+                  className="text-[10px] px-2 py-0.5 rounded bg-primary text-primary-foreground font-semibold flex items-center gap-1">
+                  {copied === 'opener' ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy &amp; Use</>}
+                </button>
               </div>
               <p className="text-sm text-foreground italic">"{result.suggested_opener}"</p>
             </div>
@@ -130,8 +130,9 @@ Return a JSON with:
                     <li key={i} className="flex items-start gap-2 text-sm text-foreground">
                       <span className="text-primary font-bold mt-0.5">·</span>
                       <span className="flex-1">{pt}</span>
-                      <button onClick={() => copy(pt)} className="text-muted-foreground hover:text-foreground flex-shrink-0 mt-0.5">
-                        <Copy className="w-3 h-3" />
+                      <button onClick={() => copyAndUse(pt, `tp-${i}`)}
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground hover:text-foreground flex-shrink-0 flex items-center gap-1">
+                        {copied === `tp-${i}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                       </button>
                     </li>
                   ))}
@@ -152,8 +153,10 @@ Return a JSON with:
                     <li key={i} className="flex items-start gap-2 text-sm text-foreground">
                       <span className="text-cyan-400 font-bold mt-0.5">·</span>
                       <span className="flex-1">{angle}</span>
-                      <button onClick={() => { onInsert && onInsert(angle); }} className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground hover:text-foreground flex-shrink-0">
-                        Use
+                      <button
+                        onClick={() => copyAndUse(angle, `angle-${i}`)}
+                        className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground hover:text-foreground flex-shrink-0 flex items-center gap-1 min-w-[44px] justify-center">
+                        {copied === `angle-${i}` ? <><Check className="w-3 h-3 text-emerald-500" /> Done</> : 'Use'}
                       </button>
                     </li>
                   ))}
