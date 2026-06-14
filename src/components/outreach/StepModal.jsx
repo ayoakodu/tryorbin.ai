@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import Anthropic from '@anthropic-ai/sdk';
 import { base44 } from '@/api/base44Client';
+import { invokeLLMJson, getApiKey } from '@/lib/together';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
 import {
@@ -585,7 +586,37 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
   const generateEmail = async () => {
     setGenerating(true);
     try {
-      const prompt = `You are an expert B2B sales copywriter for African and emerging markets.
+      const jsonPrompt = `You are an expert B2B sales copywriter for African and emerging markets.
+
+Generate a B2B outbound sales email for the following context:
+- Sequence name: ${sequenceName || 'Outbound Sequence'}
+- Sequence step: ${stepIndex + 1} of ${(allSteps || []).length || 1}
+- Recipient: {{first_name}} {{last_name}}, {{title}} at {{company}} ({{industry}})
+- Sender: {{sender_name}}, {{sender_title}} at {{sender_company}}
+${step.body ? `- Existing draft to improve:\n${step.body.replace(/<[^>]+>/g, ' ').substring(0, 300)}` : ''}
+
+Requirements:
+- Use a compelling, specific opening line (not generic)
+- Keep it under 150 words
+- One clear CTA at the end
+- Use {{first_name}}, {{company}}, {{sender_name}} variables where natural
+- African business context — be warm, direct, and professional
+
+Return a JSON object with:
+- subject: a compelling subject line
+- body: the HTML email body using only <p> tags`;
+
+      let subject = '';
+      let html = '';
+
+      if (getApiKey()) {
+        // Use Together AI (Llama) when API key is set
+        const result = await invokeLLMJson(jsonPrompt);
+        subject = result?.subject?.trim() ?? '';
+        html = result?.body?.trim() ?? '';
+      } else {
+        // Fall back to Anthropic SDK
+        const plainPrompt = `You are an expert B2B sales copywriter for African and emerging markets.
 
 Write a personalized outbound sales email with these details:
 - Subject: ${step.subject || '(no subject set yet)'}
@@ -603,20 +634,25 @@ Requirements:
 - African business context — be warm, direct, and professional
 - Return ONLY the HTML email body, no preamble or explanation`;
 
-      const message = await anthropic.messages.create({
-        model: 'claude-opus-4-8',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: prompt }],
-      });
-      const html = message.content.find(b => b.type === 'text')?.text ?? '';
-      if (html && editorRef.current) {
+        const message = await anthropic.messages.create({
+          model: 'claude-opus-4-8',
+          max_tokens: 1024,
+          messages: [{ role: 'user', content: plainPrompt }],
+        });
+        html = message.content.find(b => b.type === 'text')?.text ?? '';
+      }
+
+      const updates = { ...step };
+      if (subject && !step.subject) updates.subject = subject;
+      if (html) {
         const safe = DOMPurify.sanitize(html, {
           ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'a', 'ul', 'ol', 'li'],
           ALLOWED_ATTR: ['href'],
         });
-        editorRef.current.innerHTML = safe;
-        onUpdate({ ...step, body: safe });
+        if (editorRef.current) editorRef.current.innerHTML = safe;
+        updates.body = safe;
       }
+      onUpdate(updates);
     } catch {
       // Silently fail — user can try again
     } finally {

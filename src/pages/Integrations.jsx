@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, Zap, ArrowRight, Loader2, X, AlertCircle, RefreshCw, Copy, ExternalLink, Lock, Info } from 'lucide-react';
+import { CheckCircle2, Zap, ArrowRight, Loader2, X, AlertCircle, RefreshCw, Copy, ExternalLink, Lock, Info, Brain } from 'lucide-react';
+import { setApiKey as setTogetherApiKey } from '@/lib/together';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -158,6 +159,25 @@ const INTEGRATIONS = [
     },
   },
   {
+    id: 'together_ai', name: 'Together AI', category: 'AI', color: '#6D28D9',
+    desc: 'Open-source LLMs (Llama 3, Mistral) for email generation',
+    type: 'apikey',
+    icon: Brain,
+    fields: [
+      { key: 'api_key', label: 'API Key', placeholder: 'Your Together AI API key', type: 'password', secret: true },
+    ],
+    test: async (creds) => {
+      const res = await fetch('https://api.together.xyz/v1/models', {
+        headers: { Authorization: `Bearer ${creds.api_key}` },
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return 'Together AI connected — models API responding normally.';
+    },
+    onConnect: (creds) => {
+      setTogetherApiKey(creds.api_key || '');
+    },
+  },
+  {
     id: 'linkedin', name: 'LinkedIn', category: 'Social', color: '#0077B5',
     desc: 'Log LinkedIn outreach tasks and track engagement as part of multichannel sequences.',
     type: 'oauth',
@@ -188,7 +208,7 @@ const CAT_COLORS = {
   CRM: 'bg-blue-500/10 text-blue-600', Social: 'bg-blue-600/10 text-blue-500',
   Messaging: 'bg-emerald-500/10 text-emerald-600', Email: 'bg-cyan-500/10 text-cyan-600',
   Notifications: 'bg-violet-500/10 text-violet-600', Scheduling: 'bg-amber-500/10 text-amber-600',
-  Automation: 'bg-orange-500/10 text-orange-600', SMS: 'bg-red-500/10 text-red-600',
+  Automation: 'bg-orange-500/10 text-orange-600', SMS: 'bg-red-500/10 text-red-600', AI: 'bg-purple-500/10 text-purple-600',
   Prospecting: 'bg-indigo-500/10 text-indigo-600', Revenue: 'bg-primary/10 text-primary',
 };
 
@@ -230,6 +250,7 @@ export default function Integrations() {
     setLoading(integration.id);
     await new Promise(r => setTimeout(r, 600));
     setSaved(prev => ({ ...prev, [integration.id]: { creds: formData, connected: true } }));
+    if (integration.onConnect) integration.onConnect(formData);
     setLoading(null);
     setModal(null);
     toast({ title: `${integration.name} connected!`, description: 'Credentials saved. Use "Test" to verify the connection.' });
