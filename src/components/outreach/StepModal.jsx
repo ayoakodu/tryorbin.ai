@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import { base44 } from '@/api/base44Client';
+import { invokeLLMJson, getApiKey } from '@/lib/together';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
 import {
@@ -588,7 +589,37 @@ function EmailEditor({ step, onUpdate, draft, onDraftChange, allSteps, stepIndex
     setGenerating(true);
     setGenerateError('');
     try {
-      const prompt = `You are an expert B2B sales copywriter for African and emerging markets.
+      const jsonPrompt = `You are an expert B2B sales copywriter for African and emerging markets.
+
+Generate a B2B outbound sales email for the following context:
+- Sequence name: ${sequenceName || 'Outbound Sequence'}
+- Sequence step: ${stepIndex + 1} of ${(allSteps || []).length || 1}
+- Recipient: {{first_name}} {{last_name}}, {{title}} at {{company}} ({{industry}})
+- Sender: {{sender_name}}, {{sender_title}} at {{sender_company}}
+${step.body ? `- Existing draft to improve:\n${step.body.replace(/<[^>]+>/g, ' ').substring(0, 300)}` : ''}
+
+Requirements:
+- Use a compelling, specific opening line (not generic)
+- Keep it under 150 words
+- One clear CTA at the end
+- Use {{first_name}}, {{company}}, {{sender_name}} variables where natural
+- African business context — be warm, direct, and professional
+
+Return a JSON object with:
+- subject: a compelling subject line
+- body: the HTML email body using only <p> tags`;
+
+      let subject = '';
+      let html = '';
+
+      if (getApiKey()) {
+        // Use Together AI (Llama) when API key is set
+        const result = await invokeLLMJson(jsonPrompt);
+        subject = result?.subject?.trim() ?? '';
+        html = result?.body?.trim() ?? '';
+      } else {
+        // Fall back to Anthropic SDK
+        const plainPrompt = `You are an expert B2B sales copywriter for African and emerging markets.
 
 Generate a B2B outbound sales email for the following context:
 - Sequence name: ${sequenceName || 'Outbound Sequence'}
@@ -610,19 +641,20 @@ Return a JSON with:
 - subject: a compelling subject line for this email
 - body: the HTML email body using only <p> tags (no divs, no complex markup)`;
 
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            subject: { type: 'string' },
-            body: { type: 'string' },
+        const result = await base44.integrations.Core.InvokeLLM({
+          prompt: plainPrompt,
+          response_json_schema: {
+            type: 'object',
+            properties: {
+              subject: { type: 'string' },
+              body: { type: 'string' },
+            },
+            required: ['subject', 'body'],
           },
-          required: ['subject', 'body'],
-        },
-      });
-      const subject = result?.subject?.trim() ?? '';
-      const html = result?.body?.trim() ?? '';
+        });
+        subject = result?.subject?.trim() ?? '';
+        html = result?.body?.trim() ?? '';
+      }
 
       const updates = { ...step };
       if (subject && !step.subject) updates.subject = subject;

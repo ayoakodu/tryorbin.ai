@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   DollarSign, Users, Mail, Calendar, TrendingUp, ChevronRight, EyeOff
@@ -48,14 +49,18 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
+const periodSlice = { '3M': 3, '6M': 6, 'YTD': 10 };
+
 export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, isCustomizing }) {
   const [activePeriod, setActivePeriod] = useState('YTD');
+  const navigate = useNavigate();
+  const chartData = pipelineData.slice(-periodSlice[activePeriod]);
 
   return (
     <div className="space-y-3">
       {/* KPI Strip — compact */}
       {!hiddenWidgets.includes('kpis') && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {KPI_CARDS.map((stat, i) => (
             <motion.div key={stat.id}
               initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }}
@@ -79,7 +84,7 @@ export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, i
       )}
 
       {/* Charts — reduced height, side by side */}
-      <div className="grid lg:grid-cols-3 gap-3">
+      <div className="grid md:grid-cols-3 gap-3">
         {/* Pipeline chart */}
         {!hiddenWidgets.includes('pipeline_chart') && (
           <div className="lg:col-span-2 rounded-xl p-4 bg-white border border-slate-200 hover:shadow-sm transition-shadow">
@@ -99,7 +104,7 @@ export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, i
               </div>
             </div>
             <ResponsiveContainer width="100%" height={140}>
-              <AreaChart data={pipelineData} margin={{ top: 2, right: 2, left: -26, bottom: 0 }}>
+              <AreaChart data={chartData} margin={{ top: 2, right: 2, left: -26, bottom: 0 }}>
                 <defs>
                   <linearGradient id="pGrad2" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="hsl(142 76% 52%)" stopOpacity={0.1} />
@@ -135,7 +140,7 @@ export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, i
                 </div>
               ))}
             </div>
-            <button className="flex items-center gap-1 w-full justify-center mt-3.5 text-[10px] text-slate-400 hover:text-emerald-600 transition-colors font-semibold">
+            <button onClick={() => navigate('/pipeline')} className="flex items-center gap-1 w-full justify-center mt-3.5 text-[10px] text-slate-400 hover:text-emerald-600 transition-colors font-semibold">
               View Pipeline <ChevronRight className="w-3 h-3" />
             </button>
           </div>
@@ -145,12 +150,12 @@ export default function PerformanceLayer({ hiddenWidgets = [], onToggleWidget, i
       {/* Activity Chart — compact */}
       {!hiddenWidgets.includes('activity_chart') && (
         <div className="rounded-xl p-4 bg-white border border-slate-200 hover:shadow-sm transition-shadow">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-start justify-between mb-3 gap-2 flex-wrap">
             <div>
               <h3 className="text-[12px] font-bold text-slate-700">Team Activity</h3>
               <p className="text-[10px] text-slate-400">Emails · Calls · Meetings · This week</p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               {[{ label: 'Emails', color: 'bg-emerald-400' }, { label: 'Calls', color: 'bg-cyan-400' }, { label: 'Meetings', color: 'bg-violet-400' }].map(l => (
                 <div key={l.label} className="flex items-center gap-1">
                   <div className={cn('w-1.5 h-1.5 rounded-full', l.color)} />

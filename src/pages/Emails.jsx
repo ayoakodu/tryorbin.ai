@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
-import { Mail, Inbox, Send, Star, Archive, Trash2, Search, Plus, RefreshCw, AlertCircle } from 'lucide-react';
+import { useState } from 'react';
+import { Mail, Inbox, Send, Star, Archive, Trash2, Search, Plus, RefreshCw, AlertCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -23,23 +21,26 @@ const SAMPLE_EMAILS = [
   { id: 5, from: 'Kemi Adeyemi',  email: 'kemi@access.bank',      subject: 'Proposal feedback',       preview: 'We\'ve reviewed the proposal internally and have a few clarifying questions...', time: 'Mon',       read: true,  starred: false, folder: 'inbox' },
 ];
 
+const BLANK_COMPOSE = { to: '', subject: '', body: '' };
+
 export default function Emails() {
   const [activeFolder, setActiveFolder] = useState('inbox');
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [search, setSearch] = useState('');
   const [emails, setEmails] = useState(SAMPLE_EMAILS);
+  const [showCompose, setShowCompose] = useState(false);
+  const [compose, setCompose] = useState(BLANK_COMPOSE);
 
-  const { data: apiEmails = [], isError: emailsError } = useQuery({
-    queryKey: ['emails'],
-    queryFn: () => base44.entities.Email.list('-created_date', 200),
-    retry: 1,
-  });
+  const isShowingSampleData = true;
 
-  useEffect(() => {
-    if (apiEmails.length > 0) setEmails(apiEmails);
-  }, [apiEmails]);
-
-  const isShowingSampleData = emails === SAMPLE_EMAILS || apiEmails.length === 0;
+  const handleSend = () => {
+    if (!compose.to.trim() || !compose.subject.trim()) return;
+    const sent = { id: Date.now(), from: 'Me', email: compose.to, subject: compose.subject, preview: compose.body, time: 'Just now', read: true, starred: false, folder: 'sent' };
+    setEmails(prev => [sent, ...prev]);
+    setCompose(BLANK_COMPOSE);
+    setShowCompose(false);
+    setActiveFolder('sent');
+  };
 
   const filtered = emails.filter(e =>
     e.folder === activeFolder &&
@@ -62,7 +63,7 @@ export default function Emails() {
       {/* Sidebar */}
       <div className="w-52 flex-shrink-0 border-r border-border bg-card flex flex-col">
         <div className="p-4 border-b border-border">
-          <Button size="sm" className="w-full gap-2 bg-primary text-primary-foreground">
+          <Button size="sm" className="w-full gap-2 bg-primary text-primary-foreground" onClick={() => setShowCompose(true)}>
             <Plus className="w-4 h-4" /> Compose
           </Button>
         </div>
@@ -176,6 +177,34 @@ export default function Emails() {
         )}
       </div>
       </div>
+
+      {/* Compose Modal */}
+      {showCompose && (
+        <div className="fixed inset-0 z-50 flex items-end justify-end p-6 pointer-events-none">
+          <div className="w-[480px] bg-card border border-border rounded-xl shadow-2xl flex flex-col pointer-events-auto" style={{ maxHeight: '520px' }}>
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-muted/40 rounded-t-xl">
+              <p className="text-sm font-semibold text-foreground">New Message</p>
+              <button onClick={() => setShowCompose(false)} className="text-muted-foreground hover:text-foreground"><X className="w-4 h-4" /></button>
+            </div>
+            <div className="flex flex-col flex-1 p-4 gap-2 overflow-y-auto">
+              <Input placeholder="To" value={compose.to} onChange={e => setCompose(p => ({ ...p, to: e.target.value }))} className="text-sm h-9" />
+              <Input placeholder="Subject" value={compose.subject} onChange={e => setCompose(p => ({ ...p, subject: e.target.value }))} className="text-sm h-9" />
+              <textarea
+                placeholder="Write your message..."
+                value={compose.body}
+                onChange={e => setCompose(p => ({ ...p, body: e.target.value }))}
+                className="flex-1 resize-none text-sm border border-input rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-ring min-h-[200px]"
+              />
+            </div>
+            <div className="flex items-center gap-2 px-4 py-3 border-t border-border">
+              <Button size="sm" className="gap-2 bg-primary text-primary-foreground" onClick={handleSend}>
+                <Send className="w-3.5 h-3.5" /> Send
+              </Button>
+              <Button size="sm" variant="ghost" onClick={() => { setCompose(BLANK_COMPOSE); setShowCompose(false); }}>Discard</Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

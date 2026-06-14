@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Zap, ArrowRight, CheckCircle2, Clock, AlertTriangle,
-  MessageCircle, Mail, Users, Shield, Flame, RefreshCw,
+  Zap, ArrowRight, CheckCircle2,
+  MessageCircle, Users, Shield, Flame, RefreshCw,
   ChevronRight, Star
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,8 @@ const ACTIONS = [
     urgencyLabel: 'Critical',
     urgencyColor: 'bg-red-50 text-red-500 border-red-200',
     estimatedImpact: '$272K at risk',
+    route: '/pipeline',
+    secondaryRoute: '/pipeline',
   },
   {
     id: 2,
@@ -37,6 +40,8 @@ const ACTIONS = [
     urgencyLabel: 'High Intent',
     urgencyColor: 'bg-orange-50 text-orange-500 border-orange-200',
     estimatedImpact: '47 hot prospects',
+    route: '/contacts',
+    secondaryRoute: '/ai-copilot',
   },
   {
     id: 3,
@@ -52,6 +57,8 @@ const ACTIONS = [
     urgencyLabel: 'Opportunity',
     urgencyColor: 'bg-emerald-50 text-emerald-600 border-emerald-200',
     estimatedImpact: '+18% reply rate',
+    route: '/whatsapp',
+    secondaryRoute: '/whatsapp',
   },
   {
     id: 4,
@@ -67,6 +74,8 @@ const ACTIONS = [
     urgencyLabel: 'AI Ready',
     urgencyColor: 'bg-violet-50 text-violet-600 border-violet-200',
     estimatedImpact: '67 cold contacts',
+    route: '/outreach',
+    secondaryRoute: '/outreach',
   },
   {
     id: 5,
@@ -82,6 +91,8 @@ const ACTIONS = [
     urgencyLabel: 'Needs Attention',
     urgencyColor: 'bg-amber-50 text-amber-600 border-amber-200',
     estimatedImpact: '~720 emails affected',
+    route: '/deliverability',
+    secondaryRoute: '/deliverability',
   },
   {
     id: 6,
@@ -97,6 +108,8 @@ const ACTIONS = [
     urgencyLabel: 'Momentum',
     urgencyColor: 'bg-cyan-50 text-cyan-600 border-cyan-200',
     estimatedImpact: '12 warm leads',
+    route: '/contacts',
+    secondaryRoute: '/outreach',
   },
 ];
 
@@ -105,6 +118,7 @@ const urgencyOrder = { critical: 0, high: 1, medium: 2, low: 3 };
 export default function NextBestActions() {
   const [completed, setCompleted] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const navigate = useNavigate();
 
   const active = ACTIONS
     .filter(a => !completed.includes(a.id))
@@ -114,13 +128,13 @@ export default function NextBestActions() {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden"
-      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 0 0 0 transparent' }}>
+      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
 
       {/* Header */}
-      <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100"
+      <div className="flex items-center justify-between px-4 sm:px-5 py-3.5 border-b border-slate-100"
         style={{ background: 'linear-gradient(to right, #fff 60%, rgba(245,243,255,0.4))' }}>
-        <div className="flex items-center gap-3">
-          <div className="relative">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="relative flex-shrink-0">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center shadow-sm">
               <Zap className="w-4 h-4 text-white" />
             </div>
@@ -128,18 +142,20 @@ export default function NextBestActions() {
               <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-red-500 border-2 border-white" />
             )}
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-[13px] font-bold text-slate-900">Next Best Actions</h2>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-600 border border-violet-200">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-xs sm:text-[13px] font-bold text-slate-900 whitespace-nowrap">Next Best Actions</h2>
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-50 text-violet-600 border border-violet-200 whitespace-nowrap">
                 {active.length} queued
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 leading-tight">AI-prioritized execution queue · Sorted by impact</p>
+            <p className="text-[11px] text-slate-400 leading-tight hidden sm:block">AI-prioritized execution queue · Sorted by impact</p>
           </div>
         </div>
-        <button className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">
-          <RefreshCw className="w-3 h-3" /> Refresh
+        <button
+          onClick={() => setCompleted([])}
+          className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0 ml-2">
+          <RefreshCw className="w-3 h-3" /> <span className="hidden sm:inline">Reset</span>
         </button>
       </div>
 
@@ -156,39 +172,39 @@ export default function NextBestActions() {
                 exit={{ opacity: 0, x: 6, height: 0 }}
                 transition={{ delay: i * 0.04, duration: 0.18 }}
                 className={cn(
-                  'flex items-center gap-4 px-5 py-4 group hover:bg-slate-50/70 transition-colors',
+                  'flex items-start sm:items-center gap-3 px-4 sm:px-5 py-3.5 group hover:bg-slate-50/70 transition-colors',
                   action.urgency === 'critical' && 'border-l-2 border-l-red-400'
                 )}
               >
-                {/* Icon */}
-                <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0', action.iconBg)}>
+                <div className={cn('w-8 h-8 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center flex-shrink-0 mt-0.5 sm:mt-0', action.iconBg)}>
                   <Icon className={cn('w-4 h-4', action.iconColor)} />
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+                  <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                     <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-md border', action.urgencyColor)}>
                       {action.urgencyLabel}
                     </span>
                     <span className="text-[10px] font-semibold text-slate-400">{action.estimatedImpact}</span>
                   </div>
-                  <p className="text-[12px] font-semibold text-slate-800 leading-snug">{action.title}</p>
-                  <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">{action.context}</p>
+                  <p className="text-xs font-semibold text-slate-800 leading-snug">{action.title}</p>
+                  <p className="text-[11px] text-slate-400 mt-0.5 leading-snug line-clamp-1">{action.context}</p>
                 </div>
 
-                {/* CTAs */}
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <button className="text-[11px] text-slate-400 font-medium hover:text-slate-600 transition-colors whitespace-nowrap hidden group-hover:block">
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => navigate(action.secondaryRoute)}
+                    className="text-[11px] text-slate-400 font-medium hover:text-slate-600 transition-colors whitespace-nowrap hidden md:group-hover:block">
                     {action.secondaryCta}
                   </button>
                   <button
+                    onClick={() => navigate(action.route)}
                     className={cn(
-                      'flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm whitespace-nowrap',
+                      'flex items-center gap-1 text-[11px] font-bold px-2.5 py-1.5 rounded-lg transition-all shadow-sm whitespace-nowrap',
                       action.ctaStyle
                     )}
                   >
-                    {action.cta}
+                    <span className="hidden xs:inline">{action.cta}</span>
                     <ArrowRight className="w-3 h-3" />
                   </button>
                   <button
@@ -209,11 +225,11 @@ export default function NextBestActions() {
             <CheckCircle2 className="w-8 h-8 text-emerald-300" />
             <p className="text-[12px] font-semibold text-slate-500">Action queue cleared</p>
             <p className="text-[11px] text-slate-400">AI is monitoring for new priorities</p>
+            <button onClick={() => setCompleted([])} className="text-[11px] text-emerald-600 hover:underline mt-1">Reset queue</button>
           </div>
         )}
       </div>
 
-      {/* Show more / Summary */}
       {active.length > 4 && (
         <div className="px-5 py-3 border-t border-slate-50 flex items-center justify-between">
           <span className="text-[11px] text-slate-400">{active.length - 4} more actions queued</span>

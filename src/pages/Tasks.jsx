@@ -1,6 +1,4 @@
-import { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { CheckSquare, Square, Plus, Search, Sparkles, Calendar, User, AlertCircle, Clock, ChevronDown, Trash2, Flag } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
@@ -49,45 +47,21 @@ export default function Tasks() {
   const [filterAssignee, setFilterAssignee] = useState('All');
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ title: '', type: 'Follow-up', priority: 'medium', due: 'Today', assignee: 'JD' });
-  const queryClient = useQueryClient();
 
-  const { data: apiTasks = [] } = useQuery({
-    queryKey: ['tasks'],
-    queryFn: () => base44.entities.Task.list('-created_date', 200),
-    retry: 1,
-  });
-
-  useEffect(() => {
-    if (apiTasks.length > 0) setTasks(apiTasks);
-  }, [apiTasks]);
-
-  const toggle = async (id) => {
-    const task = tasks.find(t => t.id === id);
+  const toggle = (id) => {
     setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-    try {
-      await base44.entities.Task.update(id, { done: !task.done });
-      queryClient.invalidateQueries(['tasks']);
-    } catch {}
   };
 
-  const remove = async (id) => {
+  const remove = (id) => {
     setTasks(prev => prev.filter(t => t.id !== id));
-    try {
-      await base44.entities.Task.delete(id);
-      queryClient.invalidateQueries(['tasks']);
-    } catch {}
   };
 
-  const handleCreate = async () => {
+  const handleCreate = () => {
     if (!form.title.trim()) return;
     const newTask = { id: Date.now(), ...form, done: false, ai: false };
     setTasks(prev => [newTask, ...prev]);
     setForm({ title: '', type: 'Follow-up', priority: 'medium', due: 'Today', assignee: 'JD' });
     setShowCreate(false);
-    try {
-      await base44.entities.Task.create({ ...form, done: false });
-      queryClient.invalidateQueries(['tasks']);
-    } catch {}
   };
 
   const filtered = tasks.filter(t => {

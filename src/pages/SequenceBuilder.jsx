@@ -11,6 +11,7 @@ import { Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { initialSequences } from './Outreach';
+import { getSequence, upsertSequence } from '@/lib/sequences';
 import AIPersonalizePanel from '@/components/ai/AIPersonalizePanel';
 import AddStepMenu, { STEP_TYPE_MAP } from '@/components/outreach/AddStepMenu';
 import StepModal from '@/components/outreach/StepModal';
@@ -134,8 +135,9 @@ export default function SequenceBuilder() {
   const seqId = parseInt(urlParams.get('id'));
 
   const [seq, setSeq] = useState(() => {
-    const found = initialSequences.find(s => s.id === seqId);
-    return found || {
+    const fromStorage = seqId ? getSequence(seqId) : null;
+    const fromStatic = seqId ? initialSequences.find(s => s.id === seqId) : null;
+    return fromStorage || fromStatic || {
       id: seqId || Date.now(), name: 'New Sequence', status: 'draft',
       steps: [], enrolled: 0, replied: 0, meetings: 0, opens: 0, tags: [],
     };
@@ -212,9 +214,10 @@ export default function SequenceBuilder() {
   }, []);
 
   const handleSave = useCallback(() => {
+    upsertSequence(seq);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
-  }, []);
+  }, [seq]);
 
   return (
     <div className="flex-1 flex flex-col min-h-0" style={{ background: '#f8fafc' }}>

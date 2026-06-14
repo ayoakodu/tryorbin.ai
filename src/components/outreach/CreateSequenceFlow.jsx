@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
+import { invokeLLMJson } from '@/lib/anthropic';
 import {
   X, Sparkles, BookOpen, Edit3, ArrowLeft, Loader2,
   Clock, ChevronRight
@@ -240,10 +240,7 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
   const generateName = useCallback(async () => {
     if (!aiPrompt.trim()) return;
     setAiLoading(true);
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Generate a concise, professional B2B outreach sequence name for: "${aiPrompt}". Return JSON with name (string only, no quotes, no explanation).`,
-      response_json_schema: { type: 'object', properties: { name: { type: 'string' } } }
-    });
+    const result = await invokeLLMJson(`Generate a concise, professional B2B outreach sequence name for: "${aiPrompt}". Return JSON: {"name": "..."}`);
     if (result?.name) setName(result.name);
     setAiLoading(false);
   }, [aiPrompt]);

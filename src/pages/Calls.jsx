@@ -27,8 +27,12 @@ const DirectionIcon = ({ dir }) => {
   return <PhoneOutgoing className="w-3.5 h-3.5 text-cyan-500" />;
 };
 
+const CALLS_KEY = 'orbin_calls';
+function loadCalls() { try { const s = localStorage.getItem(CALLS_KEY); return s ? JSON.parse(s) : null; } catch { return null; } }
+function persistCalls(calls) { try { localStorage.setItem(CALLS_KEY, JSON.stringify(calls)); } catch {} }
+
 export default function Calls() {
-  const [calls, setCalls] = useState(CALLS);
+  const [calls, setCalls] = useState(() => loadCalls() ?? CALLS);
   const [search, setSearch] = useState('');
   const [filterOutcome, setFilterOutcome] = useState('All');
   const [selected, setSelected] = useState(null);
@@ -51,9 +55,12 @@ export default function Calls() {
 
   const handleLogCall = () => {
     if (!logForm.contact.trim()) return;
-    setCalls(prev => [{
-      id: Date.now(), ...logForm, rep: 'JD', direction: 'outbound', date: 'Just now', phone: '',
-    }, ...prev]);
+    const newCall = { id: Date.now(), ...logForm, rep: 'JD', direction: 'outbound', date: 'Just now', phone: '' };
+    setCalls(prev => {
+      const updated = [newCall, ...prev];
+      persistCalls(updated);
+      return updated;
+    });
     setLogForm({ contact: '', company: '', outcome: 'Connected', duration: '', notes: '' });
     setShowLog(false);
   };

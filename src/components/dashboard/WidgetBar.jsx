@@ -182,7 +182,7 @@ export default function WidgetBar({ isCustomizing, onToggleCustomize }) {
       </AnimatePresence>
 
       {/* Active widgets */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
         <AnimatePresence>
           {visibleWidgets.map((w, i) => {
             const widgetDef = WIDGET_CONTENT[w.id];
@@ -214,7 +214,7 @@ export default function WidgetBar({ isCustomizing, onToggleCustomize }) {
         {!showPicker && (
           <button
             onClick={() => setShowPicker(true)}
-            className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-4 flex flex-col items-center justify-center gap-2 hover:border-emerald-300 hover:bg-emerald-50/30 transition-all group min-h-[100px]"
+            className="rounded-xl border border-dashed border-slate-200 bg-slate-50/50 p-4 flex flex-col items-center justify-center gap-2 hover:border-emerald-300 hover:bg-emerald-50/30 transition-all group min-h-[80px]"
           >
             <Plus className="w-5 h-5 text-slate-300 group-hover:text-emerald-500 transition-colors" />
             <span className="text-[11px] font-medium text-slate-400 group-hover:text-emerald-600 transition-colors">Add Widget</span>
