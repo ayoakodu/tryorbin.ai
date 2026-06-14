@@ -21,7 +21,7 @@ const conversationsData = [
     lastMessage: 'Thanks for the demo, very impressive!', lastTime: '2m ago',
     tag: 'hot',
     messages: [
-      { id: 1, role: 'sent', content: 'Hi Amara! 👋 Wanted to follow up on our earlier conversation about RVNU.', time: '10:30', status: 'read' },
+      { id: 1, role: 'sent', content: 'Hi Amara! 👋 Wanted to follow up on our earlier conversation about Orbin AI.', time: '10:30', status: 'read' },
       { id: 2, role: 'received', content: 'Hey! Yes, I\'ve been thinking about it. The AI features look really promising for our outbound team.', time: '10:45', status: 'read' },
       { id: 3, role: 'sent', content: 'Glad to hear it! Would love to show you how the sequencing engine works — it\'s designed exactly for teams like yours.', time: '10:47', status: 'read' },
       { id: 4, role: 'received', content: 'Thanks for the demo, very impressive!', time: '11:02', status: 'unread' },
@@ -68,10 +68,10 @@ const tagColors = {
 };
 
 const templates = [
-  { label: 'Initial Outreach', text: 'Hi {{first_name}}! 👋 I\'m reaching out from RVNU. We help GTM teams in Africa automate their outbound with AI. Would love to share how we could help {{company}}. Is now a good time?' },
+  { label: 'Initial Outreach', text: 'Hi {{first_name}}! 👋 I\'m reaching out from Orbin AI. We help GTM teams in Africa automate their outbound with AI. Would love to share how we could help {{company}}. Is now a good time?' },
   { label: 'Follow-up', text: 'Hi {{first_name}}, just following up on my previous message. We\'ve been helping similar companies improve their reply rates by 3x. Worth a quick chat?' },
   { label: 'Case Study', text: 'Hi {{first_name}}! 🚀 Thought this would be relevant — we recently helped a team like {{company}} book 40% more meetings using our AI sequencing. Happy to share details?' },
-  { label: 'Meeting Request', text: 'Hi {{first_name}}, would you be open to a 20-min call this week to see how RVNU works? I can show you exactly how it applies to {{company}}\'s workflow.' },
+  { label: 'Meeting Request', text: 'Hi {{first_name}}, would you be open to a 20-min call this week to see how Orbin AI works? I can show you exactly how it applies to {{company}}\'s workflow.' },
 ];
 
 export default function WhatsApp() {

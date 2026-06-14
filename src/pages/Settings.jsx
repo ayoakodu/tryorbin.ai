@@ -53,16 +53,16 @@ export default function Settings() {
   const [active, setActive] = useState('profile');
   const [saved, setSaved] = useState(false);
 
-  const [profile, setProfile] = useState({ name: 'John Doe', email: 'john@rvnu.io', title: 'Head of Sales', phone: '+234 810 000 0000' });
-  const [workspace, setWorkspace] = useState({ name: 'RVNU Workspace', timezone: 'Africa/Lagos', language: 'English' });
+  const [profile, setProfile] = useState({ name: 'John Doe', email: 'john@orbin-ai.io', title: 'Head of Sales', phone: '+234 810 000 0000' });
+  const [workspace, setWorkspace] = useState({ name: 'Orbin AI Workspace', timezone: 'Africa/Lagos', language: 'English' });
   const [notifs, setNotifs] = useState({ emailDigest: true, taskReminders: true, dealAlerts: true, teamActivity: false, aiInsights: true, campaignReports: true });
   const [appearance, setAppearance] = useState({ theme: 'light', density: 'comfortable' });
   const [emailConnected] = useState(true);
   const [showConnectModal, setShowConnectModal] = useState(false);
   const [mailboxes, setMailboxes] = useState([
-    { email: 'john@rvnu.io',      provider: 'gmail',   label: 'Primary',   state: 'connected',   lastSync: '2 min ago', stats: { Sent: 54, Received: 12, Tracked: 41 } },
-    { email: 'outreach@rvnu.io',  provider: 'gmail',   label: 'Outreach',  state: 'connected',   lastSync: '5 min ago', stats: { Sent: 180, Received: 3, Tracked: 154 } },
-    { email: 'sales@rvnu.io',     provider: 'outlook', label: 'Sales',     state: 'expired',     lastSync: '2d ago',    stats: null, errorMessage: 'Session token expired — reconnect to resume sync' },
+    { email: 'john@orbin-ai.io',      provider: 'gmail',   label: 'Primary',   state: 'connected',   lastSync: '2 min ago', stats: { Sent: 54, Received: 12, Tracked: 41 } },
+    { email: 'outreach@orbin-ai.io',  provider: 'gmail',   label: 'Outreach',  state: 'connected',   lastSync: '5 min ago', stats: { Sent: 180, Received: 3, Tracked: 154 } },
+    { email: 'sales@orbin-ai.io',     provider: 'outlook', label: 'Sales',     state: 'expired',     lastSync: '2d ago',    stats: null, errorMessage: 'Session token expired — reconnect to resume sync' },
   ]);
 
   const handleSave = () => {
@@ -220,9 +220,9 @@ export default function Settings() {
               <Section title="Team & Access">
                 <div className="space-y-3 mb-5">
                   {[
-                    { name: 'John Doe', email: 'john@rvnu.io', role: 'Admin', avatar: 'JD', status: 'active' },
-                    { name: 'Sara Boateng', email: 'sara@rvnu.io', role: 'Member', avatar: 'SB', status: 'active' },
-                    { name: 'Ama Mensah', email: 'ama@rvnu.io', role: 'Member', avatar: 'AM', status: 'invite_pending' },
+                    { name: 'John Doe', email: 'john@orbin-ai.io', role: 'Admin', avatar: 'JD', status: 'active' },
+                    { name: 'Sara Boateng', email: 'sara@orbin-ai.io', role: 'Member', avatar: 'SB', status: 'active' },
+                    { name: 'Ama Mensah', email: 'ama@orbin-ai.io', role: 'Member', avatar: 'AM', status: 'invite_pending' },
                   ].map(m => (
                     <div key={m.email} className="flex items-center gap-3 p-3 rounded-lg" style={{ background: '#f8fafc', border: '1px solid #e2e8f0' }}>
                       <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0">

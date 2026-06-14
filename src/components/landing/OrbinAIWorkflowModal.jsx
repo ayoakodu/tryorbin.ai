@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, ArrowLeft, ArrowRight, Sparkles, Check, Mail, MessageCircle, Linkedin, Phone, Users, Building2, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import RVNULogo from '@/components/ui/RVNULogo';
+import OrbinAILogo from '@/components/ui/OrbinAILogo';
 
 // ─── Step 1 ───────────────────────────────────────────────────────────────────
 
@@ -400,7 +400,7 @@ const STEPS = [
   { title: 'Join the Waitlist', short: 'Join' },
 ];
 
-export default function RVNUWorkflowModal({ onClose }) {
+export default function OrbinAIWorkflowModal({ onClose }) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {

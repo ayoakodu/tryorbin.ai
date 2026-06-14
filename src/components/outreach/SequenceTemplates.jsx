@@ -11,7 +11,7 @@ const templates = [
     steps_data: [
       { type: 'email', day: 0, subject: 'Quick question about {{company}}\'s payment stack', body: 'Hi {{first_name}}, I noticed {{company}} recently expanded...' },
       { type: 'linkedin', day: 2, subject: 'LinkedIn connection request', body: 'Hi {{first_name}}, I work with fintech teams across Africa...' },
-      { type: 'email', day: 5, subject: 'Case study: How Paystack 3x\'d meetings with RVNU', body: 'Hi {{first_name}}, wanted to share something relevant...' },
+      { type: 'email', day: 5, subject: 'Case study: How Paystack 3x\'d meetings with Orbin AI', body: 'Hi {{first_name}}, wanted to share something relevant...' },
       { type: 'call', day: 8, subject: 'Discovery call attempt', body: 'Qualify budget, timeline, and decision process.' },
       { type: 'email', day: 12, subject: 'Last message from me', body: 'Hi {{first_name}}, I won\'t keep following up after this...' },
     ]
@@ -29,8 +29,8 @@ const templates = [
     id: 3, name: 'Inbound Lead Nurture', channel: 'email', steps: 4, rating: 4.9,
     tags: ['inbound', 'nurture'],
     steps_data: [
-      { type: 'email', day: 0, subject: 'Welcome to RVNU — here\'s what to expect', body: 'Hi {{first_name}}, thanks for your interest...' },
-      { type: 'email', day: 2, subject: 'How teams like {{company}} use RVNU', body: 'Hi {{first_name}}, I wanted to share...' },
+      { type: 'email', day: 0, subject: 'Welcome to Orbin AI — here\'s what to expect', body: 'Hi {{first_name}}, thanks for your interest...' },
+      { type: 'email', day: 2, subject: 'How teams like {{company}} use Orbin AI', body: 'Hi {{first_name}}, I wanted to share...' },
       { type: 'email', day: 5, subject: 'Quick question', body: 'Hi {{first_name}}, just checking in...' },
       { type: 'call', day: 8, subject: 'Onboarding call', body: 'Check in on progress, answer questions.' },
     ]

@@ -1,7 +1,7 @@
 /**
- * RVNU Browser Companion Architecture — Frontend Shell
+ * Orbin AI Browser Companion Architecture — Frontend Shell
  *
- * This component prepares the RVNU frontend for future browser-extension integration.
+ * This component prepares the Orbin AI frontend for future browser-extension integration.
  * It is a PRODUCTIVITY OVERLAY — not automation. Users manually act on every suggestion.
  * No hidden actions, no auto-sending, no scraping.
  */
@@ -32,7 +32,7 @@ function LinkedInContextPanel({ context, onDismiss }) {
           <div className="w-5 h-5 rounded bg-white/20 flex items-center justify-center">
             <Zap className="w-3 h-3 text-white" />
           </div>
-          <span className="text-[11px] font-bold text-white">RVNU Companion</span>
+          <span className="text-[11px] font-bold text-white">Orbin AI Companion</span>
         </div>
         <button onClick={onDismiss} className="text-white/60 hover:text-white transition-colors">
           <X className="w-3.5 h-3.5" />

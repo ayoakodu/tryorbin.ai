@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 const QUEUE_ITEMS = [
   { id: 1, to: 'amara.diallo@flutterwave.com',   subject: 'Q3 Partnership Follow-up',      status: 'queued',  scheduledFor: 'In 2 min',    sequence: 'Fintech Q2',    retries: 0 },
-  { id: 2, to: 'kemi.adeyemi@yoco.com',           subject: 'Meeting prep — RVNU walkthrough', status: 'sending', scheduledFor: 'Now',          sequence: 'West Africa',   retries: 0 },
+  { id: 2, to: 'kemi.adeyemi@yoco.com',           subject: 'Meeting prep — Orbin AI walkthrough', status: 'sending', scheduledFor: 'Now',          sequence: 'West Africa',   retries: 0 },
   { id: 3, to: 'tunde.okafor@paystack.com',       subject: 'Enterprise plan follow-up',     status: 'retrying',scheduledFor: 'Retry #2',     sequence: 'Enterprise',    retries: 2 },
   { id: 4, to: 'nadia.hassan@cellulant.io',       subject: 'Intro from Ahmed',              status: 'failed',  scheduledFor: '—',            sequence: 'Cold ICP',      retries: 3 },
   { id: 5, to: 'chioma.eze@opay.ng',             subject: 'Product demo request',           status: 'queued',  scheduledFor: 'In 12 min',    sequence: 'Warm Lead',     retries: 0 },

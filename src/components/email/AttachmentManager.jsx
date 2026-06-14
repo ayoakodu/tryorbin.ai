@@ -13,7 +13,7 @@ const FILE_TYPES = {
 };
 
 const SAMPLE_FILES = [
-  { id: 1, name: 'RVNU_Platform_Deck.pdf',    size: '2.4 MB', type: 'pdf',  uploadedAt: '2d ago',    usedIn: 5 },
+  { id: 1, name: 'Orbin AI_Platform_Deck.pdf',    size: '2.4 MB', type: 'pdf',  uploadedAt: '2d ago',    usedIn: 5 },
   { id: 2, name: 'Proposal_Template_Q3.docx', size: '184 KB', type: 'docx', uploadedAt: '1w ago',    usedIn: 2 },
   { id: 3, name: 'Company_Logo.png',          size: '48 KB',  type: 'png',  uploadedAt: '2w ago',    usedIn: 12 },
   { id: 4, name: 'Case_Study_Fintech.pdf',    size: '1.1 MB', type: 'pdf',  uploadedAt: '3w ago',    usedIn: 8 },

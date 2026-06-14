@@ -64,7 +64,7 @@ function previewText(text) {
     .replace(/\{\{industry\}\}/g, 'Fintech')
     .replace(/\{\{sender_name\}\}/g, 'You')
     .replace(/\{\{sender_title\}\}/g, 'Account Executive')
-    .replace(/\{\{sender_company\}\}/g, 'RVNU');
+    .replace(/\{\{sender_company\}\}/g, 'Orbin AI');
 }
 
 // ─── TYPE DROPDOWN (New Thread / Reply) ───────────────────────────────────────
@@ -844,7 +844,7 @@ function WhatsAppEditor({ step, onUpdate, draft, onDraftChange }) {
       <div>
         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Message</label>
         <Textarea value={step.body || ''} onChange={e => onUpdate({ ...step, body: e.target.value })}
-          placeholder={"Hi {{first_name}} 👋 I'm reaching out from RVNU…"} className="text-[13px] resize-none" rows={9} />
+          placeholder={"Hi {{first_name}} 👋 I'm reaching out from Orbin AI…"} className="text-[13px] resize-none" rows={9} />
       </div>
       <div>
         <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">CTA</label>

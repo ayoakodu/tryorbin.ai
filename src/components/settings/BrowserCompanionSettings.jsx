@@ -96,7 +96,7 @@ export default function BrowserCompanionSettings() {
             <p className="text-[10px] text-slate-400 mt-0.5">Last synced: {new Date(lastSync).toLocaleTimeString()}</p>
           )}
           {status === 'disconnected' && (
-            <p className="text-[10px] text-slate-400 mt-0.5">Install the RVNU extension to enable LinkedIn workflow execution.</p>
+            <p className="text-[10px] text-slate-400 mt-0.5">Install the Orbin AI extension to enable LinkedIn workflow execution.</p>
           )}
           {status === 'sync_error' && (
             <p className="text-[10px] text-red-400 mt-0.5">Connection lost. Click reconnect to restore sync.</p>

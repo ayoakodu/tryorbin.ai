@@ -12,9 +12,9 @@ const PROVIDERS = [
 ];
 
 const SENDERS = [
-  { email: 'outreach@rvnu.io', name: 'RVNU Outreach', status: 'verified',  provider: 'Mailgun' },
-  { email: 'sales@rvnu.io',    name: 'RVNU Sales',    status: 'verified',  provider: 'Mailgun' },
-  { email: 'hello@rvnu.io',    name: 'RVNU Hello',    status: 'pending',   provider: 'SendGrid' },
+  { email: 'outreach@orbin-ai.io', name: 'Orbin AI Outreach', status: 'verified',  provider: 'Mailgun' },
+  { email: 'sales@orbin-ai.io',    name: 'Orbin AI Sales',    status: 'verified',  provider: 'Mailgun' },
+  { email: 'hello@orbin-ai.io',    name: 'Orbin AI Hello',    status: 'pending',   provider: 'SendGrid' },
 ];
 
 export default function SMTPConfigPanel() {
@@ -22,7 +22,7 @@ export default function SMTPConfigPanel() {
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
   const [showSecret, setShowSecret] = useState(false);
-  const [config, setConfig] = useState({ host: 'smtp.mailgun.org', port: '587', username: 'postmaster@rvnu.io', password: '', encryption: 'TLS' });
+  const [config, setConfig] = useState({ host: 'smtp.mailgun.org', port: '587', username: 'postmaster@orbin-ai.io', password: '', encryption: 'TLS' });
 
   const handleTest = () => {
     setTesting(true);

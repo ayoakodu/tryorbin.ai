@@ -7,7 +7,7 @@ const EVENTS = [
   { id: 1, event: 'email.delivered',   source: 'Mailgun',  status: 'processed', timestamp: '30s ago',    retries: 0, payload: '{"messageId":"abc123","to":"amara@fw.io"}' },
   { id: 2, event: 'email.opened',      source: 'Tracking', status: 'processed', timestamp: '2 min ago',  retries: 0, payload: '{"event":"open","recipient":"kemi@yoco.com"}' },
   { id: 3, event: 'email.bounced',     source: 'Mailgun',  status: 'processed', timestamp: '5 min ago',  retries: 0, payload: '{"event":"bounce","code":550}' },
-  { id: 4, event: 'email.clicked',     source: 'Tracking', status: 'processed', timestamp: '8 min ago',  retries: 0, payload: '{"url":"https://rvnu.io/demo","recipient":"tunde@paystack.com"}' },
+  { id: 4, event: 'email.clicked',     source: 'Tracking', status: 'processed', timestamp: '8 min ago',  retries: 0, payload: '{"url":"https://orbin-ai.io/demo","recipient":"tunde@paystack.com"}' },
   { id: 5, event: 'email.failed',      source: 'Mailgun',  status: 'failed',    timestamp: '12 min ago', retries: 3, payload: '{"error":"SMTP timeout","messageId":"xyz789"}' },
   { id: 6, event: 'sequence.enrolled', source: 'Internal', status: 'processed', timestamp: '20 min ago', retries: 0, payload: '{"contactId":"c_001","sequenceId":"s_fintech"}' },
   { id: 7, event: 'email.unsubscribed',source: 'Tracking', status: 'processed', timestamp: '1 hr ago',   retries: 0, payload: '{"email":"noreply@domain.co"}' },

@@ -8,14 +8,14 @@ import {
 } from 'lucide-react';
 
 function useTheme() {
-  const [theme, setThemeState] = useState(() => localStorage.getItem('rvnu-theme') || 'system');
+  const [theme, setThemeState] = useState(() => localStorage.getItem('orbin-theme') || 'system');
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     applyTheme(theme, mediaQuery.matches);
 
     const listener = (e) => {
-      if (localStorage.getItem('rvnu-theme') === 'system') {
+      if (localStorage.getItem('orbin-theme') === 'system') {
         applyTheme('system', e.matches);
       }
     };
@@ -33,7 +33,7 @@ function useTheme() {
   };
 
   const setTheme = (t) => {
-    localStorage.setItem('rvnu-theme', t);
+    localStorage.setItem('orbin-theme', t);
     setThemeState(t);
   };
 
