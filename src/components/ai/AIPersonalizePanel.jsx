@@ -1,20 +1,23 @@
 import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { Sparkles, Globe, Loader2, Copy, ChevronDown, ChevronUp, X, Check } from 'lucide-react';
+import { Sparkles, Globe, Loader2, Copy, ChevronDown, ChevronUp, X, Check, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 export default function AIPersonalizePanel({ onInsert, onClose }) {
   const [url, setUrl] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rewritingOpener, setRewritingOpener] = useState(false);
   const [result, setResult] = useState(null);
   const [expanded, setExpanded] = useState(null);
   const [copied, setCopied] = useState(null);
+  const [activeAngle, setActiveAngle] = useState(null);
 
   const analyze = async () => {
     if (!url.trim()) return;
     setLoading(true);
     setResult(null);
+    setActiveAngle(null);
     const data = await base44.integrations.Core.InvokeLLM({
       prompt: `Analyze this company website URL: ${url}
 
@@ -42,7 +45,38 @@ Return a JSON with:
     setLoading(false);
   };
 
-  const copyAndUse = (text, key) => {
+  const applyAngle = async (angle, i) => {
+    if (!result) return;
+    setActiveAngle(i);
+    setRewritingOpener(true);
+    try {
+      const data = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are a B2B sales copywriter for African/emerging markets.
+
+Rewrite this opening line for a cold outreach email to ${result.company_name}, incorporating the following personalization angle:
+
+Angle: "${angle}"
+
+Original opener: "${result.suggested_opener}"
+
+Company context: ${result.summary}
+
+Write a new 1-2 sentence opening line that naturally weaves in the angle. Be specific, warm, and direct. No generic phrases.`,
+        response_json_schema: {
+          type: 'object',
+          properties: { suggested_opener: { type: 'string' } },
+          required: ['suggested_opener'],
+        },
+      });
+      setResult(prev => ({ ...prev, suggested_opener: data.suggested_opener || prev.suggested_opener }));
+    } catch {
+      // keep existing opener on failure
+    } finally {
+      setRewritingOpener(false);
+    }
+  };
+
+  const copyText = (text, key) => {
     navigator.clipboard.writeText(text).catch(() => {});
     setCopied(key);
     setTimeout(() => setCopied(null), 2000);
@@ -107,14 +141,28 @@ Return a JSON with:
             {/* Suggested Opener */}
             <div className="p-3 rounded-xl bg-primary/10 border border-primary/20">
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-primary">Suggested Opening Line</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-xs font-semibold text-primary">Suggested Opening Line</p>
+                  {activeAngle !== null && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-semibold">
+                      Angle applied
+                    </span>
+                  )}
+                </div>
                 <button
-                  onClick={() => copyAndUse(result.suggested_opener, 'opener')}
-                  className="text-[10px] px-2 py-0.5 rounded bg-primary text-primary-foreground font-semibold flex items-center gap-1">
+                  onClick={() => copyText(result.suggested_opener, 'opener')}
+                  disabled={rewritingOpener}
+                  className="text-[10px] px-2 py-0.5 rounded bg-primary text-primary-foreground font-semibold flex items-center gap-1 disabled:opacity-50">
                   {copied === 'opener' ? <><Check className="w-3 h-3" /> Copied!</> : <><Copy className="w-3 h-3" /> Copy &amp; Use</>}
                 </button>
               </div>
-              <p className="text-sm text-foreground italic">"{result.suggested_opener}"</p>
+              {rewritingOpener ? (
+                <div className="flex items-center gap-2 text-xs text-primary/70 italic py-1">
+                  <Loader2 className="w-3 h-3 animate-spin" /> Rewriting with selected angle…
+                </div>
+              ) : (
+                <p className="text-sm text-foreground italic">"{result.suggested_opener}"</p>
+              )}
             </div>
 
             {/* Talking Points */}
@@ -130,7 +178,7 @@ Return a JSON with:
                     <li key={i} className="flex items-start gap-2 text-sm text-foreground">
                       <span className="text-primary font-bold mt-0.5">·</span>
                       <span className="flex-1">{pt}</span>
-                      <button onClick={() => copyAndUse(pt, `tp-${i}`)}
+                      <button onClick={() => copyText(pt, `tp-${i}`)}
                         className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground hover:text-foreground flex-shrink-0 flex items-center gap-1">
                         {copied === `tp-${i}` ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
                       </button>
@@ -148,19 +196,27 @@ Return a JSON with:
                 {expanded === 'angles' ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />}
               </button>
               {expanded === 'angles' && (
-                <ul className="mt-2 space-y-1.5">
-                  {result.personalization_angles?.map((angle, i) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-foreground">
-                      <span className="text-cyan-400 font-bold mt-0.5">·</span>
-                      <span className="flex-1">{angle}</span>
-                      <button
-                        onClick={() => copyAndUse(angle, `angle-${i}`)}
-                        className="text-[10px] px-1.5 py-0.5 rounded bg-secondary text-muted-foreground hover:text-foreground flex-shrink-0 flex items-center gap-1 min-w-[44px] justify-center">
-                        {copied === `angle-${i}` ? <><Check className="w-3 h-3 text-emerald-500" /> Done</> : 'Use'}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                <>
+                  <p className="text-[10px] text-muted-foreground mt-1.5 mb-2">Click <strong>Use</strong> to rewrite the opening line using that angle.</p>
+                  <ul className="space-y-1.5">
+                    {result.personalization_angles?.map((angle, i) => (
+                      <li key={i} className={`flex items-start gap-2 text-sm text-foreground p-2 rounded-lg transition-colors ${activeAngle === i ? 'bg-primary/10 border border-primary/20' : 'hover:bg-secondary/50'}`}>
+                        <span className="text-cyan-400 font-bold mt-0.5">·</span>
+                        <span className="flex-1">{angle}</span>
+                        <button
+                          onClick={() => applyAngle(angle, i)}
+                          disabled={rewritingOpener}
+                          className="text-[10px] px-2 py-0.5 rounded bg-primary/90 text-primary-foreground hover:bg-primary flex-shrink-0 flex items-center gap-1 min-w-[44px] justify-center font-semibold disabled:opacity-50">
+                          {rewritingOpener && activeAngle === i
+                            ? <Loader2 className="w-3 h-3 animate-spin" />
+                            : activeAngle === i
+                              ? <><RefreshCw className="w-3 h-3" /> Re-apply</>
+                              : 'Use'}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
               )}
             </div>
           </div>
