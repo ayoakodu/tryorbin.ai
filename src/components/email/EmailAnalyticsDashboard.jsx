@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { TrendingUp, Mail, MousePointerClick, Reply, AlertTriangle, ChevronDown, Users } from 'lucide-react';
+import { AreaChart, Area, BarChart, Bar, Cell, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { Mail, MousePointerClick, Reply, AlertTriangle, ChevronDown, Users, X, TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const DATA_BY_RANGE = {
@@ -76,6 +76,7 @@ export default function EmailAnalyticsDashboard() {
   const [chartView, setChartView] = useState('opens');
   const [sortCol, setSortCol] = useState('sent');
   const [sortDir, setSortDir] = useState('desc');
+  const [expandedCampaign, setExpandedCampaign] = useState(null);
 
   const { kpis, trend } = DATA_BY_RANGE[dateRange];
 
@@ -180,7 +181,7 @@ export default function EmailAnalyticsDashboard() {
         <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
           <Users className="w-4 h-4 text-primary" />
           <h3 className="text-sm font-semibold text-slate-800">Campaign Performance</h3>
-          <span className="text-[10px] text-slate-400 ml-1">Click a column header to sort</span>
+          <span className="text-[10px] text-slate-400 ml-1">Click a row to expand · Click a header to sort</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[11px]">
@@ -206,25 +207,76 @@ export default function EmailAnalyticsDashboard() {
             <tbody className="divide-y divide-slate-100">
               {sortedCampaigns.map((c) => {
                 const openRate = Math.round((c.opens / c.sent) * 100);
+                const clickRate = Math.round((c.clicks / c.sent) * 100);
                 const replyRate = Math.round((c.replies / c.sent) * 100);
+                const bounceRate = Math.round((c.bounce / c.sent) * 100);
+                const isExpanded = expandedCampaign === c.name;
+                const barData = [
+                  { label: 'Opens',   value: openRate,   fill: '#3b82f6' },
+                  { label: 'Clicks',  value: clickRate,  fill: '#8b5cf6' },
+                  { label: 'Replies', value: replyRate,  fill: '#16a34a' },
+                  { label: 'Bounces', value: bounceRate, fill: '#f59e0b' },
+                ];
                 return (
-                  <tr key={c.name} className="hover:bg-slate-50 transition-colors">
-                    <td className="px-4 py-3 font-medium text-slate-800 max-w-[180px] truncate">{c.name}</td>
-                    <td className="px-4 py-3 text-slate-600">{c.sent}</td>
-                    <td className="px-4 py-3">
-                      <span className="font-semibold text-blue-600">{c.opens}</span>
-                      <span className="text-slate-400 ml-1">({openRate}%)</span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-600">{c.clicks}</td>
-                    <td className="px-4 py-3">
-                      <span className="font-semibold text-emerald-600">{c.replies}</span>
-                      <span className="text-slate-400 ml-1">({replyRate}%)</span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn('font-semibold', c.bounce > 5 ? 'text-red-500' : 'text-amber-500')}>{c.bounce}</span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-500">{c.unsub}</td>
-                  </tr>
+                  <>
+                    <tr key={c.name}
+                      onClick={() => setExpandedCampaign(isExpanded ? null : c.name)}
+                      className={cn('cursor-pointer transition-colors', isExpanded ? 'bg-primary/5' : 'hover:bg-slate-50')}>
+                      <td className="px-4 py-3 font-medium text-slate-800 max-w-[180px] truncate">{c.name}</td>
+                      <td className="px-4 py-3 text-slate-600">{c.sent}</td>
+                      <td className="px-4 py-3">
+                        <span className="font-semibold text-blue-600">{c.opens}</span>
+                        <span className="text-slate-400 ml-1">({openRate}%)</span>
+                      </td>
+                      <td className="px-4 py-3 text-slate-600">{c.clicks}</td>
+                      <td className="px-4 py-3">
+                        <span className="font-semibold text-emerald-600">{c.replies}</span>
+                        <span className="text-slate-400 ml-1">({replyRate}%)</span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={cn('font-semibold', c.bounce > 5 ? 'text-red-500' : 'text-amber-500')}>{c.bounce}</span>
+                      </td>
+                      <td className="px-4 py-3 text-slate-500">{c.unsub}</td>
+                    </tr>
+                    {isExpanded && (
+                      <tr key={`${c.name}-detail`}>
+                        <td colSpan={7} className="px-5 py-4 bg-slate-50 border-t border-slate-100">
+                          <div className="flex flex-col sm:flex-row gap-4 items-start">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs font-bold text-slate-700 mb-3">{c.name} — Rate Breakdown</p>
+                              <ResponsiveContainer width="100%" height={100}>
+                                <BarChart data={barData} margin={{ top: 0, right: 0, left: -30, bottom: 0 }}>
+                                  <XAxis dataKey="label" tick={{ fontSize: 9, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
+                                  <YAxis tick={{ fontSize: 9, fill: '#94a3b8' }} axisLine={false} tickLine={false} unit="%" />
+                                  <Tooltip formatter={(v) => `${v}%`} contentStyle={{ fontSize: 11, borderRadius: 8 }} />
+                                  <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                                    {barData.map((entry, i) => (
+                                      <Cell key={i} fill={entry.fill} />
+                                    ))}
+                                  </Bar>
+                                </BarChart>
+                              </ResponsiveContainer>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 flex-shrink-0 text-[11px]">
+                              {[
+                                { label: 'Sent',    value: c.sent,    color: 'text-slate-700' },
+                                { label: 'Opens',   value: `${c.opens} (${openRate}%)`,   color: 'text-blue-600' },
+                                { label: 'Clicks',  value: `${c.clicks} (${clickRate}%)`, color: 'text-violet-600' },
+                                { label: 'Replies', value: `${c.replies} (${replyRate}%)`,color: 'text-emerald-600' },
+                                { label: 'Bounces', value: `${c.bounce} (${bounceRate}%)`,color: c.bounce > 5 ? 'text-red-500' : 'text-amber-500' },
+                                { label: 'Unsubs',  value: c.unsub,   color: 'text-slate-500' },
+                              ].map(({ label, value, color }) => (
+                                <div key={label}>
+                                  <p className="text-[10px] text-slate-400 uppercase tracking-wide">{label}</p>
+                                  <p className={cn('font-bold', color)}>{value}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 );
               })}
             </tbody>
