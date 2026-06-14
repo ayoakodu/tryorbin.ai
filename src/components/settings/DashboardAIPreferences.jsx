@@ -354,7 +354,7 @@ function OperationalPriorities({ top3, onChange }) {
 function DefaultViewPicker({ value, onChange }) {
   return (
     <Card>
-      <CardTitle sub="Choose how your dashboard is structured by default when you open RVNU.">
+      <CardTitle sub="Choose how your dashboard is structured by default when you open Orbin AI.">
         Default Dashboard View
       </CardTitle>
       <div className="space-y-2">

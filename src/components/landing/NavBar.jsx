@@ -15,7 +15,7 @@ import {
   UserPlus, Puzzle, ContactRound
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import RVNULogo from '@/components/ui/RVNULogo.jsx';
+import OrbinAILogo from '@/components/ui/OrbinAILogo.jsx';
 
 const navData = {
   Product: {
@@ -235,7 +235,7 @@ export default function NavBar() {
 
         {/* Logo */}
         <div className="flex items-center gap-2.5 flex-shrink-0">
-          <RVNULogo size={32} className="rounded-lg" />
+          <OrbinAILogo size={32} className="rounded-lg" />
           <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png" alt="Orbin" className="h-7 object-contain" />
         </div>
 

@@ -52,7 +52,7 @@ export const initialSequences = [
     enrolled: 89, replied: 22, meetings: 5, opens: 89,
     tags: ['nigeria', 'smb', 'whatsapp'],
     steps: [
-      { type: 'whatsapp', day: 0, subject: 'Initial WhatsApp intro', body: 'Hi {{first_name}}! 👋 I\'m reaching out from RVNU...' },
+      { type: 'whatsapp', day: 0, subject: 'Initial WhatsApp intro', body: 'Hi {{first_name}}! 👋 I\'m reaching out from Orbin AI...' },
       { type: 'whatsapp', day: 3, subject: 'Follow-up with value', body: 'Hey {{first_name}}, just wanted to follow up...' },
       { type: 'whatsapp', day: 7, subject: 'Case study share', body: 'Hi {{first_name}}, thought this might be relevant...' },
     ]
@@ -63,7 +63,7 @@ export const initialSequences = [
     tags: ['inbound', 'nurture'],
     steps: [
       { type: 'email', day: 0, subject: 'Welcome — here\'s what to expect', body: 'Hi {{first_name}}, thanks for your interest...' },
-      { type: 'email', day: 2, subject: 'How teams like yours use RVNU', body: 'Hi {{first_name}}, I wanted to share...' },
+      { type: 'email', day: 2, subject: 'How teams like yours use Orbin AI', body: 'Hi {{first_name}}, I wanted to share...' },
       { type: 'email', day: 5, subject: 'Quick question', body: 'Hi {{first_name}}, just checking in...' },
     ]
   },
@@ -170,7 +170,7 @@ export default function Outreach() {
 
   const alerts = [
     { id: 'ai-content', type: 'warning', message: 'Update your AI content center to ensure research is tailored to your unique value proposition.', action: 'Review settings', route: '/settings' },
-    { id: 'mailbox', type: 'warning', message: 'You have no mailboxes linked. Please connect your email account to start managing and sending emails via RVNU.', action: 'Link mailbox', route: '/integrations' },
+    { id: 'mailbox', type: 'warning', message: 'You have no mailboxes linked. Please connect your email account to start managing and sending emails via Orbin AI.', action: 'Link mailbox', route: '/integrations' },
   ].filter(a => !dismissedAlerts.includes(a.id));
 
   const totalEnrolled = sequences.reduce((s, seq) => s + seq.enrolled, 0);

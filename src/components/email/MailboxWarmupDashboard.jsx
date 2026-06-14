@@ -15,10 +15,10 @@ const WARMUP_DATA = [
 ];
 
 const MAILBOXES = [
-  { email: 'outreach@rvnu.io', phase: 'Complete',    day: 30, totalDays: 30, score: 93, status: 'complete',  dailyCap: 80  },
-  { email: 'sales@rvnu.io',    phase: 'Complete',    day: 30, totalDays: 30, score: 88, status: 'complete',  dailyCap: 100 },
-  { email: 'hello@rvnu.io',    phase: 'Warming',     day: 18, totalDays: 30, score: 74, status: 'warming',   dailyCap: 30  },
-  { email: 'noreply@rvnu.io',  phase: 'Paused',      day: 5,  totalDays: 30, score: 41, status: 'paused',    dailyCap: 0   },
+  { email: 'outreach@orbin-ai.io', phase: 'Complete',    day: 30, totalDays: 30, score: 93, status: 'complete',  dailyCap: 80  },
+  { email: 'sales@orbin-ai.io',    phase: 'Complete',    day: 30, totalDays: 30, score: 88, status: 'complete',  dailyCap: 100 },
+  { email: 'hello@orbin-ai.io',    phase: 'Warming',     day: 18, totalDays: 30, score: 74, status: 'warming',   dailyCap: 30  },
+  { email: 'noreply@orbin-ai.io',  phase: 'Paused',      day: 5,  totalDays: 30, score: 41, status: 'paused',    dailyCap: 0   },
 ];
 
 const STATUS_STYLE = {
@@ -60,7 +60,7 @@ export default function MailboxWarmupDashboard() {
       <div className="bg-white rounded-xl border border-slate-200 p-5">
         <div className="flex items-center gap-2 mb-4">
           <TrendingUp className="w-4 h-4 text-primary" />
-          <h3 className="text-sm font-semibold text-slate-800">Warmup Progress — hello@rvnu.io</h3>
+          <h3 className="text-sm font-semibold text-slate-800">Warmup Progress — hello@orbin-ai.io</h3>
           <span className="ml-auto text-[11px] bg-amber-50 text-amber-700 border border-amber-200 px-2 py-0.5 rounded-full font-semibold">Day 18/30</span>
         </div>
         <ResponsiveContainer width="100%" height={150}>
@@ -123,8 +123,8 @@ export default function MailboxWarmupDashboard() {
           <p className="text-xs font-bold text-amber-800">Warmup Recommendations</p>
         </div>
         {[
-          'hello@rvnu.io is at Day 18/30 — limit sending to 30 emails/day until warmup completes.',
-          'noreply@rvnu.io warmup is paused. Resume to avoid reputation decay.',
+          'hello@orbin-ai.io is at Day 18/30 — limit sending to 30 emails/day until warmup completes.',
+          'noreply@orbin-ai.io warmup is paused. Resume to avoid reputation decay.',
           'Maintain >95% deliverability across warmed mailboxes before increasing volume.',
         ].map((r, i) => (
           <div key={i} className="flex items-start gap-2">

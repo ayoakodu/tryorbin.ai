@@ -1,4 +1,4 @@
-import RVNULogo from '@/components/ui/RVNULogo.jsx';
+import OrbinAILogo from '@/components/ui/OrbinAILogo.jsx';
 
 const footerLinks = {
   Product: [
@@ -96,7 +96,7 @@ export default function Footer() {
           {/* Brand + social */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
-              <RVNULogo size={28} className="rounded-md" />
+              <OrbinAILogo size={28} className="rounded-md" />
               <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png" alt="Orbin" className="h-5 object-contain" />
             </div>
             <div className="flex items-center gap-2">

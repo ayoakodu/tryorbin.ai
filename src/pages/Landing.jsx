@@ -9,8 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
-import RVNUWorkflowModal from '@/components/landing/RVNUWorkflowModal';
-import RVNULogo from '@/components/ui/RVNULogo.jsx';
+import OrbinAIWorkflowModal from '@/components/landing/OrbinAIWorkflowModal';
+import OrbinAILogo from '@/components/ui/OrbinAILogo.jsx';
 
 const ORBIN_WORDMARK = 'https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png';
 import HeroDashboardPreview from '@/components/landing/HeroDashboardPreview';
@@ -324,7 +324,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Why RVNU */}
+      {/* Why Orbin AI */}
       <section className="py-16 px-6" style={{ background: '#060b1a' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
@@ -382,7 +382,7 @@ export default function Landing() {
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
               <div className="flex items-center justify-center mx-auto mb-6">
-                <RVNULogo size={56} className="rounded-2xl" />
+                <OrbinAILogo size={56} className="rounded-2xl" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with Orbin</h2>
               <p className="text-muted-foreground mb-1 max-w-2xl mx-auto whitespace-nowrap">
@@ -418,7 +418,7 @@ export default function Landing() {
       <Footer />
 
       <AnimatePresence>
-        {showWorkflow && <RVNUWorkflowModal onClose={() => setShowWorkflow(false)} />}
+        {showWorkflow && <OrbinAIWorkflowModal onClose={() => setShowWorkflow(false)} />}
       </AnimatePresence>
     </div>
   );

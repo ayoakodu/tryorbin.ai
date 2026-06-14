@@ -24,7 +24,7 @@ const BROADCASTS = [
   { id: 2, name: 'Fintech CEO WhatsApp Blast', channel: 'whatsapp', status: 'sent', audience: 84, opened: 76, clicked: 0, replied: 24, sentAt: 'Jun 8, 2025', subject: 'Quick intro message' },
   { id: 3, name: 'Mid-Market SaaS Re-Engagement', channel: 'email', status: 'scheduled', audience: 210, opened: 0, clicked: 0, replied: 0, sentAt: 'Jun 20, 2025', subject: 'We have something new for you' },
   { id: 4, name: 'East Africa LinkedIn Connect', channel: 'linkedin', status: 'draft', audience: 0, opened: 0, clicked: 0, replied: 0, sentAt: '—', subject: 'Connection request template' },
-  { id: 5, name: 'Product Update Announcement', channel: 'email', status: 'sent', audience: 1240, opened: 54, clicked: 22, replied: 3, sentAt: 'May 28, 2025', subject: 'Exciting update from RVNU' },
+  { id: 5, name: 'Product Update Announcement', channel: 'email', status: 'sent', audience: 1240, opened: 54, clicked: 22, replied: 3, sentAt: 'May 28, 2025', subject: 'Exciting update from Orbin AI' },
 ];
 
 export default function Broadcasts() {

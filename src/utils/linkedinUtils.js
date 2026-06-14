@@ -1,5 +1,5 @@
 /**
- * LinkedIn deep-linking utilities for RVNU.
+ * LinkedIn deep-linking utilities for Orbin AI.
  * Opens safe links in new tabs — no hidden automation.
  */
 

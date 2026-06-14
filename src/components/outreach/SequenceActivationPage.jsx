@@ -138,7 +138,7 @@ export default function SequenceActivationPage({ onCreateAI, onCreate, alerts, o
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
                   <span className="text-[11px] text-slate-500">Guided tour available</span>
                 </div>
-                <span className="text-[10px] text-slate-400">RVNU Academy</span>
+                <span className="text-[10px] text-slate-400">Orbin AI Academy</span>
               </div>
             </motion.div>
 

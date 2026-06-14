@@ -5,38 +5,38 @@ import { cn } from '@/lib/utils';
 const DNS_RECORDS = [
   {
     type: 'SPF',
-    domain: 'rvnu.io',
+    domain: 'orbin-ai.io',
     status: 'pass',
     record: 'v=spf1 include:_spf.google.com include:mailgun.org ~all',
-    instructions: 'Add a TXT record to your DNS with the value above. This authorizes RVNU to send on behalf of your domain.',
+    instructions: 'Add a TXT record to your DNS with the value above. This authorizes Orbin AI to send on behalf of your domain.',
   },
   {
     type: 'DKIM',
-    domain: 'rvnu.io',
+    domain: 'orbin-ai.io',
     status: 'pass',
     record: 'k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC2+...truncated',
-    instructions: 'Add a TXT record with the hostname selector._domainkey.rvnu.io pointing to the DKIM public key.',
+    instructions: 'Add a TXT record with the hostname selector._domainkey.orbin-ai.io pointing to the DKIM public key.',
   },
   {
     type: 'DMARC',
-    domain: 'rvnu.io',
+    domain: 'orbin-ai.io',
     status: 'pass',
-    record: 'v=DMARC1; p=quarantine; rua=mailto:dmarc@rvnu.io; pct=100',
-    instructions: 'Add a TXT record at _dmarc.rvnu.io. Start with p=none while monitoring, then move to quarantine.',
+    record: 'v=DMARC1; p=quarantine; rua=mailto:dmarc@orbin-ai.io; pct=100',
+    instructions: 'Add a TXT record at _dmarc.orbin-ai.io. Start with p=none while monitoring, then move to quarantine.',
   },
   {
     type: 'DKIM',
-    domain: 'mail.rvnu.io',
+    domain: 'mail.orbin-ai.io',
     status: 'pending',
     record: 'k=rsa; p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC8x+...truncated',
     instructions: 'DKIM key not yet detected. Ensure the DNS record has propagated (can take up to 48 hours).',
   },
   {
     type: 'DMARC',
-    domain: 'mail.rvnu.io',
+    domain: 'mail.orbin-ai.io',
     status: 'fail',
     record: '—',
-    instructions: 'No DMARC record found. Add a TXT record at _dmarc.mail.rvnu.io to protect your sending reputation.',
+    instructions: 'No DMARC record found. Add a TXT record at _dmarc.mail.orbin-ai.io to protect your sending reputation.',
   },
 ];
 

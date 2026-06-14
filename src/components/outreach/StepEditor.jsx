@@ -134,7 +134,7 @@ function WhatsAppFields({ step, onUpdate }) {
       <div>
         <Label>Message</Label>
         <Textarea value={step.body || ''} onChange={e => onUpdate({ ...step, body: e.target.value })}
-          placeholder={"Hi {{first_name}} 👋 I'm reaching out from RVNU...\n\nWould love to show you how we help {{industry}} teams."}
+          placeholder={"Hi {{first_name}} 👋 I'm reaching out from Orbin AI...\n\nWould love to show you how we help {{industry}} teams."}
           className="text-xs resize-none" rows={5} />
         <VarChips onInsert={v => insertVar('body', v)} />
       </div>

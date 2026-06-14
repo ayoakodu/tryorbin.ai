@@ -19,7 +19,7 @@ const PROVIDERS = [
         <path fill="#EA4335" d="M5.277 14.268A7.12 7.12 0 0 1 4.909 12c0-.782.125-1.533.357-2.235L.01 7.91A11.943 11.943 0 0 0 0 12c0 1.92.445 3.73 1.237 5.335l4.04-3.067z"/>
       </svg>
     ),
-    steps: ['Sign in with your Google account', 'Grant RVNU read & send access', 'Choose mailbox to connect'],
+    steps: ['Sign in with your Google account', 'Grant Orbin AI read & send access', 'Choose mailbox to connect'],
   },
   {
     id: 'outlook',
@@ -33,7 +33,7 @@ const PROVIDERS = [
         <path fill="white" d="M10 7.5c-1.93 0-3.5 1.57-3.5 3.5S8.07 14.5 10 14.5s3.5-1.57 3.5-3.5S11.93 7.5 10 7.5zm0 5c-.828 0-1.5-.672-1.5-1.5S9.172 9.5 10 9.5s1.5.672 1.5 1.5-.672 1.5-1.5 1.5z"/>
       </svg>
     ),
-    steps: ['Sign in with your Microsoft account', 'Grant RVNU mailbox permissions', 'Select folders to sync'],
+    steps: ['Sign in with your Microsoft account', 'Grant Orbin AI mailbox permissions', 'Select folders to sync'],
   },
   {
     id: 'smtp',
@@ -47,7 +47,7 @@ const PROVIDERS = [
 ];
 
 const SECURITY_NOTES = [
-  'RVNU uses OAuth 2.0 — we never store your password',
+  'Orbin AI uses OAuth 2.0 — we never store your password',
   'You can revoke access at any time from your account settings',
   'Emails are encrypted in transit and at rest',
 ];
@@ -165,7 +165,7 @@ export default function ConnectMailboxModal({ onClose, onConnect }) {
                   <CheckCircle2 className="w-8 h-8 text-emerald-600" />
                 </div>
                 <p className="text-sm font-bold text-slate-800 mb-1">Mailbox Connected!</p>
-                <p className="text-[12px] text-slate-500 mb-6">Your inbox is now syncing with RVNU</p>
+                <p className="text-[12px] text-slate-500 mb-6">Your inbox is now syncing with Orbin AI</p>
                 {PROVIDERS.find(p => p.id === selected)?.steps.map((s, i) => (
                   <div key={i} className="flex items-center gap-2.5 px-4 py-2 text-left">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
