@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
+import { invokeLLM } from '@/lib/anthropic';
 import { X, Sparkles, Loader2, Copy, ChevronRight, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -92,7 +92,7 @@ Provide:
 - What success looks like in the next 14 days`,
     };
 
-    const res = await base44.integrations.Core.InvokeLLM({ prompt: prompts[key] });
+    const res = await invokeLLM(prompts[key]);
     setResult({ key, content: res });
     setLoading(false);
   };
