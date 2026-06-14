@@ -132,7 +132,7 @@ export default function AICopilot() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#f8fafc' }}>
-      <TopBar title="AI Copilot" subtitle="Your always-on GTM intelligence engine" />
+      <TopBar title="Orbin Copilot" subtitle="Your always-on GTM intelligence engine" />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Prompts */}

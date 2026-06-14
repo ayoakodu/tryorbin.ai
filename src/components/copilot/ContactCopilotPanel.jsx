@@ -181,7 +181,7 @@ Keep it concise and scannable.`,
 
         {/* Tabs */}
         <div className="flex border-b border-border/30 px-4 gap-1 flex-shrink-0">
-          {[['ai', 'AI Copilot'], ['whatsapp', 'WhatsApp']].map(([tab, label]) => (
+          {[['ai', 'Orbin Copilot'], ['whatsapp', 'WhatsApp']].map(([tab, label]) => (
             <button key={tab} onClick={() => setActiveTab(tab)}
               className={`text-xs px-3 py-2.5 font-medium transition-colors border-b-2 ${activeTab === tab ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}>
               {label}
@@ -233,7 +233,7 @@ Keep it concise and scannable.`,
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Sparkles className="w-4 h-4 text-primary" />
-              <p className="text-xs font-semibold text-primary uppercase tracking-wider">AI Copilot</p>
+              <p className="text-xs font-semibold text-primary uppercase tracking-wider">Orbin Copilot</p>
             </div>
             <div className="space-y-2">
               {AI_ACTIONS.map(action => (
