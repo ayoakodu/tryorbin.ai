@@ -318,6 +318,7 @@ export default function SequenceBuilder() {
           onSave={handleModalSave}
           onClose={() => setModalState(null)}
           allSteps={seq.steps}
+          sequenceName={seq.name}
         />
       )}
 
