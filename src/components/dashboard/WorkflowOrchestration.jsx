@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
-  Zap, Brain, AlertTriangle, CheckCircle2, Clock,
-  TrendingUp, MessageCircle, Mail, Wifi, Play, Pause
+  Brain, AlertTriangle, CheckCircle2, Clock,
+  TrendingUp, Play
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -12,7 +12,6 @@ const WORKFLOWS = [
     label: 'Active Sequences',
     value: '12',
     sub: '3,840 prospects',
-    status: 'running',
     icon: Play,
     color: 'text-emerald-600',
     bg: 'bg-emerald-50',
@@ -25,7 +24,6 @@ const WORKFLOWS = [
     label: 'AI Optimizing',
     value: '4',
     sub: 'sequences auto-tuning',
-    status: 'active',
     icon: Brain,
     color: 'text-violet-600',
     bg: 'bg-violet-50',
@@ -38,7 +36,6 @@ const WORKFLOWS = [
     label: 'Awaiting Approval',
     value: '2',
     sub: 'AI drafts ready',
-    status: 'pending',
     icon: Clock,
     color: 'text-amber-600',
     bg: 'bg-amber-50',
@@ -51,7 +48,6 @@ const WORKFLOWS = [
     label: 'Buying Signals',
     value: '47',
     sub: 'detected today',
-    status: 'hot',
     icon: TrendingUp,
     color: 'text-orange-600',
     bg: 'bg-orange-50',
@@ -64,7 +60,6 @@ const WORKFLOWS = [
     label: 'Deliverability Risk',
     value: '1',
     sub: 'DMARC misconfigured',
-    status: 'risk',
     icon: AlertTriangle,
     color: 'text-red-500',
     bg: 'bg-red-50',
@@ -77,7 +72,6 @@ const WORKFLOWS = [
     label: 'Follow-Ups Scheduled',
     value: '83',
     sub: 'next 48 hours',
-    status: 'scheduled',
     icon: CheckCircle2,
     color: 'text-cyan-600',
     bg: 'bg-cyan-50',
