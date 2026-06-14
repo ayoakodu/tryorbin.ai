@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { motion, AnimatePresence } from 'framer-motion';
-import { invokeLLM } from '@/lib/anthropic';
+import { base44 } from '@/api/base44Client';
 import { 
   Sparkles, Send, Zap, ChevronRight, Copy, 
   RefreshCw, ThumbsUp, ThumbsDown, Loader2,
@@ -105,7 +105,7 @@ export default function AICopilot() {
     setMessages(prev => [...prev, { role: 'assistant', content: '', loading: true, id: loadingId }]);
 
     try {
-      const response = await invokeLLM(`You are Orbin AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.\n\nYou specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, meeting prep, re-engagement strategies, and sales automation.\n\nKey principles:\n- Be specific and actionable, never generic\n- Tailor all advice for African and emerging market contexts (Nigeria, Ghana, Kenya, South Africa, Egypt, etc.)\n- WhatsApp is a PRIMARY sales channel — treat it accordingly\n- Focus on execution speed and concrete next steps\n- Use markdown bold (**text**) for emphasis\n- Structure responses clearly with sections when helpful\n- For meeting prep: include talk track, key questions, likely objections, and recommended next step\n- For objection handling: acknowledge → reframe → respond → close\n- For pipeline risk: rank deals by urgency and give specific follow-up copy\n\nUser request: ${userText}`);
+      const response = await base44.integrations.Core.InvokeLLM({ prompt: `You are Orbin AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.\n\nYou specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, meeting prep, re-engagement strategies, and sales automation.\n\nKey principles:\n- Be specific and actionable, never generic\n- Tailor all advice for African and emerging market contexts (Nigeria, Ghana, Kenya, South Africa, Egypt, etc.)\n- WhatsApp is a PRIMARY sales channel — treat it accordingly\n- Focus on execution speed and concrete next steps\n- Use markdown bold (**text**) for emphasis\n- Structure responses clearly with sections when helpful\n- For meeting prep: include talk track, key questions, likely objections, and recommended next step\n- For objection handling: acknowledge → reframe → respond → close\n- For pipeline risk: rank deals by urgency and give specific follow-up copy\n\nUser request: ${userText}`});
       setMessages(prev => prev.map(m =>
         m.id === loadingId ? { role: 'assistant', content: response, loading: false } : m
       ));
