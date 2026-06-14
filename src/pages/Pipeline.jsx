@@ -190,10 +190,14 @@ export default function Pipeline() {
   const getAIInsight = async () => {
     setAiLoading(true);
     const allDeals = Object.entries(deals).flatMap(([stage, ds]) => ds.map(d => ({ ...d, stage })));
-    const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM AI copilot. Analyze this pipeline and give ONE specific, actionable insight in 2 sentences:
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM AI copilot. Analyze this pipeline and give ONE specific, actionable insight in 2 sentences:
 Deals: ${JSON.stringify(allDeals.map(d => ({ title: d.title, stage: d.stage, value: d.value, probability: d.probability, days: d.days, risk: d.risk })))}
 Focus on risk, stale deals, or quick wins.`});
-    setAiInsight(result);
+      setAiInsight(result);
+    } catch {
+      // keep existing insight on error
+    }
     setAiLoading(false);
   };
 

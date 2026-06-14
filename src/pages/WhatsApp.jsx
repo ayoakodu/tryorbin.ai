@@ -101,7 +101,8 @@ export default function WhatsApp() {
     if (!selected) return;
     setAiLoading(true);
     const lastReceived = [...selected.messages].reverse().find(m => m.role === 'received');
-    const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are writing a WhatsApp reply for a B2B sales rep in Africa.
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are writing a WhatsApp reply for a B2B sales rep in Africa.
 
 Contact: ${selected.name} from ${selected.company}
 Their last message: "${lastReceived?.content || 'No message yet'}"
@@ -111,7 +112,10 @@ Write a SHORT, friendly, and professional WhatsApp reply (2-3 sentences max).
 Use conversational tone appropriate for WhatsApp. Be warm but direct.
 Do not use formal email language. Use emojis sparingly if appropriate.
 Just write the message text, nothing else.`});
-    setMessage(result || '');
+      setMessage(result || '');
+    } catch {
+      // keep message unchanged on error
+    }
     setAiLoading(false);
   };
 
