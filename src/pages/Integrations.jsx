@@ -17,6 +17,8 @@ function saveSaved(data) {
   try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch {}
 }
 
+const REDIRECT_URI = `${window.location.origin}/integrations/callback`;
+
 const INTEGRATIONS = [
   {
     id: 'gmail', name: 'Gmail', category: 'Email', color: '#EA4335',
@@ -24,16 +26,17 @@ const INTEGRATIONS = [
     type: 'oauth',
     oauthLabel: 'Connect with Google',
     setupSteps: [
-      'Go to console.cloud.google.com and create a project',
-      'Enable the Gmail API under APIs & Services',
-      'Create OAuth 2.0 credentials (Web application type)',
-      'Add your redirect URI: https://tryorbin.ai/integrations/callback',
+      'Go to console.cloud.google.com → APIs & Services → Credentials',
+      'Create OAuth 2.0 Client ID (Web application type)',
+      `Add this exact Authorized redirect URI: ${window.location.origin}/integrations/callback`,
+      'Under OAuth consent screen → Test users, add your Google account email',
+      'Enable the Gmail API under APIs & Services → Library',
       'Copy your Client ID and paste it below',
     ],
     fields: [
       { key: 'client_id', label: 'Google Client ID', placeholder: '123456789-xxx.apps.googleusercontent.com' },
     ],
-    oauthUrl: (creds) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${creds.client_id}&redirect_uri=https://tryorbin.ai/integrations/callback&response_type=code&scope=https://mail.google.com/&access_type=offline&prompt=consent`,
+    oauthUrl: (creds) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly')}&access_type=offline&prompt=consent&state=gmail`,
   },
   {
     id: 'outlook', name: 'Outlook', category: 'Email', color: '#0078D4',
@@ -41,16 +44,16 @@ const INTEGRATIONS = [
     type: 'oauth',
     oauthLabel: 'Connect with Microsoft',
     setupSteps: [
-      'Go to portal.azure.com and register a new app',
-      'Add Mail.Send and Mail.ReadWrite API permissions',
-      'Set redirect URI to: https://tryorbin.ai/integrations/callback',
-      'Copy your Application (client) ID and tenant ID below',
+      'Go to portal.azure.com → Azure Active Directory → App registrations → New registration',
+      'Under Authentication, add a Redirect URI (Web): ' + `${window.location.origin}/integrations/callback`,
+      'Under API permissions, add: Mail.Send, Mail.ReadWrite (Microsoft Graph)',
+      'Copy your Application (client) ID below',
     ],
     fields: [
       { key: 'client_id', label: 'Application (Client) ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
-      { key: 'tenant_id', label: 'Tenant ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (or "common")' },
+      { key: 'tenant_id', label: 'Tenant ID', placeholder: 'common  (or your tenant ID)' },
     ],
-    oauthUrl: (creds) => `https://login.microsoftonline.com/${creds.tenant_id || 'common'}/oauth2/v2.0/authorize?client_id=${creds.client_id}&response_type=code&redirect_uri=https://tryorbin.ai/integrations/callback&scope=https://graph.microsoft.com/Mail.Send+offline_access`,
+    oauthUrl: (creds) => `https://login.microsoftonline.com/${creds.tenant_id || 'common'}/oauth2/v2.0/authorize?client_id=${encodeURIComponent(creds.client_id)}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent('https://graph.microsoft.com/Mail.Send offline_access')}&state=outlook`,
   },
   {
     id: 'google_calendar', name: 'Google Calendar', category: 'Scheduling', color: '#4285F4',
@@ -58,15 +61,15 @@ const INTEGRATIONS = [
     type: 'oauth',
     oauthLabel: 'Connect with Google',
     setupSteps: [
-      'Use the same Google Cloud project as Gmail (or create a new one)',
-      'Enable the Google Calendar API',
-      'Use the same OAuth 2.0 credentials (add Calendar scope)',
-      'Redirect URI: https://tryorbin.ai/integrations/callback',
+      'Enable the Google Calendar API in console.cloud.google.com',
+      'Use the same OAuth 2.0 Client ID as Gmail (or create a new one)',
+      `Ensure this redirect URI is added: ${window.location.origin}/integrations/callback`,
+      'Add your Google account as a Test User in OAuth consent screen',
     ],
     fields: [
       { key: 'client_id', label: 'Google Client ID', placeholder: '123456789-xxx.apps.googleusercontent.com' },
     ],
-    oauthUrl: (creds) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${creds.client_id}&redirect_uri=https://tryorbin.ai/integrations/callback&response_type=code&scope=https://www.googleapis.com/auth/calendar&access_type=offline&prompt=consent`,
+    oauthUrl: (creds) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/calendar')}&access_type=offline&prompt=consent&state=google_calendar`,
   },
   {
     id: 'hubspot', name: 'HubSpot', category: 'CRM', color: '#FF7A59',
@@ -74,15 +77,15 @@ const INTEGRATIONS = [
     type: 'oauth',
     oauthLabel: 'Connect with HubSpot',
     setupSteps: [
-      'Go to app.hubspot.com/developer and create a public app',
-      'Under Auth, add these scopes: crm.contacts.read, crm.contacts.write, crm.deals.read, crm.deals.write',
-      'Set redirect URL to: https://tryorbin.ai/integrations/callback',
+      'Go to app.hubspot.com/developer → Create app (Public App)',
+      'Under Auth, set redirect URL to: ' + `${window.location.origin}/integrations/callback`,
+      'Add scopes: crm.contacts.read, crm.contacts.write, crm.deals.read, crm.deals.write',
       'Copy your App Client ID below',
     ],
     fields: [
       { key: 'client_id', label: 'HubSpot App Client ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
     ],
-    oauthUrl: (creds) => `https://app.hubspot.com/oauth/authorize?client_id=${creds.client_id}&redirect_uri=https://tryorbin.ai/integrations/callback&scope=crm.contacts.read%20crm.contacts.write%20crm.deals.read%20crm.deals.write`,
+    oauthUrl: (creds) => `https://app.hubspot.com/oauth/authorize?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=crm.contacts.read%20crm.contacts.write%20crm.deals.read%20crm.deals.write&state=hubspot`,
   },
   {
     id: 'salesforce', name: 'Salesforce', category: 'CRM', color: '#00A1E0',
@@ -162,13 +165,13 @@ const INTEGRATIONS = [
     setupSteps: [
       'Go to linkedin.com/developers → Create app',
       'Add products: Sign In with LinkedIn, Marketing Developer Platform',
-      'Under Auth, set redirect URL to: https://tryorbin.ai/integrations/callback',
+      `Under Auth, set redirect URL to: ${window.location.origin}/integrations/callback`,
       'Copy your Client ID below',
     ],
     fields: [
       { key: 'client_id', label: 'LinkedIn Client ID', placeholder: 'xxxxxxxxxx' },
     ],
-    oauthUrl: (creds) => `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${creds.client_id}&redirect_uri=https://tryorbin.ai/integrations/callback&scope=r_liteprofile%20r_emailaddress%20w_member_social`,
+    oauthUrl: (creds) => `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=r_liteprofile%20r_emailaddress%20w_member_social&state=linkedin`,
   },
 ];
 
@@ -432,6 +435,14 @@ export default function Integrations() {
                   {modalIntegration.setupSteps.map((step, i) => (
                     <p key={i} className="text-xs text-blue-800 leading-relaxed">{i + 1}. {step}</p>
                   ))}
+                  <div className="mt-2 pt-2 border-t border-blue-200">
+                    <p className="text-[10px] font-semibold text-blue-700 mb-1">Your redirect URI (copy this exactly):</p>
+                    <div className="flex items-center gap-2 bg-white border border-blue-200 rounded px-2 py-1.5">
+                      <code className="text-[10px] text-blue-900 flex-1 break-all">{REDIRECT_URI}</code>
+                      <button onClick={() => { navigator.clipboard.writeText(REDIRECT_URI); toast({ title: 'Redirect URI copied!' }); }}
+                        className="text-blue-500 hover:text-blue-700 flex-shrink-0"><Copy className="w-3 h-3" /></button>
+                    </div>
+                  </div>
                 </div>
               )}
 
