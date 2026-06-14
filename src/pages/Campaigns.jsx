@@ -323,7 +323,7 @@ Keep it specific and actionable for African/emerging markets.`);
           </div>
           <div className="flex-1 text-center md:text-left">
             <h3 className="font-bold text-xs mb-0.5">AI Campaign Builder</h3>
-            <p className="text-xs text-muted-foreground">Describe your goal and RVNU AI generates the entire campaign — audience, messaging, channels, and schedule. Ready in minutes.</p>
+            <p className="text-xs text-muted-foreground">Describe your goal and Orbin AI generates the entire campaign — audience, messaging, channels, and schedule. Ready in minutes.</p>
           </div>
           <Button onClick={() => { setEditingCampaign(null); setModalPrefill(null); setShowModal(true); }}
             className="bg-primary text-primary-foreground hover:bg-primary/90 gap-2 whitespace-nowrap">
