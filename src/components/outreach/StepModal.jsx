@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
-import Anthropic from '@anthropic-ai/sdk';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useToast } from '@/components/ui/use-toast';
@@ -21,10 +20,6 @@ import { STEP_TYPE_MAP, STEP_SUBTYPE_LABELS } from './AddStepMenu';
 import AdvancedScheduling from './AdvancedScheduling';
 import LinkedInStepEditor from '@/components/linkedin/LinkedInStepEditor';
 
-const anthropic = new Anthropic({
-  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
-  dangerouslyAllowBrowser: true,
-});
 
 const channelColors = {
   email: 'text-blue-500', linkedin: 'text-blue-600',
@@ -611,21 +606,23 @@ Requirements:
 - African business context — be warm, direct, and professional
 - If this is a follow-up step (step > 1), reference the sequence context naturally
 
-Respond with EXACTLY this format (no other text):
-SUBJECT: <subject line here>
-BODY:
-<HTML email body using only <p> tags>`;
+Return a JSON with:
+- subject: a compelling subject line for this email
+- body: the HTML email body using only <p> tags (no divs, no complex markup)`;
 
-      const message = await anthropic.messages.create({
-        model: 'claude-opus-4-8',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: prompt }],
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: 'object',
+          properties: {
+            subject: { type: 'string' },
+            body: { type: 'string' },
+          },
+          required: ['subject', 'body'],
+        },
       });
-      const raw = message.content.find(b => b.type === 'text')?.text ?? '';
-      const subjectMatch = raw.match(/^SUBJECT:\s*(.+)/m);
-      const bodyMatch = raw.match(/BODY:\s*\n([\s\S]+)/);
-      const subject = subjectMatch?.[1]?.trim() ?? '';
-      const html = bodyMatch?.[1]?.trim() ?? '';
+      const subject = result?.subject?.trim() ?? '';
+      const html = result?.body?.trim() ?? '';
 
       const updates = { ...step };
       if (subject && !step.subject) updates.subject = subject;
