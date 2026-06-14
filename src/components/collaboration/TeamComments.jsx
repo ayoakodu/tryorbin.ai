@@ -33,8 +33,14 @@ export default function TeamComments({ entityId, entityType }) {
     setShowMentions(false);
   };
 
-  const formatWithMentions = (text) =>
-    text.replace(/@(\w+)/g, '<span class="text-primary font-semibold">@$1</span>');
+  const formatWithMentions = (text) => {
+    const parts = text.split(/(@\w+)/g);
+    return parts.map((part, i) =>
+      /^@\w+$/.test(part)
+        ? <span key={i} className="text-primary font-semibold">{part}</span>
+        : part
+    );
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -56,8 +62,9 @@ export default function TeamComments({ entityId, entityType }) {
                 <span className="text-[11px] font-semibold text-foreground">{c.author}</span>
                 <span className="text-[10px] text-muted-foreground">{c.time}</span>
               </div>
-              <p className="text-xs text-muted-foreground leading-relaxed"
-                dangerouslySetInnerHTML={{ __html: formatWithMentions(c.text) }} />
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {formatWithMentions(c.text)}
+              </p>
             </div>
           </div>
         ))}

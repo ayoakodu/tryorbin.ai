@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
@@ -53,6 +53,12 @@ export default function Integrations() {
   const [testingId, setTestingId] = useState(null);
   const [testResults, setTestResults] = useState({});
   const { toast } = useToast();
+  const mountedRef = useRef(true);
+
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => { mountedRef.current = false; };
+  }, []);
 
   const handleConnect = (integration) => {
     if (integration.oauth) {
@@ -94,6 +100,7 @@ export default function Integrations() {
   const handleTest = async (id, name) => {
     setTestingId(id);
     await new Promise(r => setTimeout(r, 1200));
+    if (!mountedRef.current) return;
     setTestResults(prev => ({ ...prev, [id]: { success: true, message: `${name} connection verified — API responding normally.` } }));
     setTestingId(null);
   };

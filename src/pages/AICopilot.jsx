@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { 
@@ -25,17 +26,7 @@ const suggestionPrompts = [
 const initialMessages = [
   {
     role: 'assistant',
-    content: `Hello! I'm **RVNU AI**, your GTM execution copilot. 
-
-I'm embedded throughout your workflows and can help you execute faster:
-- ✉️ **Sequences** — Write multichannel outbound sequences, follow-ups, and WhatsApp messages
-- 🎯 **Personalization** — Generate personalized first lines, company summaries, and outreach angles
-- 📊 **Pipeline** — Analyze deal risk, suggest next actions, generate deal summaries
-- 🚀 **Campaigns** — Build campaign briefs, analyze performance, recommend optimizations
-- 💬 **Objection Handling** — Respond to common objections with market-aware replies
-- ⚡ **Automation** — Design workflow triggers and engagement automations
-
-What would you like to execute today?`,
+    content: `Hello! I'm **RVNU AI**, your GTM execution copilot. \n\nI'm embedded throughout your workflows and can help you execute faster:\n- ✉️ **Sequences** — Write multichannel outbound sequences, follow-ups, and WhatsApp messages\n- 🎯 **Personalization** — Generate personalized first lines, company summaries, and outreach angles\n- 📊 **Pipeline** — Analyze deal risk, suggest next actions, generate deal summaries\n- 🚀 **Campaigns** — Build campaign briefs, analyze performance, recommend optimizations\n- 💬 **Objection Handling** — Respond to common objections with market-aware replies\n- ⚡ **Automation** — Design workflow triggers and engagement automations\n\nWhat would you like to execute today?`,
   }
 ];
 
@@ -67,9 +58,10 @@ function Message({ msg }) {
             </div>
           ) : (
             <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{
-              __html: msg.content
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/🎯|✉️|📊|🔮|⚡/g, match => match)
+              __html: DOMPurify.sanitize(
+                msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>'),
+                { ALLOWED_TAGS: ['strong', 'em', 'br', 'p', 'ul', 'ol', 'li', 'code'], ALLOWED_ATTR: [] }
+              )
             }} />
           )}
         </div>
@@ -112,28 +104,20 @@ export default function AICopilot() {
     const loadingId = Date.now();
     setMessages(prev => [...prev, { role: 'assistant', content: '', loading: true, id: loadingId }]);
 
-    const response = await base44.integrations.Core.InvokeLLM({
-      prompt: `You are RVNU AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.
-
-You specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, meeting prep, re-engagement strategies, and sales automation.
-
-Key principles:
-- Be specific and actionable, never generic
-- Tailor all advice for African and emerging market contexts (Nigeria, Ghana, Kenya, South Africa, Egypt, etc.)
-- WhatsApp is a PRIMARY sales channel — treat it accordingly
-- Focus on execution speed and concrete next steps
-- Use markdown bold (**text**) for emphasis
-- Structure responses clearly with sections when helpful
-- For meeting prep: include talk track, key questions, likely objections, and recommended next step
-- For objection handling: acknowledge → reframe → respond → close
-- For pipeline risk: rank deals by urgency and give specific follow-up copy
-
-User request: ${userText}`,
-    });
-
-    setMessages(prev => prev.map(m => 
-      m.id === loadingId ? { role: 'assistant', content: response, loading: false } : m
-    ));
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `You are RVNU AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.\n\nYou specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, meeting prep, re-engagement strategies, and sales automation.\n\nKey principles:\n- Be specific and actionable, never generic\n- Tailor all advice for African and emerging market contexts (Nigeria, Ghana, Kenya, South Africa, Egypt, etc.)\n- WhatsApp is a PRIMARY sales channel — treat it accordingly\n- Focus on execution speed and concrete next steps\n- Use markdown bold (**text**) for emphasis\n- Structure responses clearly with sections when helpful\n- For meeting prep: include talk track, key questions, likely objections, and recommended next step\n- For objection handling: acknowledge → reframe → respond → close\n- For pipeline risk: rank deals by urgency and give specific follow-up copy\n\nUser request: ${userText}`,
+      });
+      setMessages(prev => prev.map(m =>
+        m.id === loadingId ? { role: 'assistant', content: response, loading: false } : m
+      ));
+    } catch {
+      setMessages(prev => prev.map(m =>
+        m.id === loadingId
+          ? { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.', loading: false }
+          : m
+      ));
+    }
     setLoading(false);
   };
 
