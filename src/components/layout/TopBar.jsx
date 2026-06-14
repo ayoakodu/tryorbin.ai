@@ -19,7 +19,7 @@ export default function TopBar({ title, subtitle }) {
         </div>
         <Button variant="outline" size="sm" className="h-6 px-2 gap-1 text-[11px] border-primary/30 text-primary hover:bg-primary/10">
           <Sparkles className="w-3 h-3" />
-          Ask AI
+          Ask Orbin
         </Button>
         <button className="relative p-1 rounded-lg hover:bg-white/60 transition-colors">
           <Bell className="w-3.5 h-3.5 text-slate-500" />

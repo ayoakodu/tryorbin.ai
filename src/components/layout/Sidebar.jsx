@@ -15,7 +15,7 @@ const navGroups = [
     label: null,
     items: [
       { icon: Home, label: 'Home', path: '/dashboard' },
-      { icon: Sparkles, label: 'AI Copilot', path: '/ai-copilot', highlight: true },
+      { icon: Sparkles, label: 'Orbin Copilot', path: '/ai-copilot', highlight: true },
     ],
   },
   {

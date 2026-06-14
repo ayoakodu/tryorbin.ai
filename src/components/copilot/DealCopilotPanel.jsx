@@ -109,7 +109,7 @@ Provide:
               <div className="w-6 h-6 rounded-lg gradient-brand flex items-center justify-center">
                 <Sparkles className="w-3 h-3 text-black" />
               </div>
-              <p className="font-bold text-sm text-foreground">AI Copilot</p>
+              <p className="font-bold text-sm text-foreground">Orbin Copilot</p>
             </div>
             <p className="text-xs text-muted-foreground">{deal.title} · {deal.company}</p>
           </div>

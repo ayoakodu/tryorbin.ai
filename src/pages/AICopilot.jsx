@@ -111,9 +111,12 @@ export default function AICopilot() {
       ));
     } catch (err) {
       const errMsg = err?.message || 'Unknown error';
+      const isNoKey = !import.meta.env.VITE_ANTHROPIC_API_KEY;
       setMessages(prev => prev.map(m =>
         m.id === loadingId
-          ? { role: 'assistant', content: `Error: ${errMsg}`, loading: false }
+          ? { role: 'assistant', content: isNoKey
+              ? 'No API key set — add VITE_ANTHROPIC_API_KEY to your environment variables.'
+              : `Error: ${errMsg}`, loading: false }
           : m
       ));
     }
@@ -129,7 +132,7 @@ export default function AICopilot() {
 
   return (
     <div className="h-screen flex flex-col overflow-hidden" style={{ background: '#f8fafc' }}>
-      <TopBar title="AI Copilot" subtitle="Your always-on GTM intelligence engine" />
+      <TopBar title="Orbin Copilot" subtitle="Your always-on GTM intelligence engine" />
       
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Prompts */}

@@ -1,20 +1,27 @@
-import { base44 } from '@/api/base44Client';
+import Anthropic from '@anthropic-ai/sdk';
 
-// Returns plain text response using Base44's built-in LLM integration
+export const anthropic = new Anthropic({
+  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
+  dangerouslyAllowBrowser: true,
+});
+
+// Returns plain text response
 export async function invokeLLM(prompt) {
-  const result = await base44.integrations.Core.InvokeLLM({ prompt });
-  return result || '';
+  const message = await anthropic.messages.create({
+    model: 'claude-opus-4-8',
+    max_tokens: 1024,
+    messages: [{ role: 'user', content: prompt }],
+  });
+  return message.content.find(b => b.type === 'text')?.text ?? '';
 }
 
 // Returns parsed JSON response
 export async function invokeLLMJson(prompt) {
-  const result = await base44.integrations.Core.InvokeLLM({
-    prompt: prompt + '\n\nRespond with valid JSON only, no markdown fences.',
-    response_json_schema: {
-      type: 'object',
-      properties: {},
-      additionalProperties: true,
-    },
-  });
-  return result || null;
+  const text = await invokeLLM(prompt + '\n\nRespond with valid JSON only, no markdown fences.');
+  try {
+    const match = text.match(/\{[\s\S]*\}/);
+    return match ? JSON.parse(match[0]) : null;
+  } catch {
+    return null;
+  }
 }
