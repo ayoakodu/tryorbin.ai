@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { invokeLLM } from '@/lib/anthropic';
@@ -19,6 +19,7 @@ import SequenceAnalyticsTab from '@/components/outreach/SequenceAnalyticsTab';
 import SequenceDiagnosticsTab from '@/components/outreach/SequenceDiagnosticsTab';
 import CreateSequenceFlow from '@/components/outreach/CreateSequenceFlow';
 import TopBar from '@/components/layout/TopBar';
+import { loadSequences, saveSequences } from '@/lib/sequences';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -152,8 +153,10 @@ function SequenceRow({ seq, isSelected, onSelect, onToggleStatus, onDelete }) {
 
 export default function Outreach() {
   const navigate = useNavigate();
-  const [sequences, setSequences] = useState([]);
-  const [selectedSeq, setSelectedSeq] = useState(initialSequences[0]);
+  const [sequences, setSequences] = useState(() => loadSequences() ?? initialSequences);
+  const [selectedSeq, setSelectedSeq] = useState(() => (loadSequences() ?? initialSequences)[0] ?? null);
+
+  useEffect(() => { saveSequences(sequences); }, [sequences]);
   const [showCreate, setShowCreate] = useState(false);
   const [createMethod, setCreateMethod] = useState(null);
   const [showTemplates, setShowTemplates] = useState(false);
@@ -193,7 +196,11 @@ export default function Outreach() {
       steps: [],
       schedule: data.schedule || 'business',
     };
-    setSequences(prev => [...prev, newSeq]);
+    setSequences(prev => {
+      const updated = [...prev, newSeq];
+      saveSequences(updated);
+      return updated;
+    });
     setSelectedSeq(newSeq);
     setShowCreate(false);
     setCreateMethod(null);
