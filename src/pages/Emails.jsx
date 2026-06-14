@@ -1,5 +1,7 @@
-import { useState } from 'react';
-import { Mail, Inbox, Send, Star, Archive, Trash2, Search, Plus, RefreshCw } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
+import { Mail, Inbox, Send, Star, Archive, Trash2, Search, Plus, RefreshCw, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -25,14 +27,37 @@ export default function Emails() {
   const [activeFolder, setActiveFolder] = useState('inbox');
   const [selectedEmail, setSelectedEmail] = useState(null);
   const [search, setSearch] = useState('');
+  const [emails, setEmails] = useState(SAMPLE_EMAILS);
 
-  const filtered = SAMPLE_EMAILS.filter(e =>
+  const { data: apiEmails = [], isError: emailsError } = useQuery({
+    queryKey: ['emails'],
+    queryFn: () => base44.entities.Email.list('-created_date', 200),
+    retry: 1,
+  });
+
+  useEffect(() => {
+    if (apiEmails.length > 0) setEmails(apiEmails);
+  }, [apiEmails]);
+
+  const isShowingSampleData = emails === SAMPLE_EMAILS || apiEmails.length === 0;
+
+  const filtered = emails.filter(e =>
     e.folder === activeFolder &&
     (search === '' || e.from.toLowerCase().includes(search.toLowerCase()) || e.subject.toLowerCase().includes(search.toLowerCase()))
   );
 
   return (
-    <div className="flex h-full bg-background">
+    <div className="flex flex-col h-full bg-background">
+
+      {/* Integration banner */}
+      {isShowingSampleData && (
+        <div className="flex items-center gap-2 px-4 py-2 bg-amber-50 border-b border-amber-200 text-xs text-amber-700 flex-shrink-0">
+          <AlertCircle className="w-3.5 h-3.5 flex-shrink-0" />
+          Sample data shown — connect Gmail or Outlook in <a href="/integrations" className="font-semibold underline">Integrations</a> to see real emails.
+        </div>
+      )}
+
+      <div className="flex flex-1 overflow-hidden">
 
       {/* Sidebar */}
       <div className="w-52 flex-shrink-0 border-r border-border bg-card flex flex-col">
@@ -149,6 +174,7 @@ export default function Emails() {
             <p className="text-sm">Select an email to read</p>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
