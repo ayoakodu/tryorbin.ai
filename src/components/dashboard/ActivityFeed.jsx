@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Flame, Calendar, DollarSign, TrendingUp, Brain,
@@ -6,6 +7,15 @@ import {
   MessageCircle, Star, Eye
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const ACTIVITY_ROUTES = {
+  'Follow Up Now': '/pipeline',
+  'Prepare Brief': '/ai-copilot',
+  'View Deal': '/pipeline',
+  'Reply': '/whatsapp',
+  'Review Drafts': '/campaigns',
+  'Fix Now': '/deliverability',
+};
 
 const ACTIVITIES = [
   {
@@ -96,6 +106,7 @@ const urgencyBorder = { critical: 'border-l-2 border-l-red-400', high: 'border-l
 export default function ActivityFeed() {
   const [filter, setFilter] = useState('all');
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   const visible = ACTIVITIES.filter(a => filter === 'all' || a.type === filter);
 
@@ -114,7 +125,7 @@ export default function ActivityFeed() {
             className="text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">
             {collapsed ? 'Expand' : 'Collapse'}
           </button>
-          <button className="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-1">
+          <button onClick={() => navigate('/outreach')} className="text-[11px] font-semibold text-emerald-600 hover:text-emerald-700 transition-colors flex items-center gap-1">
             View all <ChevronRight className="w-3 h-3" />
           </button>
         </div>
@@ -178,7 +189,9 @@ export default function ActivityFeed() {
                           <p className="text-[11px] text-slate-400 truncate flex-1">{a.meta}</p>
                           <span className="text-[10px] text-slate-300 flex-shrink-0">{a.time}</span>
                           {a.action && (
-                            <button className="text-[11px] font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:text-emerald-700 flex-shrink-0">
+                            <button
+                              onClick={() => navigate(ACTIVITY_ROUTES[a.action] || '/dashboard')}
+                              className="text-[11px] font-semibold text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 hover:text-emerald-700 flex-shrink-0">
                               {a.action} <ArrowUpRight className="w-3 h-3" />
                             </button>
                           )}

@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Zap, ArrowRight, CheckCircle2, Clock, AlertTriangle,
-  MessageCircle, Mail, Users, Shield, Flame, RefreshCw,
+  Zap, ArrowRight, CheckCircle2,
+  MessageCircle, Users, Shield, Flame, RefreshCw,
   ChevronRight, Star
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,8 @@ const ACTIONS = [
     urgencyLabel: 'Critical',
     urgencyColor: 'bg-red-50 text-red-500 border-red-200',
     estimatedImpact: '$272K at risk',
+    route: '/pipeline',
+    secondaryRoute: '/pipeline',
   },
   {
     id: 2,
@@ -37,6 +40,8 @@ const ACTIONS = [
     urgencyLabel: 'High Intent',
     urgencyColor: 'bg-orange-50 text-orange-500 border-orange-200',
     estimatedImpact: '47 hot prospects',
+    route: '/contacts',
+    secondaryRoute: '/ai-copilot',
   },
   {
     id: 3,
@@ -52,6 +57,8 @@ const ACTIONS = [
     urgencyLabel: 'Opportunity',
     urgencyColor: 'bg-emerald-50 text-emerald-600 border-emerald-200',
     estimatedImpact: '+18% reply rate',
+    route: '/whatsapp',
+    secondaryRoute: '/whatsapp',
   },
   {
     id: 4,
@@ -67,6 +74,8 @@ const ACTIONS = [
     urgencyLabel: 'AI Ready',
     urgencyColor: 'bg-violet-50 text-violet-600 border-violet-200',
     estimatedImpact: '67 cold contacts',
+    route: '/outreach',
+    secondaryRoute: '/outreach',
   },
   {
     id: 5,
@@ -82,6 +91,8 @@ const ACTIONS = [
     urgencyLabel: 'Needs Attention',
     urgencyColor: 'bg-amber-50 text-amber-600 border-amber-200',
     estimatedImpact: '~720 emails affected',
+    route: '/deliverability',
+    secondaryRoute: '/deliverability',
   },
   {
     id: 6,
@@ -97,6 +108,8 @@ const ACTIONS = [
     urgencyLabel: 'Momentum',
     urgencyColor: 'bg-cyan-50 text-cyan-600 border-cyan-200',
     estimatedImpact: '12 warm leads',
+    route: '/contacts',
+    secondaryRoute: '/outreach',
   },
 ];
 
@@ -105,6 +118,7 @@ const urgencyOrder = { critical: 0, high: 1, medium: 2, low: 3 };
 export default function NextBestActions() {
   const [completed, setCompleted] = useState([]);
   const [showAll, setShowAll] = useState(false);
+  const navigate = useNavigate();
 
   const active = ACTIONS
     .filter(a => !completed.includes(a.id))
@@ -114,7 +128,7 @@ export default function NextBestActions() {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden"
-      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06), 0 0 0 0 transparent' }}>
+      style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
 
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-100"
@@ -138,8 +152,10 @@ export default function NextBestActions() {
             <p className="text-[11px] text-slate-400 leading-tight">AI-prioritized execution queue · Sorted by impact</p>
           </div>
         </div>
-        <button className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">
-          <RefreshCw className="w-3 h-3" /> Refresh
+        <button
+          onClick={() => setCompleted([])}
+          className="flex items-center gap-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">
+          <RefreshCw className="w-3 h-3" /> Reset
         </button>
       </div>
 
@@ -160,12 +176,10 @@ export default function NextBestActions() {
                   action.urgency === 'critical' && 'border-l-2 border-l-red-400'
                 )}
               >
-                {/* Icon */}
                 <div className={cn('w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0', action.iconBg)}>
                   <Icon className={cn('w-4 h-4', action.iconColor)} />
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                     <span className={cn('text-[10px] font-bold px-1.5 py-0.5 rounded-md border', action.urgencyColor)}>
@@ -177,12 +191,14 @@ export default function NextBestActions() {
                   <p className="text-[11px] text-slate-400 mt-0.5 leading-snug truncate">{action.context}</p>
                 </div>
 
-                {/* CTAs */}
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <button className="text-[11px] text-slate-400 font-medium hover:text-slate-600 transition-colors whitespace-nowrap hidden group-hover:block">
+                  <button
+                    onClick={() => navigate(action.secondaryRoute)}
+                    className="text-[11px] text-slate-400 font-medium hover:text-slate-600 transition-colors whitespace-nowrap hidden group-hover:block">
                     {action.secondaryCta}
                   </button>
                   <button
+                    onClick={() => navigate(action.route)}
                     className={cn(
                       'flex items-center gap-1 text-[11px] font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm whitespace-nowrap',
                       action.ctaStyle
@@ -209,11 +225,11 @@ export default function NextBestActions() {
             <CheckCircle2 className="w-8 h-8 text-emerald-300" />
             <p className="text-[12px] font-semibold text-slate-500">Action queue cleared</p>
             <p className="text-[11px] text-slate-400">AI is monitoring for new priorities</p>
+            <button onClick={() => setCompleted([])} className="text-[11px] text-emerald-600 hover:underline mt-1">Reset queue</button>
           </div>
         )}
       </div>
 
-      {/* Show more / Summary */}
       {active.length > 4 && (
         <div className="px-5 py-3 border-t border-slate-50 flex items-center justify-between">
           <span className="text-[11px] text-slate-400">{active.length - 4} more actions queued</span>
