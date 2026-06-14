@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { invokeLLM } from '@/lib/anthropic';
 import { X, Sparkles, Loader2, Copy, ChevronRight, Mail, Phone, MessageCircle, Linkedin, MapPin, Globe, AlertTriangle, Clock, CheckCheck, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
@@ -152,8 +151,12 @@ Include:
 Keep it concise and scannable.`,
     };
 
-    const res = await invokeLLM(prompts[key]);
-    setResult({ key, content: res });
+    try {
+      const res = await base44.integrations.Core.InvokeLLM({ prompt: prompts[key] });
+      setResult({ key, content: res });
+    } catch {
+      // silently fail
+    }
     setLoading(false);
   };
 

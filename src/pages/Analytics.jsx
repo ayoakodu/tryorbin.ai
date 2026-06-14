@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { invokeLLMJson } from '@/lib/anthropic';
+import { base44 } from '@/api/base44Client';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import {
@@ -107,7 +107,7 @@ export default function Analytics() {
   const refreshAIInsights = async () => {
     setAiLoading(true);
     try {
-      const result = await invokeLLMJson(`You are a GTM campaign analytics AI. Analyze these outbound campaign metrics and detect issues based on these rules:\n- Low open rate (<40%) → flag subject line issue\n- High open + low reply (<10% reply despite >60% open) → flag weak CTA or message mismatch\n- Drop-off >35% at any step → flag step optimisation needed\n- Channel with highest engagement → recommend replicating its targeting pattern\n- Any campaign with reply rate <18% → recommend pause or revision\n\nCampaign Data:\n- Total Sent: ${totalSent}, Avg Open Rate: ${avgOpenRate}%, Avg Reply Rate: ${avgReplyRate}%, Total Meetings: ${totalMeetings}\n- WhatsApp: 91% open, 28% reply | Email: 66% open, 22% reply | LinkedIn: 54% open, 18% reply\n- Best step: Step 1 (73% of replies) | Dropoff: 31% step 2, 35% step 3\n- Re-engagement campaign: 38% open, 17% reply rate — UNDERPERFORMING\n- Peak reply hours: 10am–11am and 3pm–4pm\n\nReturn exactly 4 insights. Each must reference a specific metric. JSON: insights array with type ("success"|"warning"|"danger") and text.`);
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM campaign analytics AI. Analyze these outbound campaign metrics and detect issues based on these rules:\n- Low open rate (<40%) → flag subject line issue\n- High open + low reply (<10% reply despite >60% open) → flag weak CTA or message mismatch\n- Drop-off >35% at any step → flag step optimisation needed\n- Channel with highest engagement → recommend replicating its targeting pattern\n- Any campaign with reply rate <18% → recommend pause or revision\n\nCampaign Data:\n- Total Sent: ${totalSent}, Avg Open Rate: ${avgOpenRate}%, Avg Reply Rate: ${avgReplyRate}%, Total Meetings: ${totalMeetings}\n- WhatsApp: 91% open, 28% reply | Email: 66% open, 22% reply | LinkedIn: 54% open, 18% reply\n- Best step: Step 1 (73% of replies) | Dropoff: 31% step 2, 35% step 3\n- Re-engagement campaign: 38% open, 17% reply rate — UNDERPERFORMING\n- Peak reply hours: 10am–11am and 3pm–4pm\n\nReturn exactly 4 insights. Each must reference a specific metric. JSON: insights array with type ("success"|"warning"|"danger") and text.`});
       if (result?.insights?.length) setAiInsights(result.insights);
     } catch {
       // Silently keep existing insights if AI refresh fails

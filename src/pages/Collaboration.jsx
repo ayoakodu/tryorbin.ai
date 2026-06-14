@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { invokeLLM } from '@/lib/anthropic';
+import { base44 } from '@/api/base44Client';
 import {
   Users, MessageSquare, Bell, Activity, Share2, Plus,
   Send, Sparkles, CheckCircle2, Clock, AlertCircle,
@@ -138,12 +138,12 @@ export default function Collaboration() {
 
   const getAISummary = async () => {
     setAiLoading(true);
-    const result = await invokeLLM(`You are a GTM team intelligence assistant. Summarize this team activity and provide 2-3 strategic recommendations based on the following comments and context:
+    const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM team intelligence assistant. Summarize this team activity and provide 2-3 strategic recommendations based on the following comments and context:
 
 Team comments: ${comments.map(c => `${c.author} (${c.channel}): ${c.text}`).join('\n')}
 Pipeline: $2.4M, Meetings: 47, Reply Rate: 14.2%
 
-Provide a concise 3-sentence team summary and 2-3 bullet actionable recommendations for the GTM team.`);
+Provide a concise 3-sentence team summary and 2-3 bullet actionable recommendations for the GTM team.`});
     setAiSummary(result);
     setAiLoading(false);
   };

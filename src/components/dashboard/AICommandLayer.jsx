@@ -7,7 +7,7 @@ import {
   Sparkles, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { invokeLLM } from '@/lib/anthropic';
+import { base44 } from '@/api/base44Client';
 
 const INITIAL_INSIGHTS = [
   {
@@ -117,7 +117,7 @@ export default function AICommandLayer({ isRefreshing }) {
     setAiLoading(true);
     setAiSummary(null);
     try {
-      const result = await invokeLLM(`You are Orbin AI, a GTM execution copilot for B2B revenue teams in Africa.
+      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are Orbin AI, a GTM execution copilot for B2B revenue teams in Africa.
 
 Current pipeline snapshot:
 - 3 enterprise deals at risk: Flutterwave ($120K), Paystack ($85K), Access Bank ($67K) — 14+ days no contact
