@@ -90,10 +90,10 @@ export default function EmailAnalyticsDashboard() {
   });
 
   const kpiCards = [
-    { label: 'Open Rate',   value: kpis.open,   delta: kpis.openDelta,   icon: Mail,             color: 'text-blue-600',    bg: 'bg-blue-50' },
-    { label: 'Click Rate',  value: kpis.click,  delta: kpis.clickDelta,  icon: MousePointerClick, color: 'text-violet-600', bg: 'bg-violet-50' },
-    { label: 'Reply Rate',  value: kpis.reply,  delta: kpis.replyDelta,  icon: Reply,            color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { label: 'Bounce Rate', value: kpis.bounce, delta: kpis.bounceDelta, icon: AlertTriangle,    color: 'text-amber-600',   bg: 'bg-amber-50' },
+    { label: 'Open Rate',   value: kpis.open,   delta: kpis.openDelta,   icon: Mail,             color: 'text-blue-600',    bg: 'bg-blue-50',    chartKey: 'opens' },
+    { label: 'Click Rate',  value: kpis.click,  delta: kpis.clickDelta,  icon: MousePointerClick, color: 'text-violet-600', bg: 'bg-violet-50',  chartKey: 'clicks' },
+    { label: 'Reply Rate',  value: kpis.reply,  delta: kpis.replyDelta,  icon: Reply,            color: 'text-emerald-600', bg: 'bg-emerald-50', chartKey: 'replies' },
+    { label: 'Bounce Rate', value: kpis.bounce, delta: kpis.bounceDelta, icon: AlertTriangle,    color: 'text-amber-600',   bg: 'bg-amber-50',   chartKey: 'bounces' },
   ];
 
   return (
@@ -121,11 +121,16 @@ export default function EmailAnalyticsDashboard() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {kpiCards.map(({ label, value, delta, icon: KpiIcon, color, bg }) => {
+        {kpiCards.map(({ label, value, delta, icon: KpiIcon, color, bg, chartKey }) => {
           const isBaseline = delta === 'baseline';
           const isUp = delta.startsWith('+');
+          const isActive = chartView === chartKey;
           return (
-            <div key={label} className="bg-white rounded-xl border border-slate-200 p-4">
+            <button key={label} onClick={() => setChartView(chartKey)}
+              className={cn(
+                'text-left rounded-xl border p-4 transition-all hover:shadow-md',
+                isActive ? 'border-primary/40 ring-2 ring-primary/20 bg-primary/[0.02]' : 'bg-white border-slate-200 hover:border-slate-300'
+              )}>
               <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center mb-3', bg)}>
                 <KpiIcon className={cn('w-4 h-4', color)} />
               </div>
@@ -134,7 +139,7 @@ export default function EmailAnalyticsDashboard() {
               <p className={cn('text-[10px] font-semibold mt-1', isBaseline ? 'text-slate-400' : isUp ? 'text-emerald-600' : 'text-red-500')}>
                 {isBaseline ? '— all time baseline' : `${delta} vs prev. period`}
               </p>
-            </div>
+            </button>
           );
         })}
       </div>
