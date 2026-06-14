@@ -68,7 +68,7 @@ export default function Sidebar({ collapsed, onToggle }) {
         <RVNULogo size={26} className="rounded-md flex-shrink-0" />
         {!collapsed && (
           <>
-            <span className="text-sm font-bold tracking-tight whitespace-nowrap" style={{ color: '#10b981' }}>RVNU</span>
+            <span className="text-sm font-bold tracking-tight whitespace-nowrap" style={{ color: '#10b981' }}>Orbin</span>
             <span className="ml-auto text-[10px] font-mono text-primary/60 bg-primary/10 px-1.5 py-0.5 rounded whitespace-nowrap">BETA</span>
           </>
         )}

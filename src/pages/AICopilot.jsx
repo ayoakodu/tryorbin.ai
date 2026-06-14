@@ -26,7 +26,7 @@ const suggestionPrompts = [
 const initialMessages = [
   {
     role: 'assistant',
-    content: `Hello! I'm **RVNU AI**, your GTM execution copilot. \n\nI'm embedded throughout your workflows and can help you execute faster:\n- ✉️ **Sequences** — Write multichannel outbound sequences, follow-ups, and WhatsApp messages\n- 🎯 **Personalization** — Generate personalized first lines, company summaries, and outreach angles\n- 📊 **Pipeline** — Analyze deal risk, suggest next actions, generate deal summaries\n- 🚀 **Campaigns** — Build campaign briefs, analyze performance, recommend optimizations\n- 💬 **Objection Handling** — Respond to common objections with market-aware replies\n- ⚡ **Automation** — Design workflow triggers and engagement automations\n\nWhat would you like to execute today?`,
+    content: `Hello! I'm **Orbin AI**, your GTM execution copilot. \n\nI'm embedded throughout your workflows and can help you execute faster:\n- ✉️ **Sequences** — Write multichannel outbound sequences, follow-ups, and WhatsApp messages\n- 🎯 **Personalization** — Generate personalized first lines, company summaries, and outreach angles\n- 📊 **Pipeline** — Analyze deal risk, suggest next actions, generate deal summaries\n- 🚀 **Campaigns** — Build campaign briefs, analyze performance, recommend optimizations\n- 💬 **Objection Handling** — Respond to common objections with market-aware replies\n- ⚡ **Automation** — Design workflow triggers and engagement automations\n\nWhat would you like to execute today?`,
   }
 ];
 
@@ -54,7 +54,7 @@ function Message({ msg }) {
           {msg.loading ? (
             <div className="flex items-center gap-2">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
-              <span className="text-muted-foreground text-xs">RVNU AI is thinking...</span>
+              <span className="text-muted-foreground text-xs">Orbin AI is thinking...</span>
             </div>
           ) : (
             <div className="whitespace-pre-wrap" dangerouslySetInnerHTML={{
@@ -105,14 +105,18 @@ export default function AICopilot() {
     setMessages(prev => [...prev, { role: 'assistant', content: '', loading: true, id: loadingId }]);
 
     try {
-      const response = await invokeLLM(`You are RVNU AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.\n\nYou specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, meeting prep, re-engagement strategies, and sales automation.\n\nKey principles:\n- Be specific and actionable, never generic\n- Tailor all advice for African and emerging market contexts (Nigeria, Ghana, Kenya, South Africa, Egypt, etc.)\n- WhatsApp is a PRIMARY sales channel — treat it accordingly\n- Focus on execution speed and concrete next steps\n- Use markdown bold (**text**) for emphasis\n- Structure responses clearly with sections when helpful\n- For meeting prep: include talk track, key questions, likely objections, and recommended next step\n- For objection handling: acknowledge → reframe → respond → close\n- For pipeline risk: rank deals by urgency and give specific follow-up copy\n\nUser request: ${userText}`);
+      const response = await invokeLLM(`You are Orbin AI, an expert GTM execution copilot for B2B revenue teams in Africa and emerging markets.\n\nYou specialize in: multichannel outbound sequences (email, WhatsApp, LinkedIn, SMS), personalized messaging, pipeline analysis, campaign optimization, deal risk assessment, objection handling, WhatsApp GTM workflows, meeting prep, re-engagement strategies, and sales automation.\n\nKey principles:\n- Be specific and actionable, never generic\n- Tailor all advice for African and emerging market contexts (Nigeria, Ghana, Kenya, South Africa, Egypt, etc.)\n- WhatsApp is a PRIMARY sales channel — treat it accordingly\n- Focus on execution speed and concrete next steps\n- Use markdown bold (**text**) for emphasis\n- Structure responses clearly with sections when helpful\n- For meeting prep: include talk track, key questions, likely objections, and recommended next step\n- For objection handling: acknowledge → reframe → respond → close\n- For pipeline risk: rank deals by urgency and give specific follow-up copy\n\nUser request: ${userText}`);
       setMessages(prev => prev.map(m =>
         m.id === loadingId ? { role: 'assistant', content: response, loading: false } : m
       ));
-    } catch {
+    } catch (err) {
+      const errMsg = err?.message || 'Unknown error';
+      const isNoKey = !import.meta.env.VITE_ANTHROPIC_API_KEY;
       setMessages(prev => prev.map(m =>
         m.id === loadingId
-          ? { role: 'assistant', content: 'Sorry, I encountered an error. Please try again.', loading: false }
+          ? { role: 'assistant', content: isNoKey
+              ? 'No API key set — add VITE_ANTHROPIC_API_KEY to your environment variables.'
+              : `Error: ${errMsg}`, loading: false }
           : m
       ));
     }
@@ -179,7 +183,7 @@ export default function AICopilot() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKey}
-                placeholder="Ask RVNU AI anything — write outbound emails, analyze pipeline, build ICPs..."
+                placeholder="Ask Orbin AI anything — write outbound emails, analyze pipeline, build ICPs..."
                 className="bg-transparent border-0 text-sm text-foreground placeholder:text-muted-foreground resize-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 min-h-[60px]"
                 rows={3}
               />
@@ -200,7 +204,7 @@ export default function AICopilot() {
               </div>
             </div>
             <p className="text-center text-[10px] text-muted-foreground mt-2">
-              RVNU AI may make mistakes. Verify important information.
+              Orbin AI may make mistakes. Verify important information.
             </p>
           </div>
         </div>
