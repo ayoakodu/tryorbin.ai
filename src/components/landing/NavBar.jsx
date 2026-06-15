@@ -234,9 +234,9 @@ export default function NavBar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <div className="flex items-center gap-1 flex-shrink-0">
-          <OrbinAILogo size={44} className="rounded-lg" />
-          <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/16b1fa4ca_2.png" alt="Orbin" className="h-20 object-contain -ml-2" />
+        <div className="flex items-center gap-0 flex-shrink-0">
+          <OrbinAILogo size={50} className="rounded-lg" />
+          <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/16b1fa4ca_2.png" alt="Orbin" style={{ height: '30px' }} className="object-contain -ml-3" />
         </div>
 
         {/* Centre nav items */}
