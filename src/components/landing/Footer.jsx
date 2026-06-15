@@ -97,7 +97,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <OrbinAILogo size={28} className="rounded-md" />
-              <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png" alt="Orbin" className="h-5 object-contain" />
+              <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/16b1fa4ca_2.png" alt="Orbin" className="h-5 object-contain" />
             </div>
             <div className="flex items-center gap-2">
               {socialLinks.map((s) => (
