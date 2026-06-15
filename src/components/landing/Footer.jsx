@@ -95,7 +95,7 @@ export default function Footer() {
 
           {/* Brand + social */}
           <div className="col-span-2 md:col-span-1">
-            <div className="flex items-center mb-4" style={{ gap: 0, marginLeft: '-42px' }}>
+            <div className="flex items-center mb-1" style={{ gap: 0, marginLeft: '-42px' }}>
               <OrbinAILogo size={120} className="rounded-xl" />
               <img src="https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/16b1fa4ca_2.png" alt="Orbin" style={{ height: '140px', marginLeft: '-70px' }} className="object-contain" />
             </div>
