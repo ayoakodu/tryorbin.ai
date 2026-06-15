@@ -65,10 +65,10 @@ export default function Sidebar({ collapsed, onToggle }) {
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-3 border-b border-slate-200 flex-shrink-0 overflow-hidden"
         style={{ height: '40px', minHeight: '40px', maxHeight: '40px' }}>
-        <OrbinAILogo size={26} className="rounded-md flex-shrink-0" />
+        <OrbinAILogo size={36} className="rounded-md flex-shrink-0" />
         {!collapsed && (
           <>
-            <span className="text-sm font-bold tracking-tight whitespace-nowrap" style={{ color: '#10b981' }}>Orbin</span>
+            <span className="text-sm font-bold tracking-tight whitespace-nowrap" style={{ color: '#0a1628' }}>Orbin</span>
             <span className="ml-auto text-[10px] font-mono text-primary/60 bg-primary/10 px-1.5 py-0.5 rounded whitespace-nowrap">BETA</span>
           </>
         )}
