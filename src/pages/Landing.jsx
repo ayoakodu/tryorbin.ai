@@ -382,7 +382,7 @@ export default function Landing() {
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
               <div className="flex items-center justify-center mx-auto mb-6">
-                <OrbinAILogo size={96} className="rounded-2xl" />
+                <OrbinAILogo size={110} className="rounded-2xl" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with Orbin</h2>
               <p className="text-muted-foreground mb-1 max-w-2xl mx-auto whitespace-nowrap">
