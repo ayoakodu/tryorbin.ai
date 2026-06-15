@@ -58,7 +58,6 @@ import Settings from './pages/Settings';
 import Deliverability from './pages/Deliverability.jsx';
 import OnboardingHub from './pages/OnboardingHub';
 import SequenceBuilder from './pages/SequenceBuilder';
-import EmailOps from './pages/EmailOps';
 import OAuthCallback from './pages/OAuthCallback';
 
 // Layout
@@ -116,7 +115,6 @@ const AuthenticatedApp = () => {
         <Route path="/deliverability" element={<Deliverability />} />
         <Route path="/onboarding-hub" element={<OnboardingHub />} />
         <Route path="/sequence-builder" element={<SequenceBuilder />} />
-        <Route path="/email-ops" element={<EmailOps />} />
       </Route>
 
       <Route path="/integrations/callback" element={<OAuthCallback />} />

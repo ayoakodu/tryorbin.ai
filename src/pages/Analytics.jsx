@@ -10,9 +10,17 @@ import {
 import {
   TrendingUp, TrendingDown, Mail, MessageCircle, Target,
   Sparkles, Loader2, AlertTriangle, CheckCircle2, Users,
-  BarChart3, Reply, Calendar, MousePointerClick, Send
+  BarChart3, Reply, Calendar, MousePointerClick, Send, Ban, Paperclip, Activity, Webhook
 } from 'lucide-react';
 import LinkedInAnalyticsCard from '@/components/linkedin/LinkedInAnalyticsCard';
+import EmailAnalyticsDashboard from '@/components/email/EmailAnalyticsDashboard';
+import BounceManagementDashboard from '@/components/email/BounceManagementDashboard';
+import UnsubscribeManager from '@/components/email/UnsubscribeManager';
+import EmailQueueDashboard from '@/components/email/EmailQueueDashboard';
+import AttachmentManager from '@/components/email/AttachmentManager';
+import AIUsageDashboard from '@/components/email/AIUsageDashboard';
+import WebhookEventMonitor from '@/components/email/WebhookEventMonitor';
+import SystemHealthDashboard from '@/components/email/SystemHealthDashboard';
 
 // Channel performance comparison
 const channelPerformanceData = [
@@ -91,6 +99,19 @@ const statusBadge = {
 };
 
 export default function Analytics() {
+  const [emailOpsTab, setEmailOpsTab] = useState('analytics');
+
+  const EMAIL_OPS_TABS = [
+    { id: 'analytics',   label: 'Analytics',    icon: BarChart3 },
+    { id: 'bounces',     label: 'Bounces',       icon: AlertTriangle },
+    { id: 'unsubscribe', label: 'Suppression',   icon: Ban },
+    { id: 'queue',       label: 'Queue',         icon: Send },
+    { id: 'attachments', label: 'Attachments',   icon: Paperclip },
+    { id: 'ai',          label: 'AI Usage',      icon: Sparkles },
+    { id: 'webhooks',    label: 'Events',        icon: Activity },
+    { id: 'health',      label: 'System Health', icon: Webhook },
+  ];
+
   const [aiInsights, setAiInsights] = useState([
     { type: 'warning', text: 'WhatsApp sequences have 91% open rate vs 66% for email — consider shifting more prospects to WhatsApp touchpoints.' },
     { type: 'success', text: 'Step 1 drives 73% of all replies. Invest in optimizing your first touchpoint subject lines and hooks.' },
@@ -176,7 +197,7 @@ export default function Analytics() {
 
         {/* Tab Nav */}
         <div className="flex gap-1 flex-wrap">
-          {[['overview', 'Overview'], ['channels', 'Channel Performance'], ['sequences', 'Sequence Performance'], ['campaigns', 'Campaign Dashboard']].map(([val, label]) => (
+          {[['overview', 'Overview'], ['channels', 'Channel Performance'], ['sequences', 'Sequence Performance'], ['campaigns', 'Campaign Dashboard'], ['emailops', 'Email Ops']].map(([val, label]) => (
             <button key={val} onClick={() => setActiveTab(val)}
               className={`text-xs px-3 py-1.5 rounded-lg font-medium transition-colors ${activeTab === val ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-secondary'}`}>
               {label}
@@ -353,6 +374,33 @@ export default function Analytics() {
                 </table>
               </div>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'emailops' && (
+          <div className="space-y-4">
+            <div className="flex gap-1 bg-white border border-slate-200 rounded-xl p-1 overflow-x-auto">
+              {EMAIL_OPS_TABS.map((t) => {
+                const TIcon = t.icon;
+                return (
+                  <button key={t.id} onClick={() => setEmailOpsTab(t.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap flex-shrink-0 ${emailOpsTab === t.id ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'}`}>
+                    <TIcon className="w-3.5 h-3.5" />
+                    <span>{t.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <motion.div key={emailOpsTab} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.15 }}>
+              {emailOpsTab === 'analytics'   && <EmailAnalyticsDashboard />}
+              {emailOpsTab === 'bounces'     && <BounceManagementDashboard />}
+              {emailOpsTab === 'unsubscribe' && <UnsubscribeManager />}
+              {emailOpsTab === 'queue'       && <EmailQueueDashboard />}
+              {emailOpsTab === 'attachments' && <AttachmentManager />}
+              {emailOpsTab === 'ai'          && <AIUsageDashboard />}
+              {emailOpsTab === 'webhooks'    && <WebhookEventMonitor />}
+              {emailOpsTab === 'health'      && <SystemHealthDashboard />}
+            </motion.div>
           </div>
         )}
 
