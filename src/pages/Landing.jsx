@@ -378,11 +378,11 @@ export default function Landing() {
       {/* Final CTA */}
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="glass rounded-2xl p-8 md:p-12 border border-primary/20 glow-green relative overflow-hidden">
+          <div className="glass rounded-2xl p-6 md:p-8 border border-primary/20 glow-green relative overflow-hidden">
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
-              <div className="flex items-center justify-center mx-auto mb-6">
-                <OrbinAILogo size={110} className="rounded-2xl" />
+              <div className="flex items-center justify-center mx-auto mb-4">
+                <OrbinAILogo size={120} className="rounded-2xl" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with Orbin</h2>
               <p className="text-muted-foreground mb-1 max-w-2xl mx-auto whitespace-nowrap">
