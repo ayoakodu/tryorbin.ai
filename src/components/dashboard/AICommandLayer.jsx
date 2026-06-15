@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Brain, AlertTriangle, TrendingDown, TrendingUp, Zap,
-  ArrowRight, RefreshCw, ChevronDown, ChevronUp, Users, Shield,
+  ArrowRight, ChevronDown, ChevronUp, Users,
   Sparkles, Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -88,7 +88,7 @@ const INITIAL_INSIGHTS = [
     iconColor: 'text-orange-500',
     iconBg: 'bg-orange-50 border-orange-100',
     title: '2 reps over-indexing on low-fit accounts',
-    detail: '34% of this week\'s outreach went to accounts with <30% ICP fit score. Reallocating to high-fit accounts is projected to improve conversion rate 2x.',
+    detail: "34% of this week's outreach went to accounts with <30% ICP fit score. Reallocating to high-fit accounts is projected to improve conversion rate 2x.",
     actions: [{ label: 'Rebalance', primary: true, route: '/collaboration' }, { label: 'Review', primary: false, route: '/analytics' }],
     badge: 'Efficiency',
     badgeColor: 'bg-orange-50 text-orange-600 border-orange-200',
@@ -117,18 +117,21 @@ export default function AICommandLayer({ isRefreshing }) {
     setAiLoading(true);
     setAiSummary(null);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are Orbin AI, a GTM execution copilot for B2B revenue teams in Africa.
-
-Current pipeline snapshot:
-- 3 enterprise deals at risk: Flutterwave ($120K), Paystack ($85K), Access Bank ($67K) — 14+ days no contact
-- Reply rates dropped 12% in fintech sequences this week
-- 47 contacts with high buying intent (pricing page revisits)
-- WhatsApp converting 2.3x better than email this month
-- DMARC policy set to "none" — ~8% of emails hitting spam
-- 67 cold contacts ready for re-engagement sequence
-- 2 reps spending 34% of outreach on low-ICP-fit accounts
-
-Give me ONE sharp, specific GTM insight or recommendation I should act on RIGHT NOW. Be direct and actionable. 2-3 sentences max.`);
+      const prompt = [
+        'You are Orbin AI, a GTM execution copilot for B2B revenue teams in Africa.',
+        '',
+        'Current pipeline snapshot:',
+        '- 3 enterprise deals at risk: Flutterwave ($120K), Paystack ($85K), Access Bank ($67K) — 14+ days no contact',
+        '- Reply rates dropped 12% in fintech sequences this week',
+        '- 47 contacts with high buying intent (pricing page revisits)',
+        '- WhatsApp converting 2.3x better than email this month',
+        '- DMARC policy set to none — ~8% of emails hitting spam',
+        '- 67 cold contacts ready for re-engagement sequence',
+        '- 2 reps spending 34% of outreach on low-ICP-fit accounts',
+        '',
+        'Give me ONE sharp, specific GTM insight or recommendation I should act on RIGHT NOW. Be direct and actionable. 2-3 sentences max.',
+      ].join('\n');
+      const result = await base44.integrations.Core.InvokeLLM({ prompt });
       setAiSummary(result);
     } catch {
       setAiSummary('Unable to generate insight — check your API key configuration.');
@@ -193,7 +196,7 @@ Give me ONE sharp, specific GTM insight or recommendation I should act on RIGHT 
                 </p>
               </div>
               {aiSummary && (
-                <button onClick={() => setAiSummary(null)} className="ml-auto text-slate-300 hover:text-slate-500 text-[10px] flex-shrink-0">✕</button>
+                <button onClick={() => setAiSummary(null)} className="ml-auto text-slate-300 hover:text-slate-500 text-[10px] flex-shrink-0">x</button>
               )}
             </div>
           </motion.div>
