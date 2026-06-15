@@ -59,9 +59,9 @@ export default function HeroDashboardPreview() {
           {/* Sidebar */}
           <div className="hidden md:flex flex-col w-40 bg-white border-r border-gray-100 flex-shrink-0 py-3 px-2">
             {/* Logo */}
-            <div className="flex items-center gap-1.5 px-2 pb-3 mb-2 border-b border-gray-100">
-              <OrbinAILogo size={28} className="rounded" />
-              <span className="text-xs font-bold text-gray-800">Orbin</span>
+            <div className="flex items-center px-1 pb-3 mb-2 border-b border-gray-100" style={{ gap: 0 }}>
+              <OrbinAILogo size={40} className="rounded flex-shrink-0" />
+              <span className="text-[11px] font-bold text-gray-800 whitespace-nowrap" style={{ marginLeft: '-11px' }}>Orbin</span>
               <span className="ml-auto text-[7px] px-1 py-0.5 rounded bg-gray-100 text-gray-500 font-semibold border border-gray-200">BETA</span>
             </div>
 
