@@ -378,7 +378,7 @@ export default function Landing() {
       {/* Final CTA */}
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="glass rounded-2xl px-6 pt-4 pb-6 md:px-8 md:pt-5 md:pb-7 border border-primary/20 glow-green relative overflow-hidden">
+          <div className="glass rounded-2xl px-6 pt-1 pb-6 md:px-8 md:pt-2 md:pb-7 border border-primary/20 glow-green relative overflow-hidden">
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
               <div className="flex items-center justify-center mx-auto mb-3">
