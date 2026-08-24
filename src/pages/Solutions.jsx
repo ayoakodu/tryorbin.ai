@@ -1,17 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, CalendarCheck, TrendingUp, Inbox,
   Cpu, Wallet, Truck, Briefcase, Store, Activity, Stars,
   Handshake, Megaphone, LayoutDashboard, UserCheck,
-  ArrowRight, Check, Sparkles, ChevronRight,
+  ArrowRight, Check, Sparkles, ChevronRight, ChevronDown,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
-import { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 
 /* ── data ─────────────────────────────────────────────── */
@@ -152,74 +151,16 @@ const TEAMS = [
   },
 ];
 
-/* ── components ───────────────────────────────────────── */
+/* ── helpers ──────────────────────────────────────────── */
 
 const COLOR_MAP = {
-  emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
-  blue:    { bg: 'bg-blue-50',    border: 'border-blue-200',    icon: 'text-blue-600',    badge: 'bg-blue-50 text-blue-700 border-blue-200' },
-  violet:  { bg: 'bg-violet-50',  border: 'border-violet-200',  icon: 'text-violet-600',  badge: 'bg-violet-50 text-violet-700 border-violet-200' },
-  amber:   { bg: 'bg-amber-50',   border: 'border-amber-200',   icon: 'text-amber-600',   badge: 'bg-amber-50 text-amber-700 border-amber-200' },
+  emerald: { bg: 'bg-emerald-50', border: 'border-emerald-200', icon: 'text-emerald-600', badge: 'bg-emerald-50 text-emerald-700 border-emerald-200', tabActive: 'bg-emerald-600', tabText: 'text-emerald-600' },
+  blue:    { bg: 'bg-blue-50',    border: 'border-blue-200',    icon: 'text-blue-600',    badge: 'bg-blue-50 text-blue-700 border-blue-200',    tabActive: 'bg-blue-600',    tabText: 'text-blue-600' },
+  violet:  { bg: 'bg-violet-50',  border: 'border-violet-200',  icon: 'text-violet-600',  badge: 'bg-violet-50 text-violet-700 border-violet-200',  tabActive: 'bg-violet-600',  tabText: 'text-violet-600' },
+  amber:   { bg: 'bg-amber-50',   border: 'border-amber-200',   icon: 'text-amber-600',   badge: 'bg-amber-50 text-amber-700 border-amber-200',   tabActive: 'bg-amber-600',   tabText: 'text-amber-600' },
 };
 
-function SolutionCard({ item, index, colorKey }) {
-  const c = COLOR_MAP[colorKey || 'emerald'];
-  const Icon = item.icon;
-  const isEven = index % 2 === 0;
-
-  return (
-    <motion.div
-      id={item.id}
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.05 }}
-      viewport={{ once: true }}
-      className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} gap-8 items-start py-14 border-b border-slate-100 last:border-0`}
-    >
-      {/* Text */}
-      <div className="flex-1">
-        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold mb-5 ${c.badge}`}>
-          <Icon className="w-3.5 h-3.5" />
-          {item.title}
-        </div>
-        <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-3">{item.tagline}</h3>
-        <p className="text-sm text-slate-500 leading-relaxed mb-6 max-w-lg">{item.description}</p>
-        <ul className="space-y-2 mb-6">
-          {item.bullets.map(b => (
-            <li key={b} className="flex items-center gap-2 text-sm text-slate-700">
-              <Check className={`w-4 h-4 flex-shrink-0 ${c.icon}`} />
-              {b}
-            </li>
-          ))}
-        </ul>
-        <a href="#waitlist">
-          <button className="flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
-            Join waitlist to get early access <ArrowRight className="w-4 h-4" />
-          </button>
-        </a>
-      </div>
-
-      {/* Visual card */}
-      <div className={`flex-1 rounded-2xl border p-6 ${c.bg} ${c.border}`}>
-        <div className={`w-10 h-10 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center mb-4`}>
-          <Icon className={`w-5 h-5 ${c.icon}`} />
-        </div>
-        <p className="text-sm font-bold text-slate-800 mb-1">{item.title}</p>
-        <p className="text-xs text-slate-500 mb-5 leading-relaxed">{item.tagline}</p>
-        <div className="space-y-2">
-          {item.bullets.map((b, i) => (
-            <motion.div key={b}
-              initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.07 }} viewport={{ once: true }}
-              className="flex items-center gap-2 p-2.5 bg-white rounded-lg border border-white/80 shadow-sm text-xs text-slate-700">
-              <ChevronRight className={`w-3 h-3 flex-shrink-0 ${c.icon}`} />
-              {b}
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
+/* ── components ───────────────────────────────────────── */
 
 function SectionHeader({ label, title, subtitle }) {
   return (
@@ -229,6 +170,190 @@ function SectionHeader({ label, title, subtitle }) {
       </div>
       <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-3">{title}</h2>
       <p className="text-base text-slate-500 max-w-xl mx-auto">{subtitle}</p>
+    </div>
+  );
+}
+
+function UseCaseTabs() {
+  const [activeIdx, setActiveIdx] = useState(0);
+  const panelRef = useRef(null);
+  const active = USE_CASES[activeIdx];
+  const c = COLOR_MAP[active.color];
+  const Icon = active.icon;
+
+  return (
+    <div className="flex flex-col md:flex-row gap-0 rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+      {/* Tab list */}
+      <div className="md:w-56 flex-shrink-0 flex flex-row md:flex-col border-b md:border-b-0 md:border-r border-slate-200 bg-slate-50 overflow-x-auto">
+        {USE_CASES.map((uc, i) => {
+          const TabIcon = uc.icon;
+          const isActive = i === activeIdx;
+          const tc = COLOR_MAP[uc.color];
+          return (
+            <button
+              key={uc.id}
+              id={uc.id}
+              onClick={() => setActiveIdx(i)}
+              className={`relative flex items-center gap-3 px-5 py-4 text-left text-sm font-medium transition-colors flex-shrink-0 md:flex-shrink focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500
+                ${isActive
+                  ? 'bg-white text-slate-900'
+                  : 'text-slate-500 hover:text-slate-800 hover:bg-white/60'
+                }`}
+            >
+              {isActive && (
+                <motion.span
+                  layoutId="tab-indicator"
+                  className={`absolute left-0 top-0 bottom-0 w-0.5 md:w-0.5 hidden md:block ${tc.tabActive}`}
+                />
+              )}
+              <TabIcon className={`w-4 h-4 flex-shrink-0 ${isActive ? tc.tabText : 'text-slate-400'}`} />
+              <span className="leading-tight">{uc.title}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Content panel */}
+      <div className="flex-1 min-w-0 bg-white p-6 md:p-8" ref={panelRef}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={active.id}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.22, ease: 'easeOut' }}
+            className="flex flex-col lg:flex-row gap-8 items-start"
+          >
+            {/* Text */}
+            <div className="flex-1 min-w-0">
+              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold mb-5 ${c.badge}`}>
+                <Icon className="w-3.5 h-3.5" />
+                {active.title}
+              </div>
+              <h3 className="text-xl md:text-2xl font-bold text-slate-900 mb-3 text-balance">{active.tagline}</h3>
+              <p className="text-sm text-slate-500 leading-relaxed mb-6 max-w-md">{active.description}</p>
+              <ul className="space-y-2 mb-6">
+                {active.bullets.map(b => (
+                  <li key={b} className="flex items-center gap-2 text-sm text-slate-700">
+                    <Check className={`w-4 h-4 flex-shrink-0 ${c.icon}`} />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <a href="#waitlist">
+                <button className="flex items-center gap-2 text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors">
+                  Join waitlist to get early access <ArrowRight className="w-4 h-4" />
+                </button>
+              </a>
+            </div>
+
+            {/* Visual card */}
+            <div className={`w-full lg:w-64 flex-shrink-0 rounded-2xl border p-5 ${c.bg} ${c.border}`}>
+              <div className={`w-9 h-9 rounded-xl ${c.bg} border ${c.border} flex items-center justify-center mb-4`}>
+                <Icon className={`w-4.5 h-4.5 ${c.icon}`} />
+              </div>
+              <p className="text-sm font-bold text-slate-800 mb-0.5">{active.title}</p>
+              <p className="text-xs text-slate-500 mb-4 leading-relaxed">{active.tagline}</p>
+              <div className="space-y-2">
+                {active.bullets.map((b, i) => (
+                  <motion.div
+                    key={b}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.07 }}
+                    className="flex items-center gap-2 p-2.5 bg-white rounded-lg border border-white/80 shadow-sm text-xs text-slate-700"
+                  >
+                    <ChevronRight className={`w-3 h-3 flex-shrink-0 ${c.icon}`} />
+                    {b}
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+function AccordionCard({ item, isOpen, onToggle, animDelay = 0 }) {
+  const Icon = item.icon;
+  return (
+    <motion.div
+      id={item.id}
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ delay: animDelay, duration: 0.4 }}
+      viewport={{ once: true }}
+      className={`bg-white border rounded-2xl overflow-hidden transition-shadow ${isOpen ? 'border-emerald-300 shadow-md' : 'border-slate-200 hover:border-slate-300'}`}
+    >
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center gap-4 px-6 py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-inset"
+      >
+        <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 transition-colors ${isOpen ? 'bg-emerald-50 border border-emerald-200' : 'bg-slate-50 border border-slate-200'}`}>
+          <Icon className={`w-4.5 h-4.5 transition-colors ${isOpen ? 'text-emerald-600' : 'text-slate-500'}`} />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className={`text-sm font-bold leading-snug transition-colors ${isOpen ? 'text-slate-900' : 'text-slate-800'}`}>{item.title}</p>
+          <p className="text-xs text-slate-400 mt-0.5 truncate">{item.tagline}</p>
+        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.22 }}
+          className="flex-shrink-0"
+        >
+          <ChevronDown className={`w-4 h-4 transition-colors ${isOpen ? 'text-emerald-600' : 'text-slate-400'}`} />
+        </motion.div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.28, ease: 'easeInOut' }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className="px-6 pb-5 pt-1 border-t border-slate-100">
+              <p className="text-sm text-slate-500 leading-relaxed mb-4">{item.description}</p>
+              <ul className="space-y-2">
+                {item.bullets.map(b => (
+                  <li key={b} className="flex items-center gap-2 text-xs text-slate-600">
+                    <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+function AccordionGroup({ items, columns = 2 }) {
+  const [openId, setOpenId] = useState(null);
+
+  const toggle = (id) => setOpenId(prev => (prev === id ? null : id));
+
+  const gridClass = columns === 3
+    ? 'grid md:grid-cols-3 gap-4'
+    : 'grid md:grid-cols-2 gap-4';
+
+  return (
+    <div className={gridClass}>
+      {items.map((item, i) => (
+        <AccordionCard
+          key={item.id}
+          item={item}
+          isOpen={openId === item.id}
+          onToggle={() => toggle(item.id)}
+          animDelay={i * 0.07}
+        />
+      ))}
     </div>
   );
 }
@@ -330,11 +455,7 @@ export default function Solutions() {
           title="Every outbound workflow, covered"
           subtitle="From first prospecting touch to closed deal — Orbin supports every stage of your GTM execution."
         />
-        <div>
-          {USE_CASES.map((item, i) => (
-            <SolutionCard key={item.id} item={item} index={i} colorKey={item.color} />
-          ))}
-        </div>
+        <UseCaseTabs />
       </section>
 
       {/* INDUSTRIES */}
@@ -345,30 +466,7 @@ export default function Solutions() {
             title="Built for Africa's fastest-growing sectors"
             subtitle="Orbin is designed with the realities of emerging market GTM teams in mind — local channels, regional context, global ambition."
           />
-          <div className="grid md:grid-cols-2 gap-5">
-            {INDUSTRIES.map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <motion.div key={item.id} id={item.id}
-                  initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }} viewport={{ once: true }}
-                  className="bg-white border border-slate-200 rounded-2xl p-6 hover:border-emerald-300 hover:shadow-md transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-4">
-                    <Icon className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <h3 className="text-base font-bold text-slate-900 mb-1">{item.title}</h3>
-                  <p className="text-xs text-slate-500 mb-4 leading-relaxed">{item.description}</p>
-                  <ul className="space-y-1.5">
-                    {item.bullets.map(b => (
-                      <li key={b} className="flex items-center gap-2 text-xs text-slate-600">
-                        <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />{b}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              );
-            })}
-          </div>
+          <AccordionGroup items={INDUSTRIES} columns={2} />
         </div>
       </section>
 
@@ -379,31 +477,7 @@ export default function Solutions() {
           title="Right-sized for where you are"
           subtitle="Orbin adapts to your growth stage — from zero to one outbound motion to scaling a full GTM organisation."
         />
-        <div className="grid md:grid-cols-3 gap-5">
-          {COMPANY_TYPES.map((item, i) => {
-            const Icon = item.icon;
-            return (
-              <motion.div key={item.id} id={item.id}
-                initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }} viewport={{ once: true }}
-                className="bg-white border border-slate-200 rounded-2xl p-6 hover:border-emerald-300 hover:shadow-md transition-all">
-                <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center mb-4">
-                  <Icon className="w-5 h-5 text-emerald-600" />
-                </div>
-                <h3 className="text-base font-bold text-slate-900 mb-1">{item.title}</h3>
-                <p className="text-xs text-slate-500 mb-4 italic">{item.tagline}</p>
-                <p className="text-xs text-slate-500 mb-4 leading-relaxed">{item.description}</p>
-                <ul className="space-y-1.5">
-                  {item.bullets.map(b => (
-                    <li key={b} className="flex items-center gap-2 text-xs text-slate-600">
-                      <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />{b}
-                    </li>
-                  ))}
-                </ul>
-              </motion.div>
-            );
-          })}
-        </div>
+        <AccordionGroup items={COMPANY_TYPES} columns={3} />
       </section>
 
       {/* TEAMS */}
@@ -414,34 +488,7 @@ export default function Solutions() {
             title="One platform, every revenue function"
             subtitle="Sales, marketing, RevOps, and leadership — Orbin keeps every GTM function aligned and executing together."
           />
-          <div className="grid md:grid-cols-2 gap-5">
-            {TEAMS.map((item, i) => {
-              const Icon = item.icon;
-              return (
-                <motion.div key={item.id} id={item.id}
-                  initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.08 }} viewport={{ once: true }}
-                  className="bg-white border border-slate-200 rounded-2xl p-6 hover:border-emerald-300 hover:shadow-md transition-all">
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-emerald-600" />
-                    </div>
-                    <div>
-                      <h3 className="text-base font-bold text-slate-900 mb-1">{item.title}</h3>
-                      <p className="text-xs text-slate-500 mb-3 leading-relaxed">{item.description}</p>
-                      <ul className="space-y-1.5">
-                        {item.bullets.map(b => (
-                          <li key={b} className="flex items-center gap-2 text-xs text-slate-600">
-                            <Check className="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" />{b}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+          <AccordionGroup items={TEAMS} columns={2} />
         </div>
       </section>
 
