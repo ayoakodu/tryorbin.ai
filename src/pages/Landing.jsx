@@ -10,8 +10,8 @@ import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
 import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
-import OrbinAIWorkflowModal from '@/components/landing/OrbinAIWorkflowModal';
-import OrbinAILogo from '@/components/ui/OrbinAILogo.jsx';
+import RVNUWorkflowModal from '@/components/landing/RVNUWorkflowModal';
+import RVNULogo from '@/components/ui/RVNULogo.jsx';
 
 const ORBIN_WORDMARK = 'https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png';
 import HeroDashboardPreview from '@/components/landing/HeroDashboardPreview';
@@ -391,7 +391,7 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Why Orbin AI */}
+      {/* Why RVNU */}
       <section className="py-16 px-6" style={{ background: '#060b1a' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
@@ -445,11 +445,11 @@ export default function Landing() {
       {/* Final CTA */}
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
-          <div className="glass rounded-2xl px-6 pt-1 pb-6 md:px-8 md:pt-2 md:pb-7 border border-primary/20 glow-green relative overflow-hidden">
+          <div className="glass rounded-2xl p-8 md:p-12 border border-primary/20 glow-green relative overflow-hidden">
             <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at center, rgba(74, 222, 128, 0.08) 0%, transparent 70%)' }} />
             <div className="relative">
-              <div className="flex items-center justify-center mx-auto mb-3">
-                <OrbinAILogo size={130} className="rounded-2xl" />
+              <div className="flex items-center justify-center mx-auto mb-6">
+                <RVNULogo size={56} className="rounded-2xl" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold mb-4">Be first to execute with Orbin</h2>
               <p className="text-muted-foreground mb-1 max-w-2xl mx-auto whitespace-nowrap">
@@ -489,7 +489,7 @@ export default function Landing() {
       <Footer />
 
       <AnimatePresence>
-        {showWorkflow && <OrbinAIWorkflowModal onClose={() => setShowWorkflow(false)} />}
+        {showWorkflow && <RVNUWorkflowModal onClose={() => setShowWorkflow(false)} />}
       </AnimatePresence>
     </div>
   );
