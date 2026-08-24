@@ -8,6 +8,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
+import { generateCodeVerifier, generateCodeChallenge, storePKCEVerifier, getValidToken } from '@/lib/oauth';
+import { getEmailProfile } from '@/lib/integrations';
 
 const STORAGE_KEY = 'orbin_integrations';
 
@@ -26,72 +28,98 @@ const INTEGRATIONS = [
     desc: 'Send sequences from your Gmail account with open and click tracking.',
     type: 'oauth',
     oauthLabel: 'Connect with Google',
+    pkce: true,
     setupSteps: [
       'Go to console.cloud.google.com → APIs & Services → Credentials',
-      'Create OAuth 2.0 Client ID (Web application type)',
-      `Add this exact Authorized redirect URI: ${window.location.origin}/integrations/callback`,
+      'Create OAuth 2.0 Client ID — choose "Web application" type',
+      `Add this exact Authorized redirect URI: ${REDIRECT_URI}`,
       'Under OAuth consent screen → Test users, add your Google account email',
       'Enable the Gmail API under APIs & Services → Library',
-      'Copy your Client ID and paste it below',
+      'Copy your Client ID and paste it below (no client secret needed)',
     ],
     fields: [
       { key: 'client_id', label: 'Google Client ID', placeholder: '123456789-xxx.apps.googleusercontent.com' },
     ],
-    oauthUrl: (creds) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly')}&access_type=offline&prompt=consent&state=gmail`,
+    buildOAuthUrl: (creds, codeChallenge) =>
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly')}&access_type=offline&prompt=consent&state=gmail&code_challenge=${codeChallenge}&code_challenge_method=S256`,
+    test: async () => {
+      const profile = await getEmailProfile();
+      return `Gmail connected — signed in as ${profile.emailAddress}`;
+    },
   },
   {
     id: 'outlook', name: 'Outlook', category: 'Email', color: '#0078D4',
-    desc: 'Microsoft 365 email sending with full sequence automation and calendar sync.',
+    desc: 'Microsoft 365 email sending with full sequence automation.',
     type: 'oauth',
     oauthLabel: 'Connect with Microsoft',
+    pkce: true,
     setupSteps: [
       'Go to portal.azure.com → Azure Active Directory → App registrations → New registration',
-      'Under Authentication, add a Redirect URI (Web): ' + `${window.location.origin}/integrations/callback`,
-      'Under API permissions, add: Mail.Send, Mail.ReadWrite (Microsoft Graph)',
-      'Copy your Application (client) ID below',
+      'Under Authentication → Add a platform → choose "Single-page application" (SPA — not Web)',
+      `Set Redirect URI to: ${REDIRECT_URI}`,
+      'Under API permissions → Add → Microsoft Graph → Delegated: Mail.Send, Mail.ReadWrite, offline_access',
+      'Copy your Application (client) ID below — no client secret needed for SPA',
     ],
     fields: [
       { key: 'client_id', label: 'Application (Client) ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
-      { key: 'tenant_id', label: 'Tenant ID', placeholder: 'common  (or your tenant ID)' },
+      { key: 'tenant_id', label: 'Tenant ID (optional)', placeholder: 'common  (or your tenant ID)' },
     ],
-    oauthUrl: (creds) => `https://login.microsoftonline.com/${creds.tenant_id || 'common'}/oauth2/v2.0/authorize?client_id=${encodeURIComponent(creds.client_id)}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent('https://graph.microsoft.com/Mail.Send offline_access')}&state=outlook`,
+    buildOAuthUrl: (creds, codeChallenge) =>
+      `https://login.microsoftonline.com/${creds.tenant_id || 'common'}/oauth2/v2.0/authorize?client_id=${encodeURIComponent(creds.client_id)}&response_type=code&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${encodeURIComponent('https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/Mail.ReadWrite offline_access')}&state=outlook&code_challenge=${codeChallenge}&code_challenge_method=S256`,
+    test: async () => {
+      const profile = await getEmailProfile();
+      return `Outlook connected — signed in as ${profile.mail || profile.userPrincipalName}`;
+    },
   },
   {
     id: 'google_calendar', name: 'Google Calendar', category: 'Scheduling', color: '#4285F4',
     desc: 'Auto-log meetings and sync booked calls directly from your sequences.',
     type: 'oauth',
     oauthLabel: 'Connect with Google',
+    pkce: true,
     setupSteps: [
-      'Enable the Google Calendar API in console.cloud.google.com',
+      'Enable the Google Calendar API in console.cloud.google.com → APIs & Services → Library',
       'Use the same OAuth 2.0 Client ID as Gmail (or create a new one)',
-      `Ensure this redirect URI is added: ${window.location.origin}/integrations/callback`,
+      `Ensure this redirect URI is registered: ${REDIRECT_URI}`,
       'Add your Google account as a Test User in OAuth consent screen',
+      'No client secret needed',
     ],
     fields: [
       { key: 'client_id', label: 'Google Client ID', placeholder: '123456789-xxx.apps.googleusercontent.com' },
     ],
-    oauthUrl: (creds) => `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/calendar')}&access_type=offline&prompt=consent&state=google_calendar`,
+    buildOAuthUrl: (creds, codeChallenge) =>
+      `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent('https://www.googleapis.com/auth/calendar')}&access_type=offline&prompt=consent&state=google_calendar&code_challenge=${codeChallenge}&code_challenge_method=S256`,
+    test: async () => {
+      const token = await getValidToken('google_calendar');
+      const res = await fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?maxResults=1', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error(`Calendar API error ${res.status}`);
+      return 'Google Calendar connected — calendar API responding.';
+    },
   },
   {
     id: 'hubspot', name: 'HubSpot', category: 'CRM', color: '#FF7A59',
     desc: 'Bidirectional contact and deal sync — keep HubSpot updated as you execute in Orbin.',
-    type: 'oauth',
-    oauthLabel: 'Connect with HubSpot',
-    setupSteps: [
-      'Go to app.hubspot.com/developer → Create app (Public App)',
-      'Under Auth, set redirect URL to: ' + `${window.location.origin}/integrations/callback`,
-      'Add scopes: crm.contacts.read, crm.contacts.write, crm.deals.read, crm.deals.write',
-      'Copy your App Client ID below',
-    ],
+    type: 'apikey',
+    howTo: 'Go to app.hubspot.com → Settings → Integrations → Private Apps → Create a private app. Add scopes: crm.contacts.read, crm.contacts.write, crm.deals.read, crm.deals.write. Copy the generated access token.',
     fields: [
-      { key: 'client_id', label: 'HubSpot App Client ID', placeholder: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx' },
+      { key: 'api_token', label: 'HubSpot Private App Token', placeholder: 'pat-na1-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx', secret: true },
     ],
-    oauthUrl: (creds) => `https://app.hubspot.com/oauth/authorize?client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=crm.contacts.read%20crm.contacts.write%20crm.deals.read%20crm.deals.write&state=hubspot`,
+    test: async (creds) => {
+      const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts?limit=1', {
+        headers: { Authorization: `Bearer ${creds.api_token}` },
+      });
+      if (!res.ok) throw new Error(`HubSpot API error ${res.status}`);
+      const data = await res.json();
+      return `HubSpot connected — ${data.total ?? 'N/A'} contacts found.`;
+    },
   },
   {
     id: 'salesforce', name: 'Salesforce', category: 'CRM', color: '#00A1E0',
     desc: 'Sync pipeline activity, contacts, and deal stages with Salesforce in real time.',
     type: 'apikey',
+    howTo: 'In Salesforce, go to Setup → Apps → App Manager → New Connected App, or generate a session token via the Salesforce CLI: `sf org login web`.',
     fields: [
       { key: 'instance_url', label: 'Instance URL', placeholder: 'https://yourorg.salesforce.com' },
       { key: 'access_token', label: 'Access Token', placeholder: 'Bearer ...', secret: true },
@@ -105,9 +133,27 @@ const INTEGRATIONS = [
     },
   },
   {
+    id: 'linkedin', name: 'LinkedIn', category: 'Social', color: '#0077B5',
+    desc: 'Log LinkedIn outreach tasks and track engagement as part of multichannel sequences.',
+    type: 'apikey',
+    howTo: 'Go to linkedin.com/developers → Create app → Add "Sign In with LinkedIn using OpenID Connect" product. Under Auth, generate a token using the OAuth 2.0 token inspector or your app\'s auth flow. Paste the access token below.',
+    fields: [
+      { key: 'access_token', label: 'LinkedIn Access Token', placeholder: 'AQV...', secret: true },
+    ],
+    test: async (creds) => {
+      const res = await fetch('https://api.linkedin.com/v2/userinfo', {
+        headers: { Authorization: `Bearer ${creds.access_token}` },
+      });
+      if (!res.ok) throw new Error(`LinkedIn API error ${res.status}`);
+      const data = await res.json();
+      return `LinkedIn connected — signed in as ${data.name || data.sub}`;
+    },
+  },
+  {
     id: 'zapier', name: 'Zapier', category: 'Automation', color: '#FF4A00',
     desc: 'Connect Orbin triggers and actions to 5,000+ apps via Zapier webhooks.',
     type: 'apikey',
+    howTo: 'In Zapier, create a new Zap → Trigger: Webhooks by Zapier → Catch Hook. Copy the webhook URL.',
     fields: [
       { key: 'webhook_url', label: 'Zapier Webhook URL', placeholder: 'https://hooks.zapier.com/hooks/catch/...' },
     ],
@@ -125,11 +171,11 @@ const INTEGRATIONS = [
     id: 'slack', name: 'Slack', category: 'Notifications', color: '#4A154B',
     desc: 'Get real-time deal alerts, reply notifications, and team activity updates in Slack.',
     type: 'apikey',
+    howTo: 'Go to api.slack.com/apps → Create New App → Incoming Webhooks → Activate → Add to workspace → copy the webhook URL.',
     fields: [
       { key: 'webhook_url', label: 'Incoming Webhook URL', placeholder: 'https://hooks.slack.com/services/...' },
       { key: 'channel', label: 'Channel (optional)', placeholder: '#gtm-alerts' },
     ],
-    howTo: 'Go to api.slack.com/apps → Create New App → Incoming Webhooks → Activate → Add to workspace → copy the webhook URL.',
     test: async (creds) => {
       const res = await fetch(creds.webhook_url, {
         method: 'POST',
@@ -144,11 +190,11 @@ const INTEGRATIONS = [
     id: 'whatsapp', name: 'WhatsApp Business', category: 'Messaging', color: '#25D366',
     desc: 'Connect your WhatsApp Business API to send campaigns, sequences, and track engagement.',
     type: 'apikey',
+    howTo: 'Go to developers.facebook.com → My Apps → WhatsApp → Getting Started. Copy the temporary or permanent access token and the Phone Number ID.',
     fields: [
       { key: 'access_token', label: 'Meta Access Token', placeholder: 'EAAxxxxxxxx...', secret: true },
       { key: 'phone_id', label: 'Phone Number ID', placeholder: '1234567890' },
     ],
-    howTo: 'Go to developers.facebook.com → My Apps → WhatsApp → Getting Started. Copy the temporary or permanent access token and the Phone Number ID.',
     test: async (creds) => {
       const res = await fetch(`https://graph.facebook.com/v18.0/${creds.phone_id}`, {
         headers: { Authorization: `Bearer ${creds.access_token}` },
@@ -160,11 +206,12 @@ const INTEGRATIONS = [
   },
   {
     id: 'together_ai', name: 'Together AI', category: 'AI', color: '#6D28D9',
-    desc: 'Open-source LLMs (Llama 3, Mistral) for email generation',
+    desc: 'Open-source LLMs (Llama 3, Mistral) for email generation and AI features.',
     type: 'apikey',
     icon: Brain,
+    howTo: 'Sign up at together.ai, go to API Keys in your account settings, and create a new key.',
     fields: [
-      { key: 'api_key', label: 'API Key', placeholder: 'Your Together AI API key', type: 'password', secret: true },
+      { key: 'api_key', label: 'API Key', placeholder: 'Your Together AI API key', secret: true },
     ],
     test: async (creds) => {
       const res = await fetch('https://api.together.xyz/v1/models', {
@@ -176,22 +223,6 @@ const INTEGRATIONS = [
     onConnect: (creds) => {
       setTogetherApiKey(creds.api_key || '');
     },
-  },
-  {
-    id: 'linkedin', name: 'LinkedIn', category: 'Social', color: '#0077B5',
-    desc: 'Log LinkedIn outreach tasks and track engagement as part of multichannel sequences.',
-    type: 'oauth',
-    oauthLabel: 'Connect with LinkedIn',
-    setupSteps: [
-      'Go to linkedin.com/developers → Create app',
-      'Add products: Sign In with LinkedIn, Marketing Developer Platform',
-      `Under Auth, set redirect URL to: ${window.location.origin}/integrations/callback`,
-      'Copy your Client ID below',
-    ],
-    fields: [
-      { key: 'client_id', label: 'LinkedIn Client ID', placeholder: 'xxxxxxxxxx' },
-    ],
-    oauthUrl: (creds) => `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${encodeURIComponent(creds.client_id)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=r_liteprofile%20r_emailaddress%20w_member_social&state=linkedin`,
   },
 ];
 
@@ -208,19 +239,27 @@ const CAT_COLORS = {
   CRM: 'bg-blue-500/10 text-blue-600', Social: 'bg-blue-600/10 text-blue-500',
   Messaging: 'bg-emerald-500/10 text-emerald-600', Email: 'bg-cyan-500/10 text-cyan-600',
   Notifications: 'bg-violet-500/10 text-violet-600', Scheduling: 'bg-amber-500/10 text-amber-600',
-  Automation: 'bg-orange-500/10 text-orange-600', SMS: 'bg-red-500/10 text-red-600', AI: 'bg-purple-500/10 text-purple-600',
-  Prospecting: 'bg-indigo-500/10 text-indigo-600', Revenue: 'bg-primary/10 text-primary',
+  Automation: 'bg-orange-500/10 text-orange-600', SMS: 'bg-red-500/10 text-red-600',
+  AI: 'bg-purple-500/10 text-purple-600', Prospecting: 'bg-indigo-500/10 text-indigo-600',
+  Revenue: 'bg-primary/10 text-primary',
 };
 
 export default function Integrations() {
   const [saved, setSaved] = useState(loadSaved);
-  const [modal, setModal] = useState(null); // { integration, mode: 'setup'|'oauth' }
+  const [modal, setModal] = useState(null);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(null);
   const [testResults, setTestResults] = useState({});
   const { toast } = useToast();
 
   useEffect(() => { saveSaved(saved); }, [saved]);
+
+  // Re-sync from localStorage when returning from OAuth redirect
+  useEffect(() => {
+    const onFocus = () => setSaved(loadSaved());
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, []);
 
   const isConnected = (id) => !!saved[id]?.connected;
 
@@ -237,30 +276,31 @@ export default function Integrations() {
       return;
     }
 
-    if (integration.type === 'oauth') {
-      // Save creds then open OAuth URL in new tab
+    if (integration.type === 'oauth' && integration.pkce) {
+      // Save creds, generate PKCE, navigate same-tab to provider auth page
       setSaved(prev => ({ ...prev, [integration.id]: { creds: formData, connected: false, pendingOAuth: true } }));
-      const url = integration.oauthUrl(formData);
-      window.open(url, '_blank', 'width=600,height=700');
-      toast({ title: 'OAuth window opened', description: `Complete the authorisation in the popup, then click "Mark as Connected" below.` });
+      setLoading(integration.id);
+      try {
+        const verifier = generateCodeVerifier();
+        const challenge = await generateCodeChallenge(verifier);
+        storePKCEVerifier(integration.id, verifier);
+        const url = integration.buildOAuthUrl(formData, challenge);
+        window.location.href = url;
+      } catch (err) {
+        setLoading(null);
+        toast({ title: 'OAuth error', description: err.message, variant: 'destructive' });
+      }
       return;
     }
 
-    // API key flow — save and mark connected
+    // API key flow
     setLoading(integration.id);
-    await new Promise(r => setTimeout(r, 600));
+    await new Promise(r => setTimeout(r, 400));
     setSaved(prev => ({ ...prev, [integration.id]: { creds: formData, connected: true } }));
     if (integration.onConnect) integration.onConnect(formData);
     setLoading(null);
     setModal(null);
-    toast({ title: `${integration.name} connected!`, description: 'Credentials saved. Use "Test" to verify the connection.' });
-  };
-
-  const handleMarkConnected = () => {
-    const { integration } = modal;
-    setSaved(prev => ({ ...prev, [integration.id]: { ...prev[integration.id], connected: true, pendingOAuth: false } }));
-    setModal(null);
-    toast({ title: `${integration.name} connected!`, description: 'OAuth authorisation marked complete.' });
+    toast({ title: `${integration.name} connected!`, description: 'Use "Test" to verify the connection.' });
   };
 
   const handleDisconnect = (id) => {
@@ -270,15 +310,16 @@ export default function Integrations() {
   };
 
   const handleTest = async (integration) => {
-    if (!integration.test) {
-      setTestResults(prev => ({ ...prev, [integration.id]: { success: true, message: 'Connection active — API credentials stored.' } }));
-      return;
-    }
     setLoading(`test_${integration.id}`);
     setTestResults(prev => { const n = { ...prev }; delete n[integration.id]; return n; });
     try {
-      const creds = saved[integration.id]?.creds || {};
-      const message = await integration.test(creds);
+      let message;
+      if (integration.test) {
+        const creds = saved[integration.id]?.creds || {};
+        message = await integration.test(creds);
+      } else {
+        message = 'Connection active — credentials stored.';
+      }
       setTestResults(prev => ({ ...prev, [integration.id]: { success: true, message } }));
     } catch (err) {
       setTestResults(prev => ({ ...prev, [integration.id]: { success: false, message: `Test failed: ${err.message}` } }));
@@ -286,11 +327,8 @@ export default function Integrations() {
     setLoading(null);
   };
 
-  const isPendingOAuth = (id) => !!saved[id]?.pendingOAuth;
   const connectedCount = INTEGRATIONS.filter(i => isConnected(i.id)).length;
-
   const modalIntegration = modal?.integration;
-  const isPending = modalIntegration && isPendingOAuth(modalIntegration.id);
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc' }}>
@@ -303,8 +341,8 @@ export default function Integrations() {
             <Zap className="w-6 h-6 text-black" />
           </div>
           <div className="flex-1">
-            <h3 className="text-sm font-bold text-foreground mb-1">GTM Execution Integrations</h3>
-            <p className="text-xs text-muted-foreground">Real integrations — credentials are saved locally in your browser. Connect email, CRM, WhatsApp, and automation tools to run end-to-end workflows.</p>
+            <h3 className="text-sm font-bold text-foreground mb-1">Live GTM Integrations</h3>
+            <p className="text-xs text-muted-foreground">Real connections — OAuth integrations use PKCE (no server required). API keys and tokens are stored locally in your browser.</p>
           </div>
           <div className="flex items-center gap-2 text-xs text-primary font-semibold px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 flex-shrink-0">
             <CheckCircle2 className="w-3.5 h-3.5" />
@@ -337,7 +375,6 @@ export default function Integrations() {
           <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
             {INTEGRATIONS.map((integration, i) => {
               const connected = isConnected(integration.id);
-              const pending = isPendingOAuth(integration.id);
               const testResult = testResults[integration.id];
               const isTesting = loading === `test_${integration.id}`;
               const isConnecting = loading === integration.id;
@@ -356,8 +393,7 @@ export default function Integrations() {
                         {integration.category}
                       </span>
                     </div>
-                    {connected && <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />}
-                    {pending && !connected && <div className="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0" />}
+                    {connected && <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" title="Connected" />}
                   </div>
 
                   <p className="text-xs text-muted-foreground mb-3 leading-relaxed">{integration.desc}</p>
@@ -378,19 +414,14 @@ export default function Integrations() {
                           Test
                         </Button>
                         <Button size="sm" variant="outline" onClick={() => openModal(integration)}
-                          className="text-xs border-border/60 px-2">
+                          className="text-xs border-border/60 px-2" title="Edit credentials">
                           <Lock className="w-3 h-3" />
                         </Button>
                         <Button size="sm" variant="outline" onClick={() => handleDisconnect(integration.id)}
-                          className="text-xs border-destructive/30 text-destructive hover:bg-destructive/10 px-2">
+                          className="text-xs border-destructive/30 text-destructive hover:bg-destructive/10 px-2" title="Disconnect">
                           <X className="w-3 h-3" />
                         </Button>
                       </>
-                    ) : pending ? (
-                      <Button size="sm" onClick={() => openModal(integration)}
-                        className="w-full text-xs bg-amber-500/10 text-amber-700 hover:bg-amber-500/20 border-0">
-                        Complete Setup <ArrowRight className="w-3 h-3 ml-1" />
-                      </Button>
                     ) : (
                       <Button size="sm" onClick={() => openModal(integration)} disabled={isConnecting}
                         className="w-full text-xs bg-primary/10 text-primary hover:bg-primary/20 border-0">
@@ -457,7 +488,7 @@ export default function Integrations() {
                     <p key={i} className="text-xs text-blue-800 leading-relaxed">{i + 1}. {step}</p>
                   ))}
                   <div className="mt-2 pt-2 border-t border-blue-200">
-                    <p className="text-[10px] font-semibold text-blue-700 mb-1">Your redirect URI (copy this exactly):</p>
+                    <p className="text-[10px] font-semibold text-blue-700 mb-1">Your redirect URI:</p>
                     <div className="flex items-center gap-2 bg-white border border-blue-200 rounded px-2 py-1.5">
                       <code className="text-[10px] text-blue-900 flex-1 break-all">{REDIRECT_URI}</code>
                       <button onClick={() => { navigator.clipboard.writeText(REDIRECT_URI); toast({ title: 'Redirect URI copied!' }); }}
@@ -467,11 +498,11 @@ export default function Integrations() {
                 </div>
               )}
 
-              {/* How-to for webhook integrations */}
+              {/* How-to for API key integrations */}
               {modalIntegration.howTo && (
                 <div className="p-3 rounded-lg bg-secondary/50 border border-border/30">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-1">
-                    <Info className="w-3 h-3" /> How to get your webhook URL
+                    <Info className="w-3 h-3" /> How to get your credentials
                   </p>
                   <p className="text-xs text-foreground leading-relaxed">{modalIntegration.howTo}</p>
                 </div>
@@ -491,19 +522,9 @@ export default function Integrations() {
                 </div>
               ))}
 
-              {/* Pending OAuth — show mark as connected option */}
-              {isPending && (
-                <div className="p-3 rounded-lg bg-amber-50 border border-amber-200">
-                  <p className="text-xs text-amber-800 font-medium mb-2">OAuth window opened — did you complete the authorisation?</p>
-                  <Button size="sm" onClick={handleMarkConnected} className="w-full bg-amber-500 text-white hover:bg-amber-600 text-xs">
-                    <CheckCircle2 className="w-3.5 h-3.5 mr-1.5" /> Yes, mark as connected
-                  </Button>
-                </div>
-              )}
-
               <div className="text-xs text-muted-foreground p-3 rounded-lg border border-border/30 bg-secondary/20 flex items-start gap-2">
                 <Lock className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
-                Credentials are stored locally in your browser and never sent to our servers.
+                Credentials are stored locally in your browser and never sent to Orbin's servers.
               </div>
 
               <div className="flex gap-3 pt-1">
@@ -511,9 +532,9 @@ export default function Integrations() {
                 <Button onClick={handleSave} disabled={!!loading}
                   className="flex-1 bg-primary text-primary-foreground text-xs">
                   {loading === modalIntegration.id
-                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />Saving...</>
+                    ? <><Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />Redirecting…</>
                     : modalIntegration.type === 'oauth'
-                      ? <><ExternalLink className="w-3.5 h-3.5 mr-1.5" />Open OAuth &amp; Save</>
+                      ? <><ExternalLink className="w-3.5 h-3.5 mr-1.5" />{modalIntegration.oauthLabel}</>
                       : 'Save & Connect'}
                 </Button>
               </div>
