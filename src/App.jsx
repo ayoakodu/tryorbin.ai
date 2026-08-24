@@ -59,6 +59,7 @@ import Deliverability from './pages/Deliverability.jsx';
 import OnboardingHub from './pages/OnboardingHub';
 import SequenceBuilder from './pages/SequenceBuilder';
 import OAuthCallback from './pages/OAuthCallback';
+import Solutions from './pages/Solutions';
 
 // Layout
 import AppLayout from './components/layout/AppLayout';
@@ -91,6 +92,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/solutions" element={<Solutions />} />
       
       {/* App Routes with Layout */}
       <Route element={<AppLayout />}>

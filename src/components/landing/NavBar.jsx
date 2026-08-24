@@ -52,39 +52,39 @@ const navData = {
       {
         label: 'USE CASES',
         items: [
-          { icon: Search,       title: 'Outbound Prospecting', desc: 'Find and engage your ideal buyers at scale.',              href: '#demo' },
-          { icon: CalendarCheck,title: 'Meeting Generation',   desc: 'Book more qualified meetings with less effort.',           href: '#demo' },
-          { icon: TrendingUp,   title: 'Pipeline Acceleration',desc: 'Move deals faster with AI-driven engagement.',            href: '/pipeline' },
-          { icon: Inbox,        title: 'Lead Follow-Up',       desc: 'Never let a warm lead go cold again.',                    href: '/campaigns' },
-          { icon: ArrowRight,   title: 'See all use cases',    desc: 'Explore every workflow Orbin supports.', highlight: true, href: '#how-it-works' },
+          { icon: Search,        title: 'Outbound Prospecting',  desc: 'Find and engage your ideal buyers at scale.',              href: '/solutions#outbound-prospecting' },
+          { icon: CalendarCheck, title: 'Meeting Generation',    desc: 'Book more qualified meetings with less effort.',           href: '/solutions#meeting-generation' },
+          { icon: TrendingUp,    title: 'Pipeline Acceleration', desc: 'Move deals faster with AI-driven engagement.',            href: '/solutions#pipeline-acceleration' },
+          { icon: Inbox,         title: 'Lead Follow-Up',        desc: 'Never let a warm lead go cold again.',                    href: '/solutions#lead-follow-up' },
+          { icon: ArrowRight,    title: 'See all use cases',     desc: 'Explore every workflow Orbin supports.', highlight: true, href: '/solutions' },
         ],
       },
       {
         label: 'INDUSTRIES',
         items: [
-          { icon: Cpu,      title: 'SaaS & Enterprise Software', desc: 'Target software buyers with precision and intent.',          href: '#waitlist' },
-          { icon: Wallet,   title: 'FinTech & Payments',         desc: 'Reach financial decision-makers at the right time.',        href: '#waitlist' },
-          { icon: Truck,    title: 'Logistics & Supply Chain',   desc: 'Engage logistics operators and procurement teams.',          href: '#waitlist' },
-          { icon: Briefcase,title: 'Agencies & Consulting',      desc: 'Win new retainers and scale client pipelines.',             href: '#waitlist' },
-          { icon: ArrowRight,title: 'See all 12 industries',     desc: 'Explore every vertical Orbin supports.', highlight: true,   href: '#waitlist' },
+          { icon: Cpu,       title: 'SaaS & Enterprise Software', desc: 'Target software buyers with precision and intent.',    href: '/solutions#saas' },
+          { icon: Wallet,    title: 'FinTech & Payments',         desc: 'Reach financial decision-makers at the right time.',  href: '/solutions#fintech' },
+          { icon: Truck,     title: 'Logistics & Supply Chain',   desc: 'Engage logistics operators and procurement teams.',    href: '/solutions#logistics' },
+          { icon: Briefcase, title: 'Agencies & Consulting',      desc: 'Win new retainers and scale client pipelines.',        href: '/solutions#agencies' },
+          { icon: ArrowRight,title: 'See all industries',         desc: 'Explore every vertical Orbin supports.', highlight: true, href: '/solutions#saas' },
         ],
       },
       {
         label: 'COMPANY TYPE',
         items: [
-          { icon: Stars,    title: 'Startups',            desc: 'Launch your GTM motion from day one.',          href: '#waitlist' },
-          { icon: Store,    title: 'SMB & Mid-Market',    desc: 'Scale revenue without scaling headcount.',       href: '#waitlist' },
-          { icon: Activity, title: 'High-Growth Companies',desc: 'Accelerate pipeline for teams moving fast.',   href: '#waitlist' },
-          { icon: ArrowRight,title: 'See all company types',desc: 'Find the right fit for your organization.', highlight: true, href: '#waitlist' },
+          { icon: Stars,     title: 'Startups',             desc: 'Launch your GTM motion from day one.',         href: '/solutions#startups' },
+          { icon: Store,     title: 'SMB & Mid-Market',     desc: 'Scale revenue without scaling headcount.',      href: '/solutions#smb' },
+          { icon: Activity,  title: 'High-Growth Companies',desc: 'Accelerate pipeline for teams moving fast.',   href: '/solutions#high-growth' },
+          { icon: ArrowRight,title: 'See all company types',desc: 'Find the right fit for your organization.', highlight: true, href: '/solutions#startups' },
         ],
       },
       {
         label: 'TEAMS',
         items: [
-          { icon: Handshake,     title: 'Sales Teams',           desc: 'Close more deals and book more meetings with AI.', href: '#demo' },
-          { icon: Megaphone,     title: 'Marketing Teams',       desc: 'Run campaigns that convert across every channel.', href: '/campaigns' },
-          { icon: LayoutDashboard,title: 'Revenue Operations',   desc: 'Orchestrate data, tools, and GTM execution.',      href: '/analytics' },
-          { icon: UserCheck,     title: 'Founders & GTM Leaders',desc: 'Own your revenue motion from the top down.',       href: '#waitlist' },
+          { icon: Handshake,      title: 'Sales Teams',           desc: 'Close more deals and book more meetings with AI.', href: '/solutions#sales' },
+          { icon: Megaphone,      title: 'Marketing Teams',       desc: 'Run campaigns that convert across every channel.', href: '/solutions#marketing' },
+          { icon: LayoutDashboard,title: 'Revenue Operations',    desc: 'Orchestrate data, tools, and GTM execution.',      href: '/solutions#revops' },
+          { icon: UserCheck,      title: 'Founders & GTM Leaders',desc: 'Own your revenue motion from the top down.',       href: '/solutions#founders' },
         ],
       },
     ],
@@ -161,6 +161,7 @@ const navData = {
 function NavItem({ item, onClose, compact }) {
   const isHash = item.href?.startsWith('#');
   const isExternal = item.href?.startsWith('http');
+  const hasInlineHash = !isHash && !isExternal && item.href?.includes('#');
 
   const cls = compact
     ? `flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-slate-100 transition-colors text-left group w-full`
@@ -179,18 +180,17 @@ function NavItem({ item, onClose, compact }) {
   );
 
   if (isHash) {
-    return (
-      <a href={item.href} onClick={onClose} className={cls}>{inner}</a>
-    );
+    return <a href={item.href} onClick={onClose} className={cls}>{inner}</a>;
   }
   if (isExternal) {
-    return (
-      <a href={item.href} target="_blank" rel="noopener noreferrer" onClick={onClose} className={cls}>{inner}</a>
-    );
+    return <a href={item.href} target="_blank" rel="noopener noreferrer" onClick={onClose} className={cls}>{inner}</a>;
   }
-  return (
-    <Link to={item.href || '/'} onClick={onClose} className={cls}>{inner}</Link>
-  );
+  if (hasInlineHash) {
+    // e.g. /solutions#fintech — use Link so React Router handles the route + hash
+    const [path, hash] = item.href.split('#');
+    return <Link to={{ pathname: path, hash: `#${hash}` }} onClick={onClose} className={cls}>{inner}</Link>;
+  }
+  return <Link to={item.href || '/'} onClick={onClose} className={cls}>{inner}</Link>;
 }
 
 function DropdownPanel({ data, onClose }) {
