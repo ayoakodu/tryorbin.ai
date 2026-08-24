@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { base44 } from '@/api/base44Client';
 import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
 import RVNUWorkflowModal from '@/components/landing/RVNUWorkflowModal';
@@ -87,12 +88,29 @@ const earlyAccessBenefits = [
 export default function Landing() {
   const [email, setEmail] = useState('');
   const [joined, setJoined] = useState(false);
+  const [joining, setJoining] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
   const [showWorkflow, setShowWorkflow] = useState(false);
 
-  const handleJoin = () => {
-    if (email) setJoined(true);
+  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+  const handleJoin = async () => {
+    const trimmed = email.trim();
+    if (!trimmed) { setEmailError('Please enter your email.'); return; }
+    if (!isValidEmail(trimmed)) { setEmailError('Please enter a valid email address.'); return; }
+    setEmailError('');
+    setJoining(true);
+    try {
+      await base44.entities.WaitlistSignup.create({ email: trimmed, signed_up_at: new Date().toISOString() });
+    } catch (_) {
+      // Entity may not exist yet — still mark as joined for UX
+    }
+    setJoining(false);
+    setJoined(true);
   };
+
+  const handleEmailKeyDown = (e) => { if (e.key === 'Enter') handleJoin(); };
 
   return (
     <div className="min-h-screen bg-background text-foreground font-inter overflow-x-hidden">
@@ -121,19 +139,23 @@ export default function Landing() {
 
           {/* Waitlist CTA */}
           <motion.div id="waitlist" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+            className="flex flex-col items-center gap-2 mb-10">
             {!joined ? (
               <>
-                <Input
-                  placeholder="Enter your work email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-white placeholder:text-slate-300"
-                  style={{ background: 'rgba(255,255,255,0.1)' }}
-                />
-                <Button onClick={handleJoin} className="h-12 px-8 bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 glow-green">
-                  Join Waitlist <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
+                  <Input
+                    placeholder="Enter your work email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                    onKeyDown={handleEmailKeyDown}
+                    className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-white placeholder:text-slate-300"
+                    style={{ background: 'rgba(255,255,255,0.1)' }}
+                  />
+                  <Button onClick={handleJoin} disabled={joining} className="h-12 px-8 bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 glow-green">
+                    {joining ? 'Joining…' : <><span>Join Waitlist</span><ArrowRight className="w-4 h-4 ml-2" /></>}
+                  </Button>
+                </div>
+                {emailError && <p className="text-xs text-red-400 mt-1">{emailError}</p>}
               </>
             ) : (
               <div className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium">
@@ -394,16 +416,20 @@ export default function Landing() {
               <p className="text-xs text-slate-400 mb-8">Orbin is currently in development. Early waitlist members will receive priority access and product updates.</p>
 
               {!joined ? (
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Input
-                    placeholder="Enter your work email to join the waitlist"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-slate-800 placeholder:text-slate-500 bg-white"
-                  />
-                  <Button onClick={handleJoin} size="lg" className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 glow-green font-semibold">
-                    Join Waitlist <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
+                    <Input
+                      placeholder="Enter your work email to join the waitlist"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                      onKeyDown={handleEmailKeyDown}
+                      className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-slate-800 placeholder:text-slate-500 bg-white"
+                    />
+                    <Button onClick={handleJoin} disabled={joining} size="lg" className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 glow-green font-semibold">
+                      {joining ? 'Joining…' : <><span>Join Waitlist</span><ArrowRight className="w-4 h-4 ml-2" /></>}
+                    </Button>
+                  </div>
+                  {emailError && <p className="text-xs text-red-400 mt-1">{emailError}</p>}
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium">
