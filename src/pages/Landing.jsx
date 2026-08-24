@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap, ArrowRight, ChevronRight, Check, Sparkles,
@@ -15,6 +15,7 @@ import RVNULogo from '@/components/ui/RVNULogo.jsx';
 
 const ORBIN_WORDMARK = 'https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png';
 import HeroDashboardPreview from '@/components/landing/HeroDashboardPreview';
+import ProductDemo from '@/components/landing/ProductDemo';
 
 const africanCountries = [
   'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
@@ -92,6 +93,27 @@ export default function Landing() {
   const [emailError, setEmailError] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
   const [showWorkflow, setShowWorkflow] = useState(false);
+  const [demoViewed, setDemoViewed] = useState(() => {
+    try { return localStorage.getItem('orbin_demo_viewed') === '1'; } catch { return false; }
+  });
+  const demoRef = useRef(null);
+
+  const markDemoViewed = useCallback(() => {
+    if (demoViewed) return;
+    setDemoViewed(true);
+    try { localStorage.setItem('orbin_demo_viewed', '1'); } catch {}
+  }, [demoViewed]);
+
+  useEffect(() => {
+    const el = demoRef.current;
+    if (!el || demoViewed) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { markDemoViewed(); observer.disconnect(); } },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [demoViewed, markDemoViewed]);
 
   const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
@@ -177,8 +199,8 @@ export default function Landing() {
           {/* Secondary CTA */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.55 }}
             className="flex justify-center">
-            <button
-              onClick={() => setShowWorkflow(true)}
+            <a
+              href="#demo"
               className="group flex items-center gap-2.5 text-sm text-slate-300 hover:text-white transition-colors duration-200"
             >
               <span className="w-7 h-7 rounded-full border border-slate-500 group-hover:border-primary/60 flex items-center justify-center transition-colors duration-200 group-hover:bg-primary/10">
@@ -187,7 +209,12 @@ export default function Landing() {
               <span className="border-b border-dashed border-slate-600 group-hover:border-primary/50 transition-colors duration-200">
                 See How Orbin Works
               </span>
-            </button>
+              {demoViewed && (
+                <span className="flex items-center gap-1 text-[10px] bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 px-2 py-0.5 rounded-full font-medium">
+                  <Check className="w-2.5 h-2.5" /> Viewed
+                </span>
+              )}
+            </a>
           </motion.div>
         </div>
 
@@ -281,6 +308,24 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Interactive Demo */}
+      <section id="demo" ref={demoRef} className="py-20 px-6 bg-slate-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-xs text-emerald-700 mb-4">
+              {demoViewed
+                ? <><Check className="w-3 h-3 text-emerald-600" /> You've explored the demo</>
+                : <><Play className="w-3 h-3 text-emerald-600" /> Interactive Demo</>}
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">See Orbin in Action</h2>
+            <p className="text-base text-gray-500 max-w-2xl mx-auto">
+              Explore the core workflows — from discovering prospects to closing pipeline — all in one AI-native workspace.
+            </p>
+          </div>
+          <ProductDemo onViewed={markDemoViewed} />
         </div>
       </section>
 
