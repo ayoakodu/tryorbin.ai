@@ -271,18 +271,30 @@ export default function NavBar() {
                 {menu}
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${activeMenu === menu ? 'rotate-180' : ''}`} />
               </button>
-
-              {activeMenu === menu && (
-                <div
-                  className="absolute top-full left-1/2 -translate-x-1/2 mt-2 rounded-2xl border border-slate-200 shadow-2xl p-6 z-50 bg-white"
-                  style={{ width: menu === 'Workflows' ? '520px' : menu === 'Product' ? '780px' : menu === 'Solutions' ? '960px' : menu === 'Resources' ? '780px' : '580px' }}
-                >
-                  <DropdownPanel data={navData[menu]} onClose={() => setActiveMenu(null)} />
-                </div>
-              )}
             </div>
           ))}
         </div>
+
+        {/* Dropdown panels — rendered at navbar level so they can't overflow */}
+        {activeMenu && navData[activeMenu] && (
+          <div
+            className="hidden md:block absolute top-full left-0 right-0 flex justify-center z-50"
+            onMouseEnter={() => handleMouseEnter(activeMenu)}
+            onMouseLeave={handleMouseLeave}
+          >
+            <div className="flex justify-center px-6 pt-2">
+              <div
+                className="rounded-2xl border border-slate-200 shadow-2xl p-6 bg-white"
+                style={{
+                  width: activeMenu === 'Workflows' ? '520px' : activeMenu === 'Product' ? '780px' : activeMenu === 'Solutions' ? 'min(960px, calc(100vw - 48px))' : activeMenu === 'Resources' ? '780px' : '580px',
+                  maxWidth: 'calc(100vw - 48px)',
+                }}
+              >
+                <DropdownPanel data={navData[activeMenu]} onClose={() => setActiveMenu(null)} />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Right CTAs */}
         <div className="hidden md:flex items-center gap-3 flex-shrink-0">
