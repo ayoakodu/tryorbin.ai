@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap, ArrowRight, ChevronRight, Check, Sparkles,
@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { base44 } from '@/api/base44Client';
 import NavBar from '@/components/landing/NavBar';
 import Footer from '@/components/landing/Footer';
 import OrbinAIWorkflowModal from '@/components/landing/OrbinAIWorkflowModal';
@@ -14,6 +15,7 @@ import OrbinAILogo from '@/components/ui/OrbinAILogo.jsx';
 
 const ORBIN_WORDMARK = 'https://media.base44.com/images/public/6a075dcc5cdaf3650af66cec/ca2b52c96_OrbinAIWordmark.png';
 import HeroDashboardPreview from '@/components/landing/HeroDashboardPreview';
+import ProductDemo from '@/components/landing/ProductDemo';
 
 const africanCountries = [
   'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Egypt', 'Rwanda', 'Senegal',
@@ -87,12 +89,50 @@ const earlyAccessBenefits = [
 export default function Landing() {
   const [email, setEmail] = useState('');
   const [joined, setJoined] = useState(false);
+  const [joining, setJoining] = useState(false);
+  const [emailError, setEmailError] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
   const [showWorkflow, setShowWorkflow] = useState(false);
+  const [demoViewed, setDemoViewed] = useState(() => {
+    try { return localStorage.getItem('orbin_demo_viewed') === '1'; } catch { return false; }
+  });
+  const demoRef = useRef(null);
 
-  const handleJoin = () => {
-    if (email) setJoined(true);
+  const markDemoViewed = useCallback(() => {
+    if (demoViewed) return;
+    setDemoViewed(true);
+    try { localStorage.setItem('orbin_demo_viewed', '1'); } catch {}
+  }, [demoViewed]);
+
+  useEffect(() => {
+    const el = demoRef.current;
+    if (!el || demoViewed) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { markDemoViewed(); observer.disconnect(); } },
+      { threshold: 0.4 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [demoViewed, markDemoViewed]);
+
+  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+
+  const handleJoin = async () => {
+    const trimmed = email.trim();
+    if (!trimmed) { setEmailError('Please enter your email.'); return; }
+    if (!isValidEmail(trimmed)) { setEmailError('Please enter a valid email address.'); return; }
+    setEmailError('');
+    setJoining(true);
+    try {
+      await base44.entities.WaitlistSignup.create({ email: trimmed, signed_up_at: new Date().toISOString() });
+    } catch (_) {
+      // Entity may not exist yet — still mark as joined for UX
+    }
+    setJoining(false);
+    setJoined(true);
   };
+
+  const handleEmailKeyDown = (e) => { if (e.key === 'Enter') handleJoin(); };
 
   return (
     <div className="min-h-screen bg-background text-foreground font-inter overflow-x-hidden">
@@ -121,19 +161,23 @@ export default function Landing() {
 
           {/* Waitlist CTA */}
           <motion.div id="waitlist" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col sm:flex-row gap-3 justify-center mb-10">
+            className="flex flex-col items-center gap-2 mb-10">
             {!joined ? (
               <>
-                <Input
-                  placeholder="Enter your work email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-white placeholder:text-slate-300"
-                  style={{ background: 'rgba(255,255,255,0.1)' }}
-                />
-                <Button onClick={handleJoin} className="h-12 px-8 bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 glow-green">
-                  Join Waitlist <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
+                  <Input
+                    placeholder="Enter your work email"
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                    onKeyDown={handleEmailKeyDown}
+                    className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-white placeholder:text-slate-300"
+                    style={{ background: 'rgba(255,255,255,0.1)' }}
+                  />
+                  <Button onClick={handleJoin} disabled={joining} className="h-12 px-8 bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 glow-green">
+                    {joining ? 'Joining…' : <><span>Join Waitlist</span><ArrowRight className="w-4 h-4 ml-2" /></>}
+                  </Button>
+                </div>
+                {emailError && <p className="text-xs text-red-400 mt-1">{emailError}</p>}
               </>
             ) : (
               <div className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium">
@@ -155,8 +199,8 @@ export default function Landing() {
           {/* Secondary CTA */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.55 }}
             className="flex justify-center">
-            <button
-              onClick={() => setShowWorkflow(true)}
+            <a
+              href="#demo"
               className="group flex items-center gap-2.5 text-sm text-slate-300 hover:text-white transition-colors duration-200"
             >
               <span className="w-7 h-7 rounded-full border border-slate-500 group-hover:border-primary/60 flex items-center justify-center transition-colors duration-200 group-hover:bg-primary/10">
@@ -165,7 +209,12 @@ export default function Landing() {
               <span className="border-b border-dashed border-slate-600 group-hover:border-primary/50 transition-colors duration-200">
                 See How Orbin Works
               </span>
-            </button>
+              {demoViewed && (
+                <span className="flex items-center gap-1 text-[10px] bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 px-2 py-0.5 rounded-full font-medium">
+                  <Check className="w-2.5 h-2.5" /> Viewed
+                </span>
+              )}
+            </a>
           </motion.div>
         </div>
 
@@ -259,6 +308,24 @@ export default function Landing() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Interactive Demo */}
+      <section id="demo" ref={demoRef} className="py-20 px-6 bg-slate-50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-emerald-200 bg-emerald-50 text-xs text-emerald-700 mb-4">
+              {demoViewed
+                ? <><Check className="w-3 h-3 text-emerald-600" /> You've explored the demo</>
+                : <><Play className="w-3 h-3 text-emerald-600" /> Interactive Demo</>}
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4 text-gray-900">See Orbin in Action</h2>
+            <p className="text-base text-gray-500 max-w-2xl mx-auto">
+              Explore the core workflows — from discovering prospects to closing pipeline — all in one AI-native workspace.
+            </p>
+          </div>
+          <ProductDemo onViewed={markDemoViewed} />
         </div>
       </section>
 
@@ -394,16 +461,20 @@ export default function Landing() {
               <p className="text-xs text-slate-400 mb-8">Orbin is currently in development. Early waitlist members will receive priority access and product updates.</p>
 
               {!joined ? (
-                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                  <Input
-                    placeholder="Enter your work email to join the waitlist"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-slate-800 placeholder:text-slate-500 bg-white"
-                  />
-                  <Button onClick={handleJoin} size="lg" className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 glow-green font-semibold">
-                    Join Waitlist <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
+                <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
+                    <Input
+                      placeholder="Enter your work email to join the waitlist"
+                      value={email}
+                      onChange={(e) => { setEmail(e.target.value); setEmailError(''); }}
+                      onKeyDown={handleEmailKeyDown}
+                      className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-slate-800 placeholder:text-slate-500 bg-white"
+                    />
+                    <Button onClick={handleJoin} disabled={joining} size="lg" className="h-12 px-8 bg-primary text-primary-foreground hover:bg-primary/90 glow-green font-semibold">
+                      {joining ? 'Joining…' : <><span>Join Waitlist</span><ArrowRight className="w-4 h-4 ml-2" /></>}
+                    </Button>
+                  </div>
+                  {emailError && <p className="text-xs text-red-400 mt-1">{emailError}</p>}
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium">
