@@ -173,7 +173,10 @@ export default function Emails() {
             <p className="text-sm text-foreground leading-relaxed mt-4">Best regards,<br />{selectedEmail.from}</p>
           </div>
           <div className="px-4 md:px-8 py-3 md:py-4 border-t border-border">
-            <Button size="sm" className="gap-2">
+            <Button size="sm" className="gap-2" onClick={() => {
+              setCompose({ to: selectedEmail.email, subject: `Re: ${selectedEmail.subject}`, body: '' });
+              setShowCompose(true);
+            }}>
               <Send className="w-3.5 h-3.5" /> Reply
             </Button>
           </div>

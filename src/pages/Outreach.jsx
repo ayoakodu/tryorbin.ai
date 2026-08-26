@@ -433,7 +433,13 @@ Give a concise, actionable suggestion (1-2 sentences) to improve performance.`})
         {showTemplates && <SequenceTemplates onClose={() => setShowTemplates(false)} onUse={useTemplate} />}
       </AnimatePresence>
       {showPersonalize && <AIPersonalizePanel onClose={() => setShowPersonalize(false)} />}
-      {showProspects && <ProspectManager sequence={selectedSeq} onClose={() => setShowProspects(false)} />}
+      {showProspects && <ProspectManager sequence={selectedSeq} onClose={() => setShowProspects(false)} onEnroll={() => {
+        setSequences(prev => {
+          const updated = prev.map(s => s.id === selectedSeq?.id ? { ...s, enrolled: (s.enrolled || 0) + 1 } : s);
+          saveSequences(updated);
+          return updated;
+        });
+      }} />}
     </div>
   );
 }

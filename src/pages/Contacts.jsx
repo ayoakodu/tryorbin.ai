@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Search, Sparkles, Mail, Phone,
-  Linkedin, MapPin, Loader2, MessageCircle
+  Linkedin, MapPin, Loader2, MessageCircle, Pencil, Trash2
 } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
@@ -43,6 +43,8 @@ export default function Contacts() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [showAdd, setShowAdd] = useState(false);
+  const [editContact, setEditContact] = useState(null);
+  const [editForm, setEditForm] = useState({});
   const [selectedContact, setSelectedContact] = useState(null);
   const [form, setForm] = useState({ first_name: '', last_name: '', email: '', title: '', company: '', country: '', status: 'new' });
   const { toast } = useToast();
@@ -63,6 +65,29 @@ export default function Contacts() {
       toast({ title: 'Contact added!' });
     }
   });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.Contact.update(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['contacts']);
+      setEditContact(null);
+      toast({ title: 'Contact updated!' });
+    }
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id) => base44.entities.Contact.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['contacts']);
+      toast({ title: 'Contact deleted.' });
+    }
+  });
+
+  const openEdit = (contact, e) => {
+    e.stopPropagation();
+    setEditContact(contact);
+    setEditForm({ first_name: contact.first_name, last_name: contact.last_name, email: contact.email, title: contact.title || '', company: contact.company || '', country: contact.country || '', status: contact.status || 'new' });
+  };
 
   const displayContacts = contacts.length > 0 ? contacts : sampleContacts;
   const filtered = displayContacts.filter(c => {
@@ -120,6 +145,7 @@ export default function Contacts() {
                   <th className="text-left px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Intent</th>
                   <th className="text-left px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Score</th>
                   <th className="px-4 py-3.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">AI</th>
+                  <th className="px-4 py-3.5"></th>
                 </tr>
               </thead>
               <tbody>
@@ -175,6 +201,18 @@ export default function Contacts() {
                           <Sparkles className="w-3.5 h-3.5" />
                         </button>
                       </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={e => openEdit(contact, e)} className="p-1.5 rounded-md hover:bg-slate-100 text-muted-foreground hover:text-slate-700">
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                          {!contact.id.toString().startsWith('s') && (
+                            <button onClick={e => { e.stopPropagation(); deleteMutation.mutate(contact.id); }} className="p-1.5 rounded-md hover:bg-red-50 text-muted-foreground hover:text-red-500">
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
                     </motion.tr>
                   ))}
                 </AnimatePresence>
@@ -190,6 +228,60 @@ export default function Contacts() {
           <ContactCopilotPanel contact={selectedContact} onClose={() => setSelectedContact(null)} />
         )}
       </AnimatePresence>
+
+      {/* Edit Contact Dialog */}
+      <Dialog open={!!editContact} onOpenChange={open => !open && setEditContact(null)}>
+        <DialogContent className="bg-card border-border max-w-md">
+          <DialogHeader><DialogTitle>Edit Contact</DialogTitle></DialogHeader>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs text-muted-foreground mb-1.5 block">First Name</Label>
+                <Input value={editForm.first_name || ''} onChange={e => setEditForm(p => ({ ...p, first_name: e.target.value }))} className="bg-secondary/50 border-border/60" />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground mb-1.5 block">Last Name</Label>
+                <Input value={editForm.last_name || ''} onChange={e => setEditForm(p => ({ ...p, last_name: e.target.value }))} className="bg-secondary/50 border-border/60" />
+              </div>
+            </div>
+            <div>
+              <Label className="text-xs text-muted-foreground mb-1.5 block">Email</Label>
+              <Input value={editForm.email || ''} onChange={e => setEditForm(p => ({ ...p, email: e.target.value }))} className="bg-secondary/50 border-border/60" type="email" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs text-muted-foreground mb-1.5 block">Title</Label>
+                <Input value={editForm.title || ''} onChange={e => setEditForm(p => ({ ...p, title: e.target.value }))} className="bg-secondary/50 border-border/60" />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground mb-1.5 block">Company</Label>
+                <Input value={editForm.company || ''} onChange={e => setEditForm(p => ({ ...p, company: e.target.value }))} className="bg-secondary/50 border-border/60" />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <Label className="text-xs text-muted-foreground mb-1.5 block">Country</Label>
+                <Input value={editForm.country || ''} onChange={e => setEditForm(p => ({ ...p, country: e.target.value }))} className="bg-secondary/50 border-border/60" />
+              </div>
+              <div>
+                <Label className="text-xs text-muted-foreground mb-1.5 block">Status</Label>
+                <Select value={editForm.status || 'new'} onValueChange={v => setEditForm(p => ({ ...p, status: v }))}>
+                  <SelectTrigger className="bg-secondary/50 border-border/60"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(statusColors).map(s => <SelectItem key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button variant="outline" onClick={() => setEditContact(null)} className="flex-1 border-border/60">Cancel</Button>
+              <Button onClick={() => updateMutation.mutate({ id: editContact.id, data: editForm })} className="flex-1 bg-primary text-primary-foreground" disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Add Contact Dialog */}
       <Dialog open={showAdd} onOpenChange={setShowAdd}>
