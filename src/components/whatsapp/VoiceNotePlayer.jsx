@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { Mic, Play, Pause, Loader2, FileText } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
@@ -34,7 +35,7 @@ export default function VoiceNotePlayer({ note }) {
   const transcribe = async () => {
     setTranscribing(true);
     // Simulate transcription with AI for demo
-    const result = await base44.integrations.Core.InvokeLLM({
+    const result = await invokeLLM({
       prompt: `Simulate a realistic transcription of a short WhatsApp voice note from a B2B prospect in ${note.context || 'Nigeria'}. 
 The note is from ${note.sender || 'a prospect'} and is about ${note.topic || 'following up on a sales inquiry'}.
 Write ONLY the transcribed text as if it were spoken, naturally, 1-3 sentences. No explanation.`,

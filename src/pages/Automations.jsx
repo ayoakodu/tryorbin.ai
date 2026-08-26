@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import {
@@ -143,7 +144,7 @@ export default function Automations() {
   const refreshSuggestions = async () => {
     setLoadingSuggestions(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM automation strategist. Based on these engagement signals, suggest 3 high-impact automation workflows:
+      const result = await invokeLLM({ prompt: `You are a GTM automation strategist. Based on these engagement signals, suggest 3 high-impact automation workflows:
 
 Signals:
 - WhatsApp reply rate: 28% (highest channel), Email reply rate: 22%
@@ -165,7 +166,7 @@ Return 3 workflow suggestions. Each: name (short), trigger (one of: reply_receiv
     if (!aiPrompt.trim()) return;
     setAiLoading(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({ prompt: `Create a sales automation workflow based on: "${aiPrompt}"
+      const result = await invokeLLM({ prompt: `Create a sales automation workflow based on: "${aiPrompt}"
 Return JSON with: name (string), trigger (one of: reply_received/deal_stage_change/no_reply_after/contact_created/meeting_booked/whatsapp_reply), action (one of: send_email/send_whatsapp/slack_notify/add_to_sequence/update_deal_stage/create_task), description (1-2 sentences explaining what it does).`, response_json_schema: { type: 'object', properties: {}, required: [] } });
       if (result?.name) {
         setForm({ name: result.name, trigger: result.trigger || '', action: result.action || '', description: result.description || '' });

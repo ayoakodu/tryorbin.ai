@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { Sparkles, Globe, Loader2, Copy, ChevronDown, ChevronUp, X, Check, RefreshCw } from 'lucide-react';
@@ -20,7 +21,7 @@ export default function AIPersonalizePanel({ onInsert, onClose }) {
     setLoading(true);
     setResult(null);
     setActiveAngle(null);
-    const data = await base44.integrations.Core.InvokeLLM({
+    const data = await invokeLLM({
       prompt: `Analyze this company website URL: ${url}
 
 Research the company and return a structured analysis for a B2B sales rep in Africa/emerging markets.
@@ -52,7 +53,7 @@ Return a JSON with:
     setActiveAngle(i);
     setRewritingOpener(true);
     try {
-      const data = await base44.integrations.Core.InvokeLLM({
+      const data = await invokeLLM({
         prompt: `You are a B2B sales copywriter for African/emerging markets.
 
 Rewrite this opening line for a cold outreach email to ${result.company_name}, incorporating the following personalization angle:

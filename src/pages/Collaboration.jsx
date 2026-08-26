@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import {
@@ -139,7 +140,7 @@ export default function Collaboration() {
   const getAISummary = async () => {
     setAiLoading(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM team intelligence assistant. Summarize this team activity and provide 2-3 strategic recommendations based on the following comments and context:
+      const result = await invokeLLM({ prompt: `You are a GTM team intelligence assistant. Summarize this team activity and provide 2-3 strategic recommendations based on the following comments and context:
 
 Team comments: ${comments.map(c => `${c.author} (${c.channel}): ${c.text}`).join('\n')}
 Pipeline: $2.4M, Meetings: 47, Reply Rate: 14.2%

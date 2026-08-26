@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { X, Sparkles, Loader2, Copy, ChevronRight, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
@@ -93,7 +94,7 @@ Provide:
     };
 
     try {
-      const res = await base44.integrations.Core.InvokeLLM({ prompt: prompts[key] });
+      const res = await invokeLLM({ prompt: prompts[key] });
       setResult({ key, content: res });
     } catch {
       // silently fail

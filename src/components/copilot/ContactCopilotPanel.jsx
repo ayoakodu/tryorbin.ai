@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { motion } from 'framer-motion';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
@@ -152,7 +153,7 @@ Keep it concise and scannable.`,
     };
 
     try {
-      const res = await base44.integrations.Core.InvokeLLM({ prompt: prompts[key] });
+      const res = await invokeLLM({ prompt: prompts[key] });
       setResult({ key, content: res });
     } catch {
       // silently fail

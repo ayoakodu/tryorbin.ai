@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed, Search, Plus, Clock, User, Building2, FileText, ChevronDown } from 'lucide-react';
+import { Phone, PhoneIncoming, PhoneOutgoing, PhoneMissed, Search, Plus, Clock, User, Building2, FileText, ChevronDown, Sparkles, Loader2, ArrowRight } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { invokeLLM } from '@/lib/ai';
 
 const OUTCOME_STYLES = {
   'Connected': 'bg-emerald-50 text-emerald-700 border-emerald-200',
@@ -39,6 +40,34 @@ export default function Calls() {
   const [showLog, setShowLog] = useState(false);
   const [newNote, setNewNote] = useState('');
   const [logForm, setLogForm] = useState({ contact: '', company: '', outcome: 'Connected', duration: '', notes: '' });
+  const [aiSummary, setAiSummary] = useState({}); // callId → { loading, text, nextStep }
+
+  const generateSummary = async (call) => {
+    if (aiSummary[call.id]?.text) return;
+    setAiSummary(prev => ({ ...prev, [call.id]: { loading: true } }));
+    try {
+      const result = await invokeLLM({
+        prompt: `You are a GTM AI copilot for a B2B sales rep in Africa/emerging markets.
+
+Summarize this sales call and recommend the next action:
+
+Contact: ${call.contact} at ${call.company}
+Outcome: ${call.outcome}
+Duration: ${call.duration || 'not recorded'}
+Rep notes: ${call.notes || 'none'}
+
+Return JSON with:
+- summary: 2-sentence call summary
+- sentiment: one of "positive" | "neutral" | "negative"
+- next_step: one specific recommended action (e.g. "Send follow-up email with demo link by EOD", "Schedule discovery call for next Tuesday")
+- urgency: one of "high" | "medium" | "low"`,
+        response_json_schema: { type: 'object', properties: {}, required: [] },
+      });
+      setAiSummary(prev => ({ ...prev, [call.id]: { text: result?.summary, nextStep: result?.next_step, sentiment: result?.sentiment, urgency: result?.urgency } }));
+    } catch {
+      setAiSummary(prev => ({ ...prev, [call.id]: { error: true } }));
+    }
+  };
 
   const filtered = calls.filter(c => {
     const matchSearch = c.contact.toLowerCase().includes(search.toLowerCase()) || c.company.toLowerCase().includes(search.toLowerCase());
@@ -163,8 +192,36 @@ export default function Calls() {
               {selected && (
                 <tr>
                   <td colSpan={8} className="px-5 py-4 bg-slate-50 border-b border-slate-100">
-                    <p className="text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5"><FileText className="w-3.5 h-3.5" /> Call Notes</p>
-                    <p className="text-xs text-slate-600 leading-relaxed">{selected.notes || 'No notes recorded for this call.'}</p>
+                    <div className="flex items-start gap-6">
+                      <div className="flex-1">
+                        <p className="text-xs font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5"><FileText className="w-3.5 h-3.5" /> Call Notes</p>
+                        <p className="text-xs text-slate-600 leading-relaxed">{selected.notes || 'No notes recorded for this call.'}</p>
+                      </div>
+                      <div className="w-72 flex-shrink-0">
+                        {!aiSummary[selected.id] ? (
+                          <button onClick={() => generateSummary(selected)}
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-violet-50 border border-violet-200 text-xs text-violet-700 hover:bg-violet-100 transition-colors w-full">
+                            <Sparkles className="w-3.5 h-3.5" />
+                            AI Summary &amp; Next Step
+                          </button>
+                        ) : aiSummary[selected.id].loading ? (
+                          <div className="flex items-center gap-2 text-xs text-violet-600 px-3 py-2">
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…
+                          </div>
+                        ) : aiSummary[selected.id].error ? (
+                          <p className="text-xs text-red-500 px-1">AI unavailable — connect Together AI or check your key.</p>
+                        ) : (
+                          <div className="space-y-2">
+                            <p className="text-xs font-semibold text-violet-700 flex items-center gap-1"><Sparkles className="w-3 h-3" /> AI Summary</p>
+                            <p className="text-xs text-slate-700 leading-relaxed">{aiSummary[selected.id].text}</p>
+                            <div className="flex items-start gap-1.5 mt-1 bg-white border border-violet-200 rounded-lg px-2.5 py-2">
+                              <ArrowRight className="w-3 h-3 text-violet-500 flex-shrink-0 mt-0.5" />
+                              <p className="text-xs text-slate-800 font-medium">{aiSummary[selected.id].nextStep}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </td>
                 </tr>
               )}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import {
@@ -270,7 +271,7 @@ export default function Campaigns() {
     if (!aiPrompt.trim()) return;
     setAiGenerating(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
+      const result = await invokeLLM({
         prompt: `Generate a B2B GTM campaign brief for: "${aiPrompt}". Keep it specific and actionable for African/emerging markets.`,
         response_json_schema: {
           type: 'object',
