@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { Sparkles, Loader2, Calendar, User, DollarSign, X, ClipboardList } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ export default function MeetingPrepPanel({ deal, onClose }) {
 
   const generate = async () => {
     setLoading(true);
-    const result = await base44.integrations.Core.InvokeLLM({
+    const result = await invokeLLM({
       prompt: `Generate a concise meeting prep brief for this B2B sales deal:
 Deal: "${deal.title}"
 Company: ${deal.company}

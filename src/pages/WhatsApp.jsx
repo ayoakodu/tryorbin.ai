@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import {
@@ -102,7 +103,7 @@ export default function WhatsApp() {
     setAiLoading(true);
     const lastReceived = [...selected.messages].reverse().find(m => m.role === 'received');
     try {
-      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are writing a WhatsApp reply for a B2B sales rep in Africa.
+      const result = await invokeLLM({ prompt: `You are writing a WhatsApp reply for a B2B sales rep in Africa.
 
 Contact: ${selected.name} from ${selected.company}
 Their last message: "${lastReceived?.content || 'No message yet'}"

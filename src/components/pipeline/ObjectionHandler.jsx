@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { Sparkles, Loader2, X, MessageSquare, Copy, ChevronDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,7 @@ export default function ObjectionHandler({ deal, onClose }) {
     if (!objection) return;
     setLoading(true);
     setResponse(null);
-    const result = await base44.integrations.Core.InvokeLLM({
+    const result = await invokeLLM({
       prompt: `You are a B2B sales expert in African and emerging markets.
       
 Generate a concise, empathetic objection handling response for this situation:

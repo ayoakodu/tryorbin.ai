@@ -1,4 +1,5 @@
 import { base44 } from '@/api/base44Client';
+import { invokeLLM } from '@/lib/ai';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -230,7 +231,7 @@ export default function Outreach() {
     setAiSuggesting(true);
     setAiSuggestion(null);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({ prompt: `Analyze this outreach sequence and suggest ONE specific improvement:
+      const result = await invokeLLM({ prompt: `Analyze this outreach sequence and suggest ONE specific improvement:
 Sequence: "${selectedSeq.name}"
 Steps: ${selectedSeq.steps.length} steps
 Reply rate: ${selectedSeq.enrolled > 0 ? ((selectedSeq.replied / selectedSeq.enrolled) * 100).toFixed(1) : 0}%

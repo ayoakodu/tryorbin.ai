@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import {
@@ -241,7 +242,7 @@ function ConfigStep({ method, onBack, onSave, onClose }) {
     if (!aiPrompt.trim()) return;
     setAiLoading(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
+      const result = await invokeLLM({
         prompt: `Generate a concise, professional B2B outreach sequence name for: "${aiPrompt}". Return JSON: {"name": "..."}`,
         response_json_schema: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] }
       });

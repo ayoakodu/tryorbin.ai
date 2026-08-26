@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -131,7 +132,7 @@ export default function AICommandLayer({ isRefreshing }) {
         '',
         'Give me ONE sharp, specific GTM insight or recommendation I should act on RIGHT NOW. Be direct and actionable. 2-3 sentences max.',
       ].join('\n');
-      const result = await base44.integrations.Core.InvokeLLM({ prompt });
+      const result = await invokeLLM({ prompt });
       setAiSummary(result);
     } catch {
       setAiSummary('Unable to generate insight — check your API key configuration.');

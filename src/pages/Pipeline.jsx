@@ -1,4 +1,5 @@
 import { base44 } from '@/api/base44Client';
+import { invokeLLM } from '@/lib/ai';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -191,7 +192,7 @@ export default function Pipeline() {
     setAiLoading(true);
     const allDeals = Object.entries(deals).flatMap(([stage, ds]) => ds.map(d => ({ ...d, stage })));
     try {
-      const result = await base44.integrations.Core.InvokeLLM({ prompt: `You are a GTM AI copilot. Analyze this pipeline and give ONE specific, actionable insight in 2 sentences:
+      const result = await invokeLLM({ prompt: `You are a GTM AI copilot. Analyze this pipeline and give ONE specific, actionable insight in 2 sentences:
 Deals: ${JSON.stringify(allDeals.map(d => ({ title: d.title, stage: d.stage, value: d.value, probability: d.probability, days: d.days, risk: d.risk })))}
 Focus on risk, stale deals, or quick wins.`});
       setAiInsight(result);

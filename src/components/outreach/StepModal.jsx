@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { invokeLLM } from '@/lib/ai';
 import DOMPurify from 'dompurify';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -608,7 +609,7 @@ Return a JSON object with:
 - subject: a compelling subject line
 - body: the HTML email body using only <p> tags`;
 
-      const result = await base44.integrations.Core.InvokeLLM({
+      const result = await invokeLLM({
         prompt: jsonPrompt,
         response_json_schema: {
           type: 'object',
