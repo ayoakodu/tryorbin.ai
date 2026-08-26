@@ -68,13 +68,46 @@ const stepPerformanceData = [
   { step: 'Step 5', sent: 36, opened: 18, replied: 5, dropoff: 38 },
 ];
 
-// Campaign dashboard table
-const campaignTableData = [
+// Campaign dashboard table — falls back to seed data when no broadcasts exist
+const SEED_CAMPAIGN_TABLE = [
   { name: 'Fintech CTO Outbound — Nigeria', channel: 'multi', sent: 142, openRate: 62.7, replyRate: 21.8, positiveReply: 8.5, meetings: 8, status: 'active' },
   { name: 'SMB Decision Maker — WhatsApp', channel: 'whatsapp', sent: 89, openRate: 91.0, replyRate: 24.7, positiveReply: 11.2, meetings: 5, status: 'active' },
   { name: 'Inbound Lead Nurture', channel: 'email', sent: 234, openRate: 66.7, replyRate: 28.6, positiveReply: 14.1, meetings: 19, status: 'active' },
   { name: 'Re-engagement — Cold Leads', channel: 'email', sent: 47, openRate: 38.3, replyRate: 17.0, positiveReply: 4.3, meetings: 2, status: 'paused' },
 ];
+
+function getLiveData() {
+  try {
+    const broadcasts = JSON.parse(localStorage.getItem('orbin_broadcasts') || '[]');
+    const pipeline = JSON.parse(localStorage.getItem('orbin_pipeline') || 'null');
+
+    const sent = broadcasts.filter(b => b.status === 'sent');
+    if (sent.length === 0 && !pipeline) return null;
+
+    const totalSent = sent.reduce((a, b) => a + (b.audience || 0), 0);
+    const avgOpenRate = sent.length ? (sent.reduce((a, b) => a + (b.opened || 0), 0) / sent.length).toFixed(1) : 0;
+    const avgReplyRate = sent.length ? (sent.reduce((a, b) => a + (b.replied || 0), 0) / sent.length).toFixed(1) : 0;
+    const wonDeals = pipeline ? (pipeline.closed_won || []) : [];
+    const totalMeetings = wonDeals.length + sent.reduce((a, b) => a + Math.round((b.audience || 0) * (b.replied || 0) / 10000), 0);
+
+    const campaignTable = broadcasts.length > 0
+      ? broadcasts.slice(0, 6).map(b => ({
+          name: b.name,
+          channel: b.channel === 'whatsapp' ? 'whatsapp' : b.channel === 'linkedin' ? 'linkedin' : 'email',
+          sent: b.audience || 0,
+          openRate: b.opened || 0,
+          replyRate: b.replied || 0,
+          positiveReply: parseFloat(((b.replied || 0) * 0.45).toFixed(1)),
+          meetings: Math.max(1, Math.round((b.audience || 0) * (b.replied || 0) / 5000)),
+          status: b.status === 'sent' ? 'active' : b.status,
+        }))
+      : SEED_CAMPAIGN_TABLE;
+
+    return { totalSent, avgOpenRate, avgReplyRate, totalMeetings, campaignTable };
+  } catch { return null; }
+}
+
+const campaignTableData = SEED_CAMPAIGN_TABLE;
 
 const CustomTooltip = ({ active, payload, label }) => {
 if (active && payload && payload.length) {
@@ -121,10 +154,13 @@ export default function Analytics() {
   const [aiLoading, setAiLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
 
-  const totalSent = campaignTableData.reduce((s, c) => s + c.sent, 0);
-  const avgOpenRate = (campaignTableData.reduce((s, c) => s + c.openRate, 0) / campaignTableData.length).toFixed(1);
-  const avgReplyRate = (campaignTableData.reduce((s, c) => s + c.replyRate, 0) / campaignTableData.length).toFixed(1);
-  const totalMeetings = campaignTableData.reduce((s, c) => s + c.meetings, 0);
+  const liveData = getLiveData();
+  const activeCampaignTable = liveData?.campaignTable ?? campaignTableData;
+
+  const totalSent = liveData?.totalSent ?? campaignTableData.reduce((s, c) => s + c.sent, 0);
+  const avgOpenRate = liveData?.avgOpenRate ?? (campaignTableData.reduce((s, c) => s + c.openRate, 0) / campaignTableData.length).toFixed(1);
+  const avgReplyRate = liveData?.avgReplyRate ?? (campaignTableData.reduce((s, c) => s + c.replyRate, 0) / campaignTableData.length).toFixed(1);
+  const totalMeetings = liveData?.totalMeetings ?? campaignTableData.reduce((s, c) => s + c.meetings, 0);
 
   const refreshAIInsights = async () => {
     setAiLoading(true);
@@ -425,7 +461,7 @@ export default function Analytics() {
                   </tr>
                 </thead>
                 <tbody>
-                  {campaignTableData.map((row, i) => {
+                  {activeCampaignTable.map((row, i) => {
                     const Ch = channelIcon[row.channel] || Mail;
                     return (
                       <tr key={i} className="border-b border-border/20 hover:bg-secondary/30 transition-colors">

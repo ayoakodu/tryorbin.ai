@@ -1,13 +1,13 @@
 import { base44 } from '@/api/base44Client';
 import { invokeLLM } from '@/lib/ai';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import {
   Plus, DollarSign, TrendingUp, AlertTriangle, User,
   MoreHorizontal, Sparkles, Loader2, X, Calendar, Edit3,
   ChevronRight, CheckCircle2, Clock, FileText, ClipboardList,
-  MessageSquare, Users
+  MessageSquare, Users, Trash2
 } from 'lucide-react';
 import MeetingPrepPanel from '@/components/pipeline/MeetingPrepPanel';
 import ObjectionHandler from '@/components/pipeline/ObjectionHandler';
@@ -24,6 +24,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 
+const PIPELINE_KEY = 'orbin_pipeline';
+function loadDeals() {
+  try { const s = localStorage.getItem(PIPELINE_KEY); return s ? JSON.parse(s) : initialDealsData; } catch { return initialDealsData; }
+}
+function saveDeals(data) {
+  try { localStorage.setItem(PIPELINE_KEY, JSON.stringify(data)); } catch {}
+}
+
 const stages = [
   { id: 'prospecting', label: 'Prospecting', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
   { id: 'qualification', label: 'Qualification', color: 'text-violet-700', bg: 'bg-violet-50', border: 'border-violet-200' },
@@ -34,29 +42,30 @@ const stages = [
 
 const initialDealsData = {
   prospecting: [
-    { id: 1, title: 'Flutterwave Enterprise', company: 'Flutterwave', value: 85000, probability: 20, contact: 'Amara Diallo', days: 3, risk: false, notes: '' },
-    { id: 2, title: 'Paystack API Integration', company: 'Paystack', value: 42000, probability: 30, contact: 'Tunde Okafor', days: 7, risk: false, notes: '' },
-    { id: 3, title: 'Wave Mobile Suite', company: 'Wave', value: 28000, probability: 25, contact: 'Kweku Mensah', days: 12, risk: false, notes: '' },
+    { id: 1, title: 'Flutterwave Enterprise', company: 'Flutterwave', value: 85000, probability: 20, contact: 'Amara Diallo', days: 3, updated_at: new Date(Date.now() - 3 * 86400000).toISOString(), risk: false, notes: '' },
+    { id: 2, title: 'Paystack API Integration', company: 'Paystack', value: 42000, probability: 30, contact: 'Tunde Okafor', days: 7, updated_at: new Date(Date.now() - 7 * 86400000).toISOString(), risk: false, notes: '' },
+    { id: 3, title: 'Wave Mobile Suite', company: 'Wave', value: 28000, probability: 25, contact: 'Kweku Mensah', days: 12, updated_at: new Date(Date.now() - 12 * 86400000).toISOString(), risk: false, notes: '' },
   ],
   qualification: [
-    { id: 4, title: 'Andela Talent Platform', company: 'Andela', value: 120000, probability: 45, contact: 'Chioma Eze', days: 8, risk: false, notes: '' },
-    { id: 5, title: 'Yoco Growth Package', company: 'Yoco', value: 67000, probability: 50, contact: 'Kefilwe M.', days: 15, risk: true, notes: 'No response in 2 weeks' },
+    { id: 4, title: 'Andela Talent Platform', company: 'Andela', value: 120000, probability: 45, contact: 'Chioma Eze', days: 8, updated_at: new Date(Date.now() - 8 * 86400000).toISOString(), risk: false, notes: '' },
+    { id: 5, title: 'Yoco Growth Package', company: 'Yoco', value: 67000, probability: 50, contact: 'Kefilwe M.', days: 15, updated_at: new Date(Date.now() - 15 * 86400000).toISOString(), risk: true, notes: 'No response in 2 weeks' },
   ],
   proposal: [
-    { id: 6, title: 'Moniepoint Platform', company: 'Moniepoint', value: 195000, probability: 65, contact: 'Aisha Kamara', days: 5, risk: false, notes: '' },
-    { id: 7, title: 'Chipper Cash Suite', company: 'Chipper', value: 88000, probability: 60, contact: 'Emmanuel D.', days: 18, risk: true, notes: 'Pending legal review' },
+    { id: 6, title: 'Moniepoint Platform', company: 'Moniepoint', value: 195000, probability: 65, contact: 'Aisha Kamara', days: 5, updated_at: new Date(Date.now() - 5 * 86400000).toISOString(), risk: false, notes: '' },
+    { id: 7, title: 'Chipper Cash Suite', company: 'Chipper', value: 88000, probability: 60, contact: 'Emmanuel D.', days: 18, updated_at: new Date(Date.now() - 18 * 86400000).toISOString(), risk: true, notes: 'Pending legal review' },
   ],
   negotiation: [
-    { id: 8, title: 'Opay Enterprise Deal', company: 'OPay', value: 245000, probability: 80, contact: 'Chidi Nwosu', days: 2, risk: false, notes: '' },
+    { id: 8, title: 'Opay Enterprise Deal', company: 'OPay', value: 245000, probability: 80, contact: 'Chidi Nwosu', days: 2, updated_at: new Date(Date.now() - 2 * 86400000).toISOString(), risk: false, notes: '' },
   ],
   closed_won: [
-    { id: 9, title: 'PalmPay Annual License', company: 'PalmPay', value: 180000, probability: 100, contact: 'Sarah Adekunle', days: 0, risk: false, notes: 'Signed and onboarded' },
+    { id: 9, title: 'PalmPay Annual License', company: 'PalmPay', value: 180000, probability: 100, contact: 'Sarah Adekunle', days: 0, updated_at: new Date(Date.now() - 0 * 86400000).toISOString(), risk: false, notes: 'Signed and onboarded' },
   ],
 };
 
-function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
+function DealCard({ deal, onMove, onEdit, onCollab, onDelete, stages, currentStage }) {
   const [showMenu, setShowMenu] = useState(false);
   const otherStages = stages.filter(s => s.id !== currentStage);
+  const daysSince = deal.updated_at ? Math.floor((Date.now() - new Date(deal.updated_at)) / 86400000) : 0;
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
@@ -79,6 +88,10 @@ function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
               <button onClick={() => { onEdit(deal, currentStage); setShowMenu(false); }}
                 className="flex items-center gap-2 px-3 py-2 text-xs text-foreground hover:bg-secondary/60 w-full text-left">
                 <Edit3 className="w-3.5 h-3.5" /> Edit Deal
+              </button>
+              <button onClick={() => { onDelete(deal.id, currentStage); setShowMenu(false); }}
+                className="flex items-center gap-2 px-3 py-2 text-xs text-red-500 hover:bg-secondary/60 w-full text-left">
+                <Trash2 className="w-3.5 h-3.5" /> Delete Deal
               </button>
               <div className="border-t border-border/30 my-1" />
               <p className="px-3 py-1 text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Move to</p>
@@ -114,9 +127,9 @@ function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
 
       <div className="flex items-center justify-between mt-2.5">
         <span className="text-[11px] text-muted-foreground">{deal.contact}</span>
-        {deal.days > 0 && (
-          <span className={`text-[11px] font-medium ${deal.days > 14 ? 'text-amber-400' : 'text-muted-foreground'}`}>
-            {deal.days}d ago
+        {daysSince > 0 && (
+          <span className={`text-[11px] font-medium ${daysSince > 14 ? 'text-amber-400' : 'text-muted-foreground'}`}>
+            {daysSince}d ago
           </span>
         )}
       </div>
@@ -128,7 +141,7 @@ function DealCard({ deal, onMove, onEdit, onCollab, stages, currentStage }) {
 }
 
 export default function Pipeline() {
-  const [deals, setDeals] = useState(initialDealsData);
+  const [deals, setDeals] = useState(loadDeals);
   const [showAdd, setShowAdd] = useState(false);
   const [addStage, setAddStage] = useState('prospecting');
   const [editDeal, setEditDeal] = useState(null);
@@ -144,6 +157,8 @@ export default function Pipeline() {
   const [aiCopilotStage, setAiCopilotStage] = useState(null);
   const { toast } = useToast();
 
+  useEffect(() => { saveDeals(deals); }, [deals]);
+
   const totalValue = Object.values(deals).flat().reduce((sum, d) => sum + d.value, 0);
   const wonValue = (deals.closed_won || []).reduce((sum, d) => sum + d.value, 0);
   const weightedValue = Object.values(deals).flat().reduce((sum, d) => sum + (d.value * d.probability / 100), 0);
@@ -153,7 +168,7 @@ export default function Pipeline() {
     setDeals(prev => {
       const updated = { ...prev };
       updated[fromStage] = prev[fromStage].filter(d => d.id !== deal.id);
-      updated[toStage] = [...(prev[toStage] || []), { ...deal }];
+      updated[toStage] = [...(prev[toStage] || []), { ...deal, updated_at: new Date().toISOString() }];
       return updated;
     });
     toast({ title: 'Deal moved', description: `"${deal.title}" moved to ${stages.find(s => s.id === toStage)?.label}` });
@@ -171,7 +186,8 @@ export default function Pipeline() {
         ...prev,
         [editStage]: prev[editStage].map(d => d.id === editDeal.id ? {
           ...d, title: form.title, company: form.company, contact: form.contact,
-          value: Number(form.value), probability: Number(form.probability), notes: form.notes
+          value: Number(form.value), probability: Number(form.probability), notes: form.notes,
+          updated_at: new Date().toISOString()
         } : d)
       }));
       toast({ title: 'Deal updated!' });
@@ -179,13 +195,19 @@ export default function Pipeline() {
     } else {
       const newDeal = {
         id: Date.now(), title: form.title, company: form.company, contact: form.contact,
-        value: Number(form.value), probability: Number(form.probability), days: 0, risk: false, notes: form.notes
+        value: Number(form.value), probability: Number(form.probability), days: 0, risk: false, notes: form.notes,
+        updated_at: new Date().toISOString()
       };
       setDeals(prev => ({ ...prev, [addStage]: [...(prev[addStage] || []), newDeal] }));
       toast({ title: 'Deal created!' });
       setShowAdd(false);
     }
     setForm({ title: '', company: '', contact: '', value: '', probability: '30', notes: '' });
+  };
+
+  const deleteDeal = (dealId, stageId) => {
+    setDeals(prev => ({ ...prev, [stageId]: prev[stageId].filter(d => d.id !== dealId) }));
+    toast({ title: 'Deal deleted' });
   };
 
   const getAIInsight = async () => {
@@ -271,7 +293,7 @@ Focus on risk, stale deals, or quick wins.`});
                     <AnimatePresence>
                       {stageDeals.map(deal => (
                         <DealCard key={deal.id} deal={deal} currentStage={stage.id}
-                          stages={stages} onMove={moveDeal} onEdit={openEdit} onCollab={setCollabDeal} />
+                          stages={stages} onMove={moveDeal} onEdit={openEdit} onCollab={setCollabDeal} onDelete={deleteDeal} />
                       ))}
                     </AnimatePresence>
                   </div>
