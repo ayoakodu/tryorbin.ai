@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckSquare, Square, Plus, Search, Sparkles, Calendar, User, AlertCircle, Clock, ChevronDown, Trash2, Flag } from 'lucide-react';
+import { CheckSquare, Square, Plus, Search, Sparkles, Calendar, User, AlertCircle, Clock, Trash2, Flag } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,51 +19,71 @@ const TYPE_STYLES = {
   'Sequence': 'bg-blue-50 text-blue-600',
 };
 
-const TASKS = [
-  { id: 1, title: 'Follow up with Amara Diallo — Flutterwave', type: 'Follow-up', priority: 'high', due: 'Today', assignee: 'JD', done: false, ai: false },
-  { id: 2, title: 'Send sequence Day 3 email to Fintech CEO list', type: 'Sequence', priority: 'high', due: 'Today', assignee: 'JD', done: false, ai: true },
-  { id: 3, title: 'Call Tunde Okafor — Paystack (no answer yesterday)', type: 'Call', priority: 'medium', due: 'Today', assignee: 'SB', done: false, ai: false },
-  { id: 4, title: 'Review high-priority accounts in pipeline', type: 'Review', priority: 'medium', due: 'Tomorrow', assignee: 'JD', done: false, ai: false },
-  { id: 5, title: 'Update target account list for Q3', type: 'Review', priority: 'low', due: 'Tomorrow', assignee: 'AM', done: false, ai: false },
-  { id: 6, title: 'Check campaign replies — Q3 Partnership Outreach', type: 'Email', priority: 'medium', due: 'Tomorrow', assignee: 'JD', done: false, ai: true },
-  { id: 7, title: 'Prepare demo materials for Yoco meeting', type: 'Review', priority: 'high', due: 'Jun 21', assignee: 'JD', done: false, ai: false },
-  { id: 8, title: 'Send LinkedIn connection requests to new list', type: 'Follow-up', priority: 'low', due: 'Jun 22', assignee: 'SB', done: false, ai: false },
-  { id: 9, title: 'Write re-engagement email for cold contacts', type: 'Email', priority: 'medium', due: 'Jun 23', assignee: 'JD', done: false, ai: true },
-  { id: 10, title: 'Called Kemi — confirmed demo for tomorrow', type: 'Call', priority: 'low', due: 'Yesterday', assignee: 'JD', done: true, ai: false },
-];
+function getDateOffsets() {
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  const fmt = (d) => d.toISOString().split('T')[0];
+  const offset = (n) => { const d = new Date(t); d.setDate(t.getDate() + n); return fmt(d); };
+  return { today: fmt(t), yesterday: offset(-1), tomorrow: offset(1), in2: offset(2), in7: offset(7) };
+}
 
-const SECTIONS = [
-  { label: 'Overdue', filter: t => !t.done && t.due === 'Yesterday', color: 'text-red-500' },
-  { label: 'Due Today', filter: t => !t.done && t.due === 'Today', color: 'text-emerald-600' },
-  { label: 'Due Tomorrow', filter: t => !t.done && t.due === 'Tomorrow', color: 'text-amber-600' },
-  { label: 'Upcoming', filter: t => !t.done && t.due !== 'Yesterday' && t.due !== 'Today' && t.due !== 'Tomorrow', color: 'text-slate-600' },
-  { label: 'Completed', filter: t => t.done, color: 'text-slate-400' },
-];
+function buildSeedTasks() {
+  const { today, yesterday, tomorrow, in2, in7 } = getDateOffsets();
+  return [
+    { id: 1, title: 'Follow up with Amara Diallo — Flutterwave', type: 'Follow-up', priority: 'high', due: today, assignee: 'JD', done: false, ai: false },
+    { id: 2, title: 'Send sequence Day 3 email to Fintech CEO list', type: 'Sequence', priority: 'high', due: today, assignee: 'JD', done: false, ai: true },
+    { id: 3, title: 'Call Tunde Okafor — Paystack (no answer yesterday)', type: 'Call', priority: 'medium', due: today, assignee: 'SB', done: false, ai: false },
+    { id: 4, title: 'Review high-priority accounts in pipeline', type: 'Review', priority: 'medium', due: tomorrow, assignee: 'JD', done: false, ai: false },
+    { id: 5, title: 'Update target account list for Q3', type: 'Review', priority: 'low', due: tomorrow, assignee: 'AM', done: false, ai: false },
+    { id: 6, title: 'Check campaign replies — Q3 Partnership Outreach', type: 'Email', priority: 'medium', due: tomorrow, assignee: 'JD', done: false, ai: true },
+    { id: 7, title: 'Prepare demo materials for Yoco meeting', type: 'Review', priority: 'high', due: in2, assignee: 'JD', done: false, ai: false },
+    { id: 8, title: 'Send LinkedIn connection requests to new list', type: 'Follow-up', priority: 'low', due: in7, assignee: 'SB', done: false, ai: false },
+    { id: 9, title: 'Write re-engagement email for cold contacts', type: 'Email', priority: 'medium', due: in7, assignee: 'JD', done: false, ai: true },
+    { id: 10, title: 'Called Kemi — confirmed demo for tomorrow', type: 'Call', priority: 'low', due: yesterday, assignee: 'JD', done: true, ai: false },
+  ];
+}
+
+const TASKS_KEY = 'orbin_tasks';
+function loadTasks() {
+  try { const s = localStorage.getItem(TASKS_KEY); return s ? JSON.parse(s) : buildSeedTasks(); } catch { return buildSeedTasks(); }
+}
+function saveTasks(tasks) {
+  try { localStorage.setItem(TASKS_KEY, JSON.stringify(tasks)); } catch {}
+}
+
+function dueLabel(iso) {
+  const { today, yesterday, tomorrow } = getDateOffsets();
+  if (iso === today) return 'Today';
+  if (iso === tomorrow) return 'Tomorrow';
+  if (iso < today) return iso === yesterday ? 'Yesterday' : `Overdue (${iso})`;
+  return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 
 export default function Tasks() {
-  const [tasks, setTasks] = useState(TASKS);
+  const [tasks, setTasks] = useState(loadTasks);
   const [search, setSearch] = useState('');
   const [filterPriority, setFilterPriority] = useState('All');
   const [filterAssignee, setFilterAssignee] = useState('All');
-  const [filterStat, setFilterStat] = useState(null); // 'today' | 'overdue' | 'completed' | null
+  const [filterStat, setFilterStat] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState({ title: '', type: 'Follow-up', priority: 'medium', due: 'Today', assignee: 'JD' });
+  const [form, setForm] = useState({ title: '', type: 'Follow-up', priority: 'medium', due: getDateOffsets().today, assignee: 'JD' });
 
-  const toggle = (id) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  };
+  useEffect(() => { saveTasks(tasks); }, [tasks]);
 
-  const remove = (id) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
-  };
+  const { today, tomorrow } = getDateOffsets();
+
+  const toggle = (id) => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
+  const remove = (id) => setTasks(prev => prev.filter(t => t.id !== id));
 
   const handleCreate = () => {
     if (!form.title.trim()) return;
-    const newTask = { id: Date.now(), ...form, done: false, ai: false };
-    setTasks(prev => [newTask, ...prev]);
-    setForm({ title: '', type: 'Follow-up', priority: 'medium', due: 'Today', assignee: 'JD' });
+    setTasks(prev => [{ id: Date.now(), ...form, done: false, ai: false }, ...prev]);
+    setForm({ title: '', type: 'Follow-up', priority: 'medium', due: getDateOffsets().today, assignee: 'JD' });
     setShowCreate(false);
   };
+
+  const isOverdue = (t) => !t.done && t.due < today;
+  const isDueToday = (t) => !t.done && t.due === today;
+  const isDueTomorrow = (t) => !t.done && t.due === tomorrow;
 
   const filtered = tasks.filter(t => {
     const matchSearch = t.title.toLowerCase().includes(search.toLowerCase());
@@ -71,17 +91,25 @@ export default function Tasks() {
     const matchAssignee = filterAssignee === 'All' || t.assignee === filterAssignee;
     const matchStat =
       !filterStat ||
-      (filterStat === 'today' && !t.done && t.due === 'Today') ||
-      (filterStat === 'overdue' && !t.done && t.due === 'Yesterday') ||
+      (filterStat === 'today' && isDueToday(t)) ||
+      (filterStat === 'overdue' && isOverdue(t)) ||
       (filterStat === 'completed' && t.done) ||
-      (filterStat === 'total');
+      filterStat === 'total';
     return matchSearch && matchPriority && matchAssignee && matchStat;
   });
 
+  const SECTIONS = [
+    { label: 'Overdue', filter: t => isOverdue(t), color: 'text-red-500' },
+    { label: 'Due Today', filter: t => isDueToday(t), color: 'text-emerald-600' },
+    { label: 'Due Tomorrow', filter: t => isDueTomorrow(t), color: 'text-amber-600' },
+    { label: 'Upcoming', filter: t => !t.done && t.due > tomorrow, color: 'text-slate-600' },
+    { label: 'Completed', filter: t => t.done, color: 'text-slate-400' },
+  ];
+
   const total = tasks.length;
   const done = tasks.filter(t => t.done).length;
-  const overdue = tasks.filter(t => !t.done && t.due === 'Yesterday').length;
-  const today = tasks.filter(t => !t.done && t.due === 'Today').length;
+  const overdue = tasks.filter(isOverdue).length;
+  const todayCount = tasks.filter(isDueToday).length;
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc', color: '#0f172a' }}>
@@ -92,7 +120,7 @@ export default function Tasks() {
         <div className="grid grid-cols-4 gap-4">
           {[
             { label: 'Total Tasks', value: total, icon: CheckSquare, color: 'text-emerald-500', key: 'total' },
-            { label: 'Due Today', value: today, icon: Clock, color: 'text-cyan-500', key: 'today' },
+            { label: 'Due Today', value: todayCount, icon: Clock, color: 'text-cyan-500', key: 'today' },
             { label: 'Overdue', value: overdue, icon: AlertCircle, color: 'text-red-500', key: 'overdue' },
             { label: 'Completed', value: done, icon: CheckSquare, color: 'text-slate-400', key: 'completed' },
           ].map((s, i) => (
@@ -141,21 +169,25 @@ export default function Tasks() {
           <div className="rounded-xl p-5" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
             <p className="text-sm font-semibold text-slate-800 mb-3">New Task</p>
             <div className="flex gap-3 mb-3">
-              <Input placeholder="Task title..." className="h-9 text-sm flex-1" value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} />
+              <Input placeholder="Task title..." className="h-9 text-sm flex-1" value={form.title}
+                onChange={e => setForm(p => ({ ...p, title: e.target.value }))}
+                onKeyDown={e => e.key === 'Enter' && handleCreate()} />
             </div>
             <div className="flex gap-3">
-              <select className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700" value={form.type} onChange={e => setForm(p => ({ ...p, type: e.target.value }))}>
+              <select className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700"
+                value={form.type} onChange={e => setForm(p => ({ ...p, type: e.target.value }))}>
                 {Object.keys(TYPE_STYLES).map(t => <option key={t}>{t}</option>)}
               </select>
-              <select className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700" value={form.priority} onChange={e => setForm(p => ({ ...p, priority: e.target.value }))}>
-                <option value="high">High Priority</option>
-                <option value="medium">Medium Priority</option>
-                <option value="low">Low Priority</option>
+              <select className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700"
+                value={form.priority} onChange={e => setForm(p => ({ ...p, priority: e.target.value }))}>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
               </select>
-              <select className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700" value={form.due} onChange={e => setForm(p => ({ ...p, due: e.target.value }))}>
-                {['Today', 'Tomorrow', 'Jun 21', 'Jun 22', 'Jun 23'].map(d => <option key={d}>{d}</option>)}
-              </select>
-              <select className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700" value={form.assignee} onChange={e => setForm(p => ({ ...p, assignee: e.target.value }))}>
+              <input type="date" className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700"
+                value={form.due} onChange={e => setForm(p => ({ ...p, due: e.target.value }))} />
+              <select className="h-9 px-3 rounded-md text-sm border border-slate-200 bg-white text-slate-700"
+                value={form.assignee} onChange={e => setForm(p => ({ ...p, assignee: e.target.value }))}>
                 {['JD', 'SB', 'AM'].map(a => <option key={a}>{a}</option>)}
               </select>
               <Button size="sm" className="bg-primary text-white text-xs" onClick={handleCreate}>Save</Button>
@@ -197,7 +229,7 @@ export default function Tasks() {
                       </div>
                       <div className="flex items-center gap-3 flex-shrink-0">
                         <div className="flex items-center gap-1 text-xs text-slate-400">
-                          <Calendar className="w-3 h-3" />{task.due}
+                          <Calendar className="w-3 h-3" />{dueLabel(task.due)}
                         </div>
                         <div className="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center">
                           <span className="text-[9px] font-bold text-slate-600">{task.assignee}</span>

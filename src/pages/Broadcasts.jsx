@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Radio, Plus, Search, Mail, MessageSquare, Linkedin, Send, Users, BarChart3, Copy, Pencil, Trash2, ChevronRight } from 'lucide-react';
+import { Radio, Plus, Search, Mail, MessageSquare, Linkedin, Send, Users, BarChart3, Copy, Pencil, Trash2, X, Check } from 'lucide-react';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,7 +19,7 @@ const CHANNEL_STYLES = {
   linkedin: 'bg-blue-50 text-blue-700',
 };
 
-const BROADCASTS = [
+const SEED_BROADCASTS = [
   { id: 1, name: 'Q3 Partnership Outreach', channel: 'email', status: 'sent', audience: 342, opened: 61, clicked: 18, replied: 7, sentAt: 'Jun 10, 2025', subject: 'Q3 Partnership Opportunity' },
   { id: 2, name: 'Fintech CEO WhatsApp Blast', channel: 'whatsapp', status: 'sent', audience: 84, opened: 76, clicked: 0, replied: 24, sentAt: 'Jun 8, 2025', subject: 'Quick intro message' },
   { id: 3, name: 'Mid-Market SaaS Re-Engagement', channel: 'email', status: 'scheduled', audience: 210, opened: 0, clicked: 0, replied: 0, sentAt: 'Jun 20, 2025', subject: 'We have something new for you' },
@@ -27,13 +27,25 @@ const BROADCASTS = [
   { id: 5, name: 'Product Update Announcement', channel: 'email', status: 'sent', audience: 1240, opened: 54, clicked: 22, replied: 3, sentAt: 'May 28, 2025', subject: 'Exciting update from Orbin AI' },
 ];
 
+const BROADCASTS_KEY = 'orbin_broadcasts';
+function loadBroadcasts() {
+  try { const s = localStorage.getItem(BROADCASTS_KEY); return s ? JSON.parse(s) : SEED_BROADCASTS; } catch { return SEED_BROADCASTS; }
+}
+function saveBroadcasts(data) {
+  try { localStorage.setItem(BROADCASTS_KEY, JSON.stringify(data)); } catch {}
+}
+
 export default function Broadcasts() {
-  const [broadcasts, setBroadcasts] = useState(BROADCASTS);
+  const [broadcasts, setBroadcasts] = useState(loadBroadcasts);
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [filterChannel, setFilterChannel] = useState('All');
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState({ name: '', channel: 'email', subject: '' });
+  const [editId, setEditId] = useState(null);
+  const [editForm, setEditForm] = useState({ name: '', subject: '' });
+
+  useEffect(() => { saveBroadcasts(broadcasts); }, [broadcasts]);
 
   const filtered = broadcasts.filter(b => {
     const matchSearch = b.name.toLowerCase().includes(search.toLowerCase());
@@ -44,22 +56,32 @@ export default function Broadcasts() {
 
   const handleCreate = () => {
     if (!form.name.trim()) return;
-    setBroadcasts(prev => [{
-      id: Date.now(), ...form, status: 'draft', audience: 0,
-      opened: 0, clicked: 0, replied: 0, sentAt: '—',
-    }, ...prev]);
+    setBroadcasts(prev => [{ id: Date.now(), ...form, status: 'draft', audience: 0, opened: 0, clicked: 0, replied: 0, sentAt: '—' }, ...prev]);
     setForm({ name: '', channel: 'email', subject: '' });
     setShowCreate(false);
   };
 
   const handleDuplicate = (b) => {
-    setBroadcasts(prev => [{ ...b, id: Date.now(), name: `${b.name} (copy)`, status: 'draft' }, ...prev]);
+    setBroadcasts(prev => [{ ...b, id: Date.now(), name: `${b.name} (copy)`, status: 'draft', audience: 0, opened: 0, clicked: 0, replied: 0, sentAt: '—' }, ...prev]);
   };
 
   const handleDelete = (id) => setBroadcasts(prev => prev.filter(b => b.id !== id));
 
+  const startEdit = (b) => {
+    setEditId(b.id);
+    setEditForm({ name: b.name, subject: b.subject });
+  };
+
+  const saveEdit = () => {
+    setBroadcasts(prev => prev.map(b => b.id === editId ? { ...b, ...editForm } : b));
+    setEditId(null);
+  };
+
   const totalSent = broadcasts.filter(b => b.status === 'sent').reduce((a, b) => a + b.audience, 0);
-  const avgOpen = Math.round(broadcasts.filter(b => b.status === 'sent').reduce((a, b) => a + b.opened, 0) / Math.max(broadcasts.filter(b => b.status === 'sent').length, 1));
+  const sentBroadcasts = broadcasts.filter(b => b.status === 'sent');
+  const avgOpen = sentBroadcasts.length
+    ? Math.round(sentBroadcasts.reduce((a, b) => a + b.opened, 0) / sentBroadcasts.length)
+    : 0;
 
   return (
     <div className="min-h-screen" style={{ background: '#f8fafc', color: '#0f172a' }}>
@@ -141,6 +163,8 @@ export default function Broadcasts() {
           )}
           {filtered.map((b, i) => {
             const ChannelIcon = CHANNEL_ICONS[b.channel] || Mail;
+            const isEditing = editId === b.id;
+
             return (
               <motion.div key={b.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }}
                 className="rounded-xl p-5 group hover:shadow-sm transition-all" style={{ background: '#ffffff', border: '1px solid #e2e8f0' }}>
@@ -149,19 +173,25 @@ export default function Broadcasts() {
                     <ChannelIcon className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-sm font-semibold text-slate-800 truncate">{b.name}</h3>
-                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border capitalize ${STATUS_STYLES[b.status]}`}>{b.status}</span>
-                    </div>
-                    <p className="text-xs text-slate-500 mb-3">{b.subject}</p>
-                    {b.status === 'sent' && (
+                    {isEditing ? (
+                      <div className="flex gap-2 mb-2">
+                        <Input className="h-8 text-sm flex-1" value={editForm.name} onChange={e => setEditForm(p => ({ ...p, name: e.target.value }))} />
+                        <Input className="h-8 text-sm flex-1" placeholder="Subject..." value={editForm.subject} onChange={e => setEditForm(p => ({ ...p, subject: e.target.value }))} />
+                        <button onClick={saveEdit} className="p-1.5 hover:bg-emerald-50 rounded-lg"><Check className="w-4 h-4 text-emerald-600" /></button>
+                        <button onClick={() => setEditId(null)} className="p-1.5 hover:bg-slate-100 rounded-lg"><X className="w-4 h-4 text-slate-400" /></button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-3 mb-1">
+                          <h3 className="text-sm font-semibold text-slate-800 truncate">{b.name}</h3>
+                          <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border capitalize ${STATUS_STYLES[b.status]}`}>{b.status}</span>
+                        </div>
+                        <p className="text-xs text-slate-500 mb-3">{b.subject}</p>
+                      </>
+                    )}
+                    {b.status === 'sent' && !isEditing && (
                       <div className="flex gap-6">
-                        {[
-                          ['Audience', b.audience.toLocaleString()],
-                          ['Opened', `${b.opened}%`],
-                          ['Clicked', `${b.clicked}%`],
-                          ['Replied', `${b.replied}%`],
-                        ].map(([label, value]) => (
+                        {[['Audience', b.audience.toLocaleString()], ['Opened', `${b.opened}%`], ['Clicked', `${b.clicked}%`], ['Replied', `${b.replied}%`]].map(([label, value]) => (
                           <div key={label}>
                             <p className="text-[10px] text-slate-400 uppercase tracking-wider">{label}</p>
                             <p className="text-sm font-bold text-slate-800">{value}</p>
@@ -169,21 +199,23 @@ export default function Broadcasts() {
                         ))}
                       </div>
                     )}
-                    {b.status !== 'sent' && (
+                    {b.status !== 'sent' && !isEditing && (
                       <p className="text-xs text-slate-400">{b.status === 'scheduled' ? `Scheduled for ${b.sentAt}` : 'Draft — not yet sent'}</p>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button className="p-2 hover:bg-slate-100 rounded-lg" onClick={() => handleDuplicate(b)}>
-                      <Copy className="w-3.5 h-3.5 text-slate-400" />
-                    </button>
-                    <button className="p-2 hover:bg-slate-100 rounded-lg">
-                      <Pencil className="w-3.5 h-3.5 text-slate-400" />
-                    </button>
-                    <button className="p-2 hover:bg-red-50 rounded-lg" onClick={() => handleDelete(b.id)}>
-                      <Trash2 className="w-3.5 h-3.5 text-red-400" />
-                    </button>
-                  </div>
+                  {!isEditing && (
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button className="p-2 hover:bg-slate-100 rounded-lg" onClick={() => handleDuplicate(b)} title="Duplicate">
+                        <Copy className="w-3.5 h-3.5 text-slate-400" />
+                      </button>
+                      <button className="p-2 hover:bg-slate-100 rounded-lg" onClick={() => startEdit(b)} title="Edit">
+                        <Pencil className="w-3.5 h-3.5 text-slate-400" />
+                      </button>
+                      <button className="p-2 hover:bg-red-50 rounded-lg" onClick={() => handleDelete(b.id)} title="Delete">
+                        <Trash2 className="w-3.5 h-3.5 text-red-400" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             );
