@@ -2,64 +2,64 @@
  * Unified AI inference router.
  *
  * Priority:
- *   1. Together AI — if the user has connected their API key in Integrations
+ *   1. Claude API (Anthropic) — if the user has connected their API key in Integrations
  *   2. Base44 InvokeLLM — platform default, always available as fallback
- *
- * Drop-in replacement for `base44.integrations.Core.InvokeLLM({ prompt, response_json_schema })`.
- * Call signature is identical so every page just swaps the import.
  */
 import { base44 } from '@/api/base44Client';
-import { getApiKey } from './together';
+import { getApiKey } from './claude';
 
-const TOGETHER_BASE = 'https://api.together.xyz/v1';
-const TOGETHER_MODEL = 'meta-llama/Llama-3.3-70B-Instruct-Turbo-Free';
+const CLAUDE_BASE = 'https://api.anthropic.com/v1';
+const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 
-function togetherAvailable() {
+function claudeAvailable() {
   try { return !!getApiKey(); } catch { return false; }
 }
 
-async function togetherText(prompt) {
+async function claudeText(prompt) {
   const apiKey = getApiKey();
-  const res = await fetch(`${TOGETHER_BASE}/chat/completions`, {
+  const res = await fetch(`${CLAUDE_BASE}/messages`, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true',
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({
-      model: TOGETHER_MODEL,
-      messages: [{ role: 'user', content: prompt }],
+      model: CLAUDE_MODEL,
       max_tokens: 2048,
+      messages: [{ role: 'user', content: prompt }],
     }),
   });
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`Together AI error ${res.status}: ${err}`);
+    throw new Error(`Claude API error ${res.status}: ${err}`);
   }
   const data = await res.json();
-  return data.choices?.[0]?.message?.content ?? '';
+  return data.content?.[0]?.text ?? '';
 }
 
-async function togetherJson(prompt) {
-  const text = await togetherText(
+async function claudeJson(prompt) {
+  const text = await claudeText(
     prompt + '\n\nRespond with valid JSON only. No markdown fences, no explanation outside the JSON.'
   );
-  // Strip any accidental markdown fences
   const cleaned = text.replace(/```(?:json)?\s*/gi, '').replace(/```\s*/g, '').trim();
-  // Extract the first JSON object or array
   const match = cleaned.match(/(\{[\s\S]*\}|\[[\s\S]*\])/);
-  if (!match) throw new Error('Together AI returned non-JSON response');
+  if (!match) throw new Error('Claude returned non-JSON response');
   return JSON.parse(match[1]);
 }
 
 /**
  * @param {{ prompt: string, response_json_schema?: object }} opts
- * @returns {Promise<string | object>}  string when no schema, parsed object when schema provided
+ * @returns {Promise<string | object>}
  */
 export async function invokeLLM({ prompt, response_json_schema } = {}) {
   const wantJson = !!response_json_schema;
 
-  if (togetherAvailable()) {
-    return wantJson ? togetherJson(prompt) : togetherText(prompt);
+  if (claudeAvailable()) {
+    return wantJson ? claudeJson(prompt) : claudeText(prompt);
   }
 
-  // Base44 fallback — same interface
+  // Base44 fallback
   return base44.integrations.Core.InvokeLLM({ prompt, response_json_schema });
 }

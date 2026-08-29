@@ -1,9 +1,11 @@
-import { Mail, MessageCircle, Phone, Clock, CheckCircle2, Sparkles } from 'lucide-react';
+import { useState } from 'react';
+import { Mail, MessageCircle, Phone, Clock, CheckCircle2, Sparkles, Loader2 } from 'lucide-react';
 import { Linkedin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { STEP_SUBTYPE_LABELS, STEP_TYPE_MAP } from './AddStepMenu';
+import { invokeLLM } from '@/lib/ai';
 
 const channelColors = {
   email: 'text-blue-500', linkedin: 'text-blue-600',
@@ -46,13 +48,73 @@ function VarChips({ onInsert }) {
 }
 
 // Email fields
-function EmailFields({ step, onUpdate, onPersonalize }) {
+function EmailFields({ step, onUpdate, onPersonalize, sequenceName }) {
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [showAiBox, setShowAiBox] = useState(false);
+
   const insertVar = (field, v) => {
     const cur = step[field] || '';
     onUpdate({ ...step, [field]: cur + v });
   };
+
+  const generateEmail = async () => {
+    if (!aiPrompt.trim()) return;
+    setAiLoading(true);
+    try {
+      const result = await invokeLLM({
+        prompt: `You are a B2B outreach specialist for African markets. Generate a sequence email step.
+
+Sequence name: ${sequenceName || 'B2B outreach'}
+Step context: Day ${step.day ?? 0} of sequence
+Tone: ${step.tone || 'Professional'}
+Instruction: ${aiPrompt}
+
+Write a concise, personalized cold outreach email. Use {{first_name}}, {{company}}, {{industry}} where natural.
+Return JSON with:
+- subject: compelling subject line (under 50 chars)
+- body: email body (3-4 short paragraphs, no generic filler, clear value prop, one specific CTA)`,
+        response_json_schema: { type: 'object', properties: {}, required: [] },
+      });
+      if (result?.subject) onUpdate({ ...step, subject: result.subject, body: result.body || step.body });
+      if (result?.body) onUpdate({ ...step, body: result.body, subject: result.subject || step.subject });
+    } catch {}
+    setAiLoading(false);
+    setShowAiBox(false);
+    setAiPrompt('');
+  };
+
   return (
     <FieldGroup>
+      {/* AI Generate Banner */}
+      <div className="rounded-lg border border-emerald-200 bg-emerald-50/60 p-3">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-[11px] font-semibold text-emerald-700 flex items-center gap-1.5">
+            <Sparkles className="w-3 h-3" /> Generate email with AI
+          </span>
+          <button onClick={() => setShowAiBox(p => !p)} className="text-[10px] text-emerald-600 hover:text-emerald-700 font-medium">
+            {showAiBox ? 'Hide' : 'Open'}
+          </button>
+        </div>
+        {showAiBox && (
+          <div className="flex gap-2">
+            <input
+              autoFocus
+              value={aiPrompt}
+              onChange={e => setAiPrompt(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && generateEmail()}
+              placeholder="e.g. Intro email targeting fintech CTOs about pipeline visibility..."
+              className="flex-1 h-8 text-xs px-3 rounded-md border border-emerald-200 bg-white focus:outline-none focus:ring-1 focus:ring-emerald-400"
+            />
+            <button onClick={generateEmail} disabled={aiLoading}
+              className="px-3 h-8 rounded-md bg-emerald-600 text-white text-xs font-medium flex items-center gap-1.5 hover:bg-emerald-700 disabled:opacity-60">
+              {aiLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+              {aiLoading ? 'Writing...' : 'Write'}
+            </button>
+          </div>
+        )}
+      </div>
+
       <div>
         <Label>Subject Line</Label>
         <Input value={step.subject || ''} onChange={e => onUpdate({ ...step, subject: e.target.value })}
@@ -191,7 +253,7 @@ function TaskFields({ step, onUpdate }) {
   );
 }
 
-export default function StepEditor({ step, index, onUpdate, onPersonalize }) {
+export default function StepEditor({ step, index, onUpdate, onPersonalize, sequenceName }) {
   if (!step) return null;
 
   const baseType = STEP_TYPE_MAP[step.subtype] || step.type;
@@ -199,7 +261,7 @@ export default function StepEditor({ step, index, onUpdate, onPersonalize }) {
   const subtypeLabel = STEP_SUBTYPE_LABELS[step.subtype] || step.subtype || baseType;
 
   const renderFields = () => {
-    if (baseType === 'email') return <EmailFields step={step} onUpdate={onUpdate} onPersonalize={onPersonalize} />;
+    if (baseType === 'email') return <EmailFields step={step} onUpdate={onUpdate} onPersonalize={onPersonalize} sequenceName={sequenceName} />;
     if (baseType === 'linkedin') return <LinkedInFields step={step} onUpdate={onUpdate} />;
     if (baseType === 'whatsapp') return <WhatsAppFields step={step} onUpdate={onUpdate} />;
     return <TaskFields step={step} onUpdate={onUpdate} />;

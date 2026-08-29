@@ -16,7 +16,7 @@ const statusBadge = {
   completed: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
 };
 
-export default function ProspectManager({ sequence, onClose }) {
+export default function ProspectManager({ sequence, onClose, onEnroll }) {
   const [prospects, setProspects] = useState(mockProspects);
   const [search, setSearch] = useState('');
   const [addEmail, setAddEmail] = useState('');
@@ -50,6 +50,7 @@ export default function ProspectManager({ sequence, onClose }) {
       status: 'active',
       email: addEmail
     }]);
+    onEnroll?.();
     setAddEmail('');
     setLoading(false);
   };
