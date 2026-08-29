@@ -209,7 +209,7 @@ Return JSON with:
                             <Loader2 className="w-3.5 h-3.5 animate-spin" /> Generating…
                           </div>
                         ) : aiSummary[selected.id].error ? (
-                          <p className="text-xs text-red-500 px-1">AI unavailable — connect Claude AI in Integrations or check your API key.</p>
+                          <p className="text-xs text-red-500 px-1">AI unavailable — please try again in a moment.</p>
                         ) : (
                           <div className="space-y-2">
                             <p className="text-xs font-semibold text-violet-700 flex items-center gap-1"><Sparkles className="w-3 h-3" /> AI Summary</p>
