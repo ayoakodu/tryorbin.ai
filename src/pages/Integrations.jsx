@@ -222,7 +222,7 @@ const INTEGRATIONS = [
           'anthropic-dangerous-direct-browser-access': 'true',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 16, messages: [{ role: 'user', content: 'hi' }] }),
+        body: JSON.stringify({ model: 'claude-haiku-4-5', max_tokens: 16, messages: [{ role: 'user', content: 'hi' }] }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status} — check your key`);
       return 'Claude AI connected — API key is valid.';
