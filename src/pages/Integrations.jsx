@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import TopBar from '@/components/layout/TopBar';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2, Zap, ArrowRight, Loader2, X, AlertCircle, RefreshCw, Copy, ExternalLink, Lock, Info, Brain } from 'lucide-react';
-import { setApiKey as setTogetherApiKey } from '@/lib/together';
+import { setApiKey as setClaudeApiKey } from '@/lib/claude';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -205,23 +205,30 @@ const INTEGRATIONS = [
     },
   },
   {
-    id: 'together_ai', name: 'Together AI', category: 'AI', color: '#6D28D9',
-    desc: 'Open-source LLMs (Llama 3, Mistral) for email generation and AI features.',
+    id: 'claude_ai', name: 'Claude AI', category: 'AI', color: '#D97706',
+    desc: 'Anthropic\'s Claude powers AI email generation, call summaries, and personalization.',
     type: 'apikey',
     icon: Brain,
-    howTo: 'Sign up at together.ai, go to API Keys in your account settings, and create a new key.',
+    howTo: 'Go to console.anthropic.com → API Keys → Create Key. Paste it here to enable Claude-powered AI features.',
     fields: [
-      { key: 'api_key', label: 'API Key', placeholder: 'Your Together AI API key', secret: true },
+      { key: 'api_key', label: 'API Key', placeholder: 'sk-ant-...', secret: true },
     ],
     test: async (creds) => {
-      const res = await fetch('https://api.together.xyz/v1/models', {
-        headers: { Authorization: `Bearer ${creds.api_key}` },
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': creds.api_key,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 16, messages: [{ role: 'user', content: 'hi' }] }),
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      return 'Together AI connected — models API responding normally.';
+      if (!res.ok) throw new Error(`HTTP ${res.status} — check your key`);
+      return 'Claude AI connected — API key is valid.';
     },
     onConnect: (creds) => {
-      setTogetherApiKey(creds.api_key || '');
+      setClaudeApiKey(creds.api_key || '');
     },
   },
 ];
