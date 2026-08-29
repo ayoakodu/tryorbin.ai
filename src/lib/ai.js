@@ -9,7 +9,7 @@ import { base44 } from '@/api/base44Client';
 import { getApiKey } from './claude';
 
 const CLAUDE_BASE = 'https://api.anthropic.com/v1';
-const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
+const CLAUDE_MODEL = 'claude-haiku-4-5';
 
 function claudeAvailable() {
   try { return !!getApiKey(); } catch { return false; }
