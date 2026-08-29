@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
 import ContactCopilotPanel from '@/components/copilot/ContactCopilotPanel';
+import { invokeLLM } from '@/lib/ai';
 
 const statusColors = {
   new: 'bg-blue-50 text-blue-700 border-blue-200',
@@ -82,6 +83,32 @@ export default function Contacts() {
       toast({ title: 'Contact deleted.' });
     }
   });
+
+  const [followUpSuggestion, setFollowUpSuggestion] = useState(null); // { contactId, loading, text, action, draft }
+  const [showFollowUpDraft, setShowFollowUpDraft] = useState(false);
+
+  const suggestFollowUp = async (contact, e) => {
+    e.stopPropagation();
+    setFollowUpSuggestion({ contactId: contact.id, loading: true });
+    try {
+      const result = await invokeLLM({
+        prompt: `You are a B2B GTM AI copilot helping a sales rep in African markets.
+
+Contact: ${contact.first_name} ${contact.last_name}, ${contact.title || 'Decision Maker'} at ${contact.company || 'their company'} (${contact.country || 'Africa'})
+Status: ${contact.status}, Intent: ${contact.intent_signal || 'unknown'}, Lead score: ${contact.lead_score || 'unknown'}
+
+Suggest the single most impactful next action to move this deal forward. Return JSON with:
+- action: short action label (e.g. "Send follow-up email", "Book a demo call", "Send case study")
+- reasoning: one sentence explaining why
+- email_subject: suggested subject line if the action involves email
+- email_draft: a short 3-paragraph email draft personalized to this contact (if relevant)`,
+        response_json_schema: { type: 'object', properties: {}, required: [] },
+      });
+      setFollowUpSuggestion({ contactId: contact.id, loading: false, ...result });
+    } catch {
+      setFollowUpSuggestion({ contactId: contact.id, loading: false, error: true });
+    }
+  };
 
   const openEdit = (contact, e) => {
     e.stopPropagation();
@@ -196,10 +223,18 @@ export default function Contacts() {
                         ) : '—'}
                       </td>
                       <td className="px-4 py-4 hidden md:table-cell">
-                        <button onClick={e => { e.stopPropagation(); setSelectedContact(contact); }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary">
-                          <Sparkles className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={e => { e.stopPropagation(); setSelectedContact(contact); }}
+                            className="p-1.5 rounded-md hover:bg-primary/10 text-muted-foreground hover:text-primary" title="AI Copilot">
+                            <Sparkles className="w-3.5 h-3.5" />
+                          </button>
+                          <button onClick={e => suggestFollowUp(contact, e)}
+                            className="p-1.5 rounded-md hover:bg-violet-50 text-muted-foreground hover:text-violet-600 text-[10px] font-medium" title="Suggest Follow-up">
+                            {followUpSuggestion?.contactId === contact.id && followUpSuggestion?.loading
+                              ? <Loader2 className="w-3.5 h-3.5 animate-spin text-violet-500" />
+                              : <Mail className="w-3.5 h-3.5" />}
+                          </button>
+                        </div>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -226,6 +261,54 @@ export default function Contacts() {
       <AnimatePresence>
         {selectedContact && (
           <ContactCopilotPanel contact={selectedContact} onClose={() => setSelectedContact(null)} />
+        )}
+      </AnimatePresence>
+
+      {/* Follow-up Suggestion Panel */}
+      <AnimatePresence>
+        {followUpSuggestion && !followUpSuggestion.loading && !followUpSuggestion.error && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-6 right-6 z-50 w-96 bg-card border border-border rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-violet-50/60">
+              <span className="text-xs font-bold text-violet-700 flex items-center gap-1.5"><Sparkles className="w-3.5 h-3.5" /> AI Follow-up Suggestion</span>
+              <button onClick={() => setFollowUpSuggestion(null)} className="text-muted-foreground hover:text-foreground text-xs">✕</button>
+            </div>
+            <div className="p-4 space-y-3">
+              <div className="flex items-start gap-2">
+                <div className="mt-0.5 w-5 h-5 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="w-3 h-3 text-violet-600" />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-foreground">{followUpSuggestion.action}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{followUpSuggestion.reasoning}</p>
+                </div>
+              </div>
+              {followUpSuggestion.email_draft && (
+                <div className="rounded-lg border border-border bg-muted/30 p-3">
+                  {followUpSuggestion.email_subject && (
+                    <p className="text-[11px] font-semibold text-foreground mb-1">Subject: {followUpSuggestion.email_subject}</p>
+                  )}
+                  <p className="text-[11px] text-muted-foreground whitespace-pre-line leading-relaxed">{followUpSuggestion.email_draft}</p>
+                </div>
+              )}
+              <div className="flex gap-2">
+                {followUpSuggestion.email_draft && (
+                  <button onClick={() => {
+                    sessionStorage.setItem('compose_prefill', JSON.stringify({
+                      subject: followUpSuggestion.email_subject || '',
+                      body: followUpSuggestion.email_draft || '',
+                    }));
+                    window.location.href = '/emails';
+                  }} className="flex-1 h-8 rounded-lg bg-violet-600 text-white text-xs font-medium hover:bg-violet-700 flex items-center justify-center gap-1.5">
+                    <Mail className="w-3 h-3" /> Open in Emails
+                  </button>
+                )}
+                <button onClick={() => setFollowUpSuggestion(null)} className="flex-1 h-8 rounded-lg border border-border text-xs text-muted-foreground hover:bg-muted">
+                  Dismiss
+                </button>
+              </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
 

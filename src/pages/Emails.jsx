@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Mail, Inbox, Send, Star, Archive, Trash2, Search, Plus, RefreshCw, AlertCircle, X, ArrowLeft, Menu } from 'lucide-react';
+import { Mail, Inbox, Send, Star, Archive, Trash2, Search, Plus, RefreshCw, AlertCircle, X, ArrowLeft, Menu, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { invokeLLM } from '@/lib/ai';
 
 const FOLDERS = [
   { id: 'inbox',   label: 'Inbox',   icon: Inbox,   count: 12 },
@@ -32,6 +33,53 @@ export default function Emails() {
   const [showCompose, setShowCompose] = useState(false);
   const [compose, setCompose] = useState(BLANK_COMPOSE);
   const [mobilePanel, setMobilePanel] = useState('list'); // folders | list | detail
+  const [aiDrafting, setAiDrafting] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [showAiPrompt, setShowAiPrompt] = useState(false);
+
+  const draftWithAI = async () => {
+    if (!aiPrompt.trim()) return;
+    setAiDrafting(true);
+    try {
+      const result = await invokeLLM({
+        prompt: `You are a B2B sales assistant helping draft a professional outreach email for African markets.
+
+Instruction: ${aiPrompt}
+Recipient email: ${compose.to || 'unknown'}
+Existing subject: ${compose.subject || 'none'}
+
+Write a concise, personalized B2B email. Return JSON with:
+- subject: email subject line (if none given, create one)
+- body: email body (2-4 short paragraphs, professional and warm, no generic filler)`,
+        response_json_schema: { type: 'object', properties: {}, required: [] },
+      });
+      if (result?.subject) setCompose(p => ({ ...p, subject: result.subject }));
+      if (result?.body) setCompose(p => ({ ...p, body: result.body }));
+    } catch {}
+    setAiDrafting(false);
+    setShowAiPrompt(false);
+    setAiPrompt('');
+  };
+
+  const draftReplyWithAI = async () => {
+    if (!selectedEmail) return;
+    setAiDrafting(true);
+    try {
+      const result = await invokeLLM({
+        prompt: `You are a B2B sales assistant. Draft a professional reply to this email.
+
+From: ${selectedEmail.from} (${selectedEmail.email})
+Subject: ${selectedEmail.subject}
+Email content: ${selectedEmail.preview}
+
+Write a warm, concise reply (2-3 paragraphs). Move the conversation forward — acknowledge their message, provide value or answer their question, and include a clear next step. Return JSON with:
+- body: the reply body text`,
+        response_json_schema: { type: 'object', properties: {}, required: [] },
+      });
+      if (result?.body) setCompose(p => ({ ...p, body: result.body }));
+    } catch {}
+    setAiDrafting(false);
+  };
 
   useEffect(() => {
     const prefill = sessionStorage.getItem('compose_prefill');
@@ -172,12 +220,19 @@ export default function Emails() {
             </p>
             <p className="text-sm text-foreground leading-relaxed mt-4">Best regards,<br />{selectedEmail.from}</p>
           </div>
-          <div className="px-4 md:px-8 py-3 md:py-4 border-t border-border">
+          <div className="px-4 md:px-8 py-3 md:py-4 border-t border-border flex items-center gap-2">
             <Button size="sm" className="gap-2" onClick={() => {
               setCompose({ to: selectedEmail.email, subject: `Re: ${selectedEmail.subject}`, body: '' });
               setShowCompose(true);
             }}>
               <Send className="w-3.5 h-3.5" /> Reply
+            </Button>
+            <Button size="sm" variant="outline" className="gap-2 text-violet-700 border-violet-200 hover:bg-violet-50" onClick={() => {
+              setCompose({ to: selectedEmail.email, subject: `Re: ${selectedEmail.subject}`, body: '' });
+              setShowCompose(true);
+              setTimeout(() => draftReplyWithAI(), 100);
+            }}>
+              <Sparkles className="w-3.5 h-3.5" /> AI Reply
             </Button>
           </div>
         </>
@@ -244,11 +299,34 @@ export default function Emails() {
                 className="flex-1 resize-none text-sm border border-input rounded-md px-3 py-2 bg-background focus:outline-none focus:ring-2 focus:ring-ring min-h-[160px]"
               />
             </div>
+            {showAiPrompt && (
+              <div className="px-4 py-3 border-t border-violet-100 bg-violet-50/60">
+                <p className="text-[11px] font-semibold text-violet-700 mb-2 flex items-center gap-1"><Sparkles className="w-3 h-3" /> What should this email say?</p>
+                <div className="flex gap-2">
+                  <input
+                    autoFocus
+                    value={aiPrompt}
+                    onChange={e => setAiPrompt(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && draftWithAI()}
+                    placeholder="e.g. Follow up after demo call, mention their fintech stack..."
+                    className="flex-1 h-8 text-xs px-3 rounded-md border border-violet-200 bg-white focus:outline-none focus:ring-2 focus:ring-violet-300"
+                  />
+                  <Button size="sm" className="bg-violet-600 text-white text-xs h-8 px-3" onClick={draftWithAI} disabled={aiDrafting}>
+                    {aiDrafting ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Draft'}
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 text-xs" onClick={() => { setShowAiPrompt(false); setAiPrompt(''); }}>✕</Button>
+                </div>
+              </div>
+            )}
             <div className="flex items-center gap-2 px-4 py-3 border-t border-border">
               <Button size="sm" className="gap-2 bg-primary text-primary-foreground" onClick={handleSend}>
                 <Send className="w-3.5 h-3.5" /> Send
               </Button>
-              <Button size="sm" variant="ghost" onClick={() => { setCompose(BLANK_COMPOSE); setShowCompose(false); }}>Discard</Button>
+              <Button size="sm" variant="outline" className="gap-1.5 text-violet-700 border-violet-200 hover:bg-violet-50 text-xs" onClick={() => setShowAiPrompt(p => !p)} disabled={aiDrafting}>
+                {aiDrafting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                {aiDrafting ? 'Writing...' : 'Draft with AI'}
+              </Button>
+              <Button size="sm" variant="ghost" className="ml-auto" onClick={() => { setCompose(BLANK_COMPOSE); setShowCompose(false); setShowAiPrompt(false); }}>Discard</Button>
             </div>
           </div>
         </div>
