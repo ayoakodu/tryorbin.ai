@@ -1,9 +1,8 @@
 /**
  * Unified AI inference router.
  *
- * Priority:
- *   1. Claude API (Anthropic) — if the user has connected their API key in Integrations
- *   2. Base44 InvokeLLM — platform default, always available as fallback
+ * Primary: Base44 InvokeLLM — always available, server-side, no key needed.
+ * Optional upgrade: user's own Claude API key connected in Integrations.
  */
 import { base44 } from '@/api/base44Client';
 import { getApiKey } from './claude';
@@ -56,10 +55,11 @@ async function claudeJson(prompt) {
 export async function invokeLLM({ prompt, response_json_schema } = {}) {
   const wantJson = !!response_json_schema;
 
+  // If user has connected their own Claude key, use it directly
   if (claudeAvailable()) {
     return wantJson ? claudeJson(prompt) : claudeText(prompt);
   }
 
-  // Base44 fallback
+  // Default: Base44's platform AI — always works, no key required
   return base44.integrations.Core.InvokeLLM({ prompt, response_json_schema });
 }
