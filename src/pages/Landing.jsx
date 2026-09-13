@@ -88,7 +88,9 @@ const earlyAccessBenefits = [
 
 export default function Landing() {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [joined, setJoined] = useState(false);
+  const [alreadyOnList, setAlreadyOnList] = useState(false);
   const [joining, setJoining] = useState(false);
   const [emailError, setEmailError] = useState('');
   const [openFaq, setOpenFaq] = useState(null);
@@ -119,17 +121,25 @@ export default function Landing() {
 
   const handleJoin = async () => {
     const trimmed = email.trim();
+    const trimmedName = name.trim();
+    if (!trimmedName) { setEmailError('Please enter your name.'); return; }
     if (!trimmed) { setEmailError('Please enter your email.'); return; }
     if (!isValidEmail(trimmed)) { setEmailError('Please enter a valid email address.'); return; }
     setEmailError('');
     setJoining(true);
     try {
-      await base44.entities.WaitlistSignup.create({ email: trimmed, signed_up_at: new Date().toISOString() });
-    } catch (_) {
-      // Entity may not exist yet — still mark as joined for UX
+      const existing = await base44.entities.WaitlistEntry.filter({ email: trimmed });
+      if (existing && existing.length > 0) {
+        setAlreadyOnList(true);
+        setJoined(true);
+      } else {
+        await base44.entities.WaitlistEntry.create({ email: trimmed, full_name: trimmedName });
+        setJoined(true);
+      }
+    } catch (e) {
+      setEmailError('Something went wrong. Please try again.');
     }
     setJoining(false);
-    setJoined(true);
   };
 
   const handleEmailKeyDown = (e) => { if (e.key === 'Enter') handleJoin(); };
@@ -164,6 +174,14 @@ export default function Landing() {
             className="flex flex-col items-center gap-2 mb-10">
             {!joined ? (
               <>
+                <Input
+                  placeholder="Enter your full name"
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); setEmailError(''); }}
+                  onKeyDown={handleEmailKeyDown}
+                  className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-white placeholder:text-slate-300"
+                  style={{ background: 'rgba(255,255,255,0.1)' }}
+                />
                 <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
                   <Input
                     placeholder="Enter your work email"
@@ -181,7 +199,7 @@ export default function Landing() {
               </>
             ) : (
               <div className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium">
-                <Check className="w-5 h-5" /> You're on the waitlist! We'll be in touch soon.
+                <Check className="w-5 h-5" /> {alreadyOnList ? "You're already on the waitlist!" : "You're on the waitlist! We'll be in touch soon."}
               </div>
             )}
           </motion.div>
@@ -462,6 +480,13 @@ export default function Landing() {
 
               {!joined ? (
                 <div className="flex flex-col items-center gap-2">
+                  <Input
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={(e) => { setName(e.target.value); setEmailError(''); }}
+                    onKeyDown={handleEmailKeyDown}
+                    className="sm:w-72 h-12 border-primary/40 text-center sm:text-left text-slate-800 placeholder:text-slate-500 bg-white"
+                  />
                   <div className="flex flex-col sm:flex-row gap-3 justify-center w-full">
                     <Input
                       placeholder="Enter your work email to join the waitlist"
@@ -478,7 +503,7 @@ export default function Landing() {
                 </div>
               ) : (
                 <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary/10 border border-primary/30 text-primary font-medium">
-                  <Check className="w-5 h-5" /> You're on the waitlist! We'll be in touch.
+                  <Check className="w-5 h-5" /> {alreadyOnList ? "You're already on the waitlist!" : "You're on the waitlist! We'll be in touch."}
                 </div>
               )}
             </div>
